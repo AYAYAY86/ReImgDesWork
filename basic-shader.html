@@ -1,0 +1,82 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Basic Shader</title>
+    <style>
+        canvas {
+            width: 400px;
+            height: 400px;
+        }
+    </style>
+</head>
+<body>
+    <canvas id="glCanvas"></canvas>
+    <script>
+        // 1. Get the canvas and WebGL context
+        const canvas = document.getElementById('glCanvas');
+        const gl = canvas.getContext('webgl');
+
+        // 2. Define our shaders
+        const vertexShaderSource = `
+            // Input position attribute
+            attribute vec4 a_position;
+            
+            void main() {
+                // Simply set the position without any transformation
+                gl_Position = a_position;
+            }
+        `;
+
+        const fragmentShaderSource = `
+            precision mediump float;
+            
+            void main() {
+                // Set every pixel to red
+                gl_FragColor = vec4(1.0, 0.0, 0.0, 1.0);
+            }
+        `;
+
+        // 3. Create and compile shaders
+        function createShader(type, source) {
+            const shader = gl.createShader(type);
+            gl.shaderSource(shader, source);
+            gl.compileShader(shader);
+            return shader;
+        }
+
+        const vertexShader = createShader(gl.VERTEX_SHADER, vertexShaderSource);
+        const fragmentShader = createShader(gl.FRAGMENT_SHADER, fragmentShaderSource);
+
+        // 4. Create and link program
+        const program = gl.createProgram();
+        gl.attachShader(program, vertexShader);
+        gl.attachShader(program, fragmentShader);
+        gl.linkProgram(program);
+        gl.useProgram(program);
+
+        // 5. Create a square (two triangles)
+        const positions = new Float32Array([
+            -0.5, -0.5,  // bottom left
+             0.5, -0.5,  // bottom right
+            -0.5,  0.5,  // top left
+             0.5,  0.5   // top right
+        ]);
+
+        // 6. Create and fill buffer
+        const positionBuffer = gl.createBuffer();
+        gl.bindBuffer(gl.ARRAY_BUFFER, positionBuffer);
+        gl.bufferData(gl.ARRAY_BUFFER, positions, gl.STATIC_DRAW);
+
+        // 7. Connect position attribute
+        const positionAttributeLocation = gl.getAttribLocation(program, 'a_position');
+        gl.enableVertexAttribArray(positionAttributeLocation);
+        gl.vertexAttribPointer(positionAttributeLocation, 2, gl.FLOAT, false, 0, 0);
+
+        // 8. Draw!
+        gl.viewport(0, 0, canvas.width, canvas.height);
+        gl.clearColor(0, 0, 0, 0);
+        gl.clear(gl.COLOR_BUFFER_BIT);
+        gl.drawArrays(gl.TRIANGLE_STRIP, 0, 4);
+    </script>
+</body>
+</html>

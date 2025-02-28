@@ -1,0 +1,147 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Text Shader Effect</title>
+    <style>
+        canvas {
+            border: 1px solid #ccc;
+        }
+    </style>
+</head>
+<body>
+    <canvas id="glCanvas" width="500" height="200"></canvas>
+    <script>
+        // First render text to a temporary canvas
+        const tempCanvas = document.createElement('canvas');
+        tempCanvas.width = 500;
+        tempCanvas.height = 200;
+        const tempCtx = tempCanvas.getContext('2d');
+
+        // Set up text
+        tempCtx.fillStyle = 'white';
+        tempCtx.font = 'bold 48px Arial';
+        tempCtx.textAlign = 'center';
+        tempCtx.fillText('Hello Shader!', 250, 100);
+
+        // Set up WebGL
+        const canvas = document.getElementById('glCanvas');
+        const gl = canvas.getContext('webgl');
+
+        // Vertex shader - handles position and texture coordinates
+        const vertexShaderSource = `
+            attribute vec4 a_position;
+            attribute vec2 a_texCoord;
+            varying vec2 v_texCoord;
+            
+            void main() {
+                gl_Position = a_position;
+                v_texCoord = a_texCoord;
+            }
+        `;
+
+        // Fragment shader - creates a rainbow effect on the text
+        const fragmentShaderSource = `
+            precision mediump float;
+            
+            varying vec2 v_texCoord;
+            uniform sampler2D u_texture;
+            uniform float u_time;
+            
+            void main() {
+                vec4 texColor = texture2D(u_texture, v_texCoord);
+                
+                // Only apply effects to the white text
+                if (texColor.r > 0.0) {
+                    // Create rainbow effect based on position and time
+                    float hue = v_texCoord.x + u_time * 0.5;
+                    
+                    // Convert HSV to RGB (simplified)
+                    vec3 rgb = 0.5 + 0.5 * cos(6.28318 * (hue + vec3(0.0, 0.333, 0.667)));
+                    
+                    gl_FragColor = vec4(rgb, texColor.a);
+                } else {
+                    gl_FragColor = vec4(0.0, 0.0, 0.0, 0.0);
+                }
+            }
+        `;
+
+        // Create shader program
+        function createShader(type, source) {
+            const shader = gl.createShader(type);
+            gl.shaderSource(shader, source);
+            gl.compileShader(shader);
+            return shader;
+        }
+
+        const program = gl.createProgram();
+        const vertexShader = createShader(gl.VERTEX_SHADER, vertexShaderSource);
+        const fragmentShader = createShader(gl.FRAGMENT_SHADER, fragmentShaderSource);
+        gl.attachShader(program, vertexShader);
+        gl.attachShader(program, fragmentShader);
+        gl.linkProgram(program);
+        gl.useProgram(program);
+
+        // Set up rectangle covering the canvas
+        const positions = new Float32Array([
+            -1, -1,
+             1, -1,
+            -1,  1,
+             1,  1,
+        ]);
+
+        const texCoords = new Float32Array([
+            0, 1,
+            1, 1,
+            0, 0,
+            1, 0,
+        ]);
+
+        // Set up position attribute
+        const positionBuffer = gl.createBuffer();
+        gl.bindBuffer(gl.ARRAY_BUFFER, positionBuffer);
+        gl.bufferData(gl.ARRAY_BUFFER, positions, gl.STATIC_DRAW);
+
+        const positionLocation = gl.getAttribLocation(program, 'a_position');
+        gl.enableVertexAttribArray(positionLocation);
+        gl.vertexAttribPointer(positionLocation, 2, gl.FLOAT, false, 0, 0);
+
+        // Set up texture coordinate attribute
+        const texCoordBuffer = gl.createBuffer();
+        gl.bindBuffer(gl.ARRAY_BUFFER, texCoordBuffer);
+        gl.bufferData(gl.ARRAY_BUFFER, texCoords, gl.STATIC_DRAW);
+
+        const texCoordLocation = gl.getAttribLocation(program, 'a_texCoord');
+        gl.enableVertexAttribArray(texCoordLocation);
+        gl.vertexAttribPointer(texCoordLocation, 2, gl.FLOAT, false, 0, 0);
+
+        // Create and set up texture from our text rendering
+        const texture = gl.createTexture();
+        gl.bindTexture(gl.TEXTURE_2D, texture);
+        gl.texImage2D(gl.TEXTURE_2D, 0, gl.RGBA, gl.RGBA, gl.UNSIGNED_BYTE, tempCanvas);
+        gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_S, gl.CLAMP_TO_EDGE);
+        gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_T, gl.CLAMP_TO_EDGE);
+        gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MIN_FILTER, gl.LINEAR);
+
+        // Get uniform location
+        const timeLocation = gl.getUniformLocation(program, 'u_time');
+
+        // Animation loop
+        function render(time) {
+            time *= 0.001; // Convert to seconds
+
+            gl.clearColor(0, 0, 0, 0);
+            gl.clear(gl.COLOR_BUFFER_BIT);
+
+            // Update time uniform
+            gl.uniform1f(timeLocation, time);
+
+            // Draw
+            gl.drawArrays(gl.TRIANGLE_STRIP, 0, 4);
+
+            requestAnimationFrame(render);
+        }
+
+        requestAnimationFrame(render);
+    </script>
+</body>
+</html>
