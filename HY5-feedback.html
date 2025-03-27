@@ -1,0 +1,112 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <style>
+        body,
+        html {
+            margin: 0;
+            padding: 0;
+            width: 100%;
+            height: 100%;
+            overflow: hidden;
+        }
+
+        canvas {
+            display: block;
+            width: 100%;
+            height: 100%;
+        }
+    </style>
+
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Performance H5</title>
+</head>
+
+<body>
+
+    <script src='https://unpkg.com/hydra-synth'></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/p5.js/1.9.0/p5.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/gh/ffd8/hy5@main/hy5.js"></script>
+
+    <script>
+
+        // hydra » p5 » hydra
+        // pass hydra into p5 and post-process with 2nd hydra!
+        // cc teddavis.org 2024
+
+        H.hide() // hide hydra
+        noize().out()
+
+        src(s1)
+            .modulate(noize(20, 0.1))
+            .out(o1)
+
+        src(s2)
+            .modulate(osc(200, 0.1))
+            .out(o2)
+
+        render(o2)
+
+        let layer1
+        let layer2
+
+        function setup() {
+            createCanvas(windowWidth, windowHeight, WEBGL)
+            angleMode(DEGREES)
+
+            layer1 = createGraphics(width, height)
+            layer2 = createGraphics(500, 500)
+
+            s1.initP5(layer1)
+            s2.initP5(layer2)
+        }
+
+        function draw() {
+            clear()
+            background(0)
+
+            layer1.background(250)
+            layer1.strokeWeight(20)
+            layer1.stroke(0, 0, 255)
+            layer1.fill(0, 200, 200)
+            layer1.circle(0, 0, width)
+
+            layer2.stroke(0, 0, 255)
+            //layer2.noFill()
+            layer2.strokeWeight(40)
+            layer2.rect(100, 100, 200, 200)
+
+            orbitControl(3)
+            rotateY(frameCount / 3)
+            rotateX(frameCount / 4)
+            rotateZ(frameCount / 4)
+
+            //If I put the render it doesnt work
+            //H.render()
+
+            noStroke()
+            //texture(h1)
+            texture(H.get())
+            sphere(height / 3)
+        }
+
+        // 2nd instance of hydra
+        var H2 = HY5.hydra('h2', 'synth')
+
+        H2.pixelDensity(2)
+        H2.zIndex(2)
+
+        synth.s0.initP5()
+
+        synth.src(synth.s0)
+            
+            .modulateScale(synth.src(synth.o0).scale(1.01)
+            .scrollX(.05)
+            , 2.5)
+            .out()
+    </script>
+</body>
+
+</html>

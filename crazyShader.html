@@ -1,0 +1,191 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>GLSL Shader Visualization</title>
+    <style>
+        body, html {
+            margin: 0;
+            padding: 0;
+            width: 100%;
+            height: 100%;
+            overflow: hidden;
+        }
+        canvas {
+            width: 100%;
+            height: 100%;
+            display: block;
+        }
+        .attribution {
+            position: absolute;
+            bottom: 1rem;
+            right: 1rem;
+            background: rgba(0,0,0,0.7);
+            color: white;
+            padding: 0.5rem;
+            border-radius: 0.25rem;
+            z-index: 10;
+        }
+        .attribution a {
+            color: white;
+            text-decoration: none;
+        }
+        .attribution a:hover {
+            text-decoration: underline;
+        }
+    </style>
+</head>
+<body>
+    <canvas id="glslCanvas"></canvas>
+    <div class="attribution">
+        <a href="https://x.com/YoheiNishitsuji/status/1898392319386366065" target="_blank">
+            @YoheiNishitsuji
+        </a>
+    </div>
+
+    <script>
+        const canvas = document.getElementById('glslCanvas');
+        const gl = canvas.getContext('webgl2');
+
+        if (!gl) {
+            console.error('WebGL2 not supported');
+            alert('Your browser does not support WebGL2');
+        }
+
+        // Resize canvas function
+        function resizeCanvas() {
+            canvas.width = window.innerWidth;
+            canvas.height = window.innerHeight;
+        }
+        
+        // Initial resize
+        resizeCanvas();
+        
+        // Add resize listener
+        window.addEventListener('resize', resizeCanvas);
+
+        // Vertex shader
+        const vertexShaderSource = `#version 300 es
+            in vec4 a_position;
+            void main() {
+                gl_Position = a_position;
+            }
+        `;
+
+        // Fragment shader
+        const fragmentShaderSource = `#version 300 es
+            precision highp float;
+            out vec4 outColor;
+            uniform vec2 u_resolution;
+            uniform float u_time;
+            
+            // HSV to RGB conversion function
+            vec3 hsv(float h,float s,float v){
+                vec4 t=vec4(1.,2./3.,1./3.,3.);
+                vec3 p=abs(fract(vec3(h)+t.xyz)*6.-vec3(t.w));
+                return v*mix(vec3(t.x),clamp(p-vec3(t.x),0.,1.),s);
+            }
+            
+            void main(){
+                vec2 r=u_resolution;
+                vec2 FC=gl_FragCoord.xy;
+                float t=u_time;
+                vec4 o=vec4(0,0,0,1);
+                
+                float i,e,R,s;
+                
+                vec3 q,p,d=vec3(FC.xy/r-vec2(.6,.5),.7);
+                
+                for(q.zx--;i++<99.;){
+                    o.rgb+=hsv(.1,.2,min(e*s,.7-e)/35.);
+                    
+                    s=1.;
+                    
+                    p=q+=d*e*R*.1;
+                    
+                    p=vec3(log2(R=length(p))-t,exp(1.-p.z/R),atan(p.y,p.x)+cos(t)*.2);
+                    
+                    for(e=--p.y;s<3e2;s+=s)e+=sin(dot(sin(p.zxy*s)-.5,1.-cos(p.yxz*s)))/s;
+                }
+                
+                outColor=o;
+            }
+        `;
+
+        // Create and compile shader
+        function createShader(type, source) {
+            const shader = gl.createShader(type);
+            gl.shaderSource(shader, source);
+            gl.compileShader(shader);
+
+            if (!gl.getShaderParameter(shader, gl.COMPILE_STATUS)) {
+                console.error('Shader compilation error:', gl.getShaderInfoLog(shader));
+                gl.deleteShader(shader);
+                return null;
+            }
+
+            return shader;
+        }
+
+        // Create vertex and fragment shaders
+        const vertexShader = createShader(gl.VERTEX_SHADER, vertexShaderSource);
+        const fragmentShader = createShader(gl.FRAGMENT_SHADER, fragmentShaderSource);
+
+        // Create and link program
+        const program = gl.createProgram();
+        gl.attachShader(program, vertexShader);
+        gl.attachShader(program, fragmentShader);
+        gl.linkProgram(program);
+
+        if (!gl.getProgramParameter(program, gl.LINK_STATUS)) {
+            console.error('Program linking error:', gl.getProgramInfoLog(program));
+        }
+
+        // Set up position buffer (full screen quad)
+        const positionBuffer = gl.createBuffer();
+        gl.bindBuffer(gl.ARRAY_BUFFER, positionBuffer);
+        gl.bufferData(
+            gl.ARRAY_BUFFER,
+            new Float32Array([-1.0, -1.0, 1.0, -1.0, -1.0, 1.0, -1.0, 1.0, 1.0, -1.0, 1.0, 1.0]),
+            gl.STATIC_DRAW
+        );
+
+        // Use the program
+        gl.useProgram(program);
+
+        // Set up attributes
+        const positionAttributeLocation = gl.getAttribLocation(program, 'a_position');
+        gl.enableVertexAttribArray(positionAttributeLocation);
+        gl.vertexAttribPointer(positionAttributeLocation, 2, gl.FLOAT, false, 0, 0);
+
+        // Set up uniforms
+        const resolutionUniformLocation = gl.getUniformLocation(program, 'u_resolution');
+        const timeUniformLocation = gl.getUniformLocation(program, 'u_time');
+
+        // Start time for animation
+        const startTime = performance.now();
+
+        // Render function
+        function render() {
+            // Update time uniform
+            const currentTime = (performance.now() - startTime) / 1000;
+            gl.uniform1f(timeUniformLocation, currentTime);
+
+            // Update resolution uniform
+            gl.uniform2f(resolutionUniformLocation, canvas.width, canvas.height);
+
+            // Clear canvas and draw
+            gl.viewport(0, 0, canvas.width, canvas.height);
+            gl.clearColor(0, 0, 0, 1);
+            gl.clear(gl.COLOR_BUFFER_BIT);
+            gl.drawArrays(gl.TRIANGLES, 0, 6);
+
+            // Request next frame
+            requestAnimationFrame(render);
+        }
+
+        // Start rendering
+        render();
+    </script>
+</body>
+</html>

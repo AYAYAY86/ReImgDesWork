@@ -1,0 +1,73 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>SVG Fisheye Lens Distortion</title>
+</head>
+<body>
+    <svg width="400" height="400" viewBox="0 0 400 400" xmlns="http://www.w3.org/2000/svg">
+        <defs>
+            <script type="text/javascript">
+                function fisheye(cx, cy, radius) {
+                    return function(x, y) {
+                        // Calculate distance from center
+                        let dx = x - cx;
+                        let dy = y - cy;
+                        let distance = Math.sqrt(dx * dx + dy * dy);
+                        
+                        // If outside radius, return original point
+                        if (distance > radius) return [x, y];
+                        
+                        // Calculate distortion strength
+                        let strength = 1 - (distance / radius);
+                        let distortionFactor = 1 + (1 - strength) * 2;
+                        
+                        // Apply distortion
+                        let newX = cx + dx * distortionFactor;
+                        let newY = cy + dy * distortionFactor;
+                        
+                        return [newX, newY];
+                    }
+                }
+    
+                function applyFishEye() {
+                    const svg = document.querySelector('svg');
+                    const rect = document.getElementById('sourceRect');
+                    const points = rect.getAttribute('points').split(' ')
+                        .map(p => p.split(',').map(Number));
+                    
+                    const cx = 200;
+                    const cy = 200;
+                    const radius = 150;
+                    
+                    const fisheyeTransform = fisheye(cx, cy, radius);
+                    
+                    const distortedPoints = points.map(point => 
+                        fisheyeTransform(point[0], point[1])
+                    );
+                    
+                    const newPointsString = distortedPoints
+                        .map(p => `${p[0]},${p[1]}`)
+                        .join(' ');
+                    
+                    rect.setAttribute('points', newPointsString);
+                }
+    
+                window.onload = applyFishEye;
+            </script>
+        </defs>
+    
+        <!-- Grid for reference -->
+        <line x1="0" y1="200" x2="400" y2="200" stroke="lightgray" stroke-dasharray="5,5"/>
+        <line x1="200" y1="0" x2="200" y2="400" stroke="lightgray" stroke-dasharray="5,5"/>
+    
+        <!-- Original square -->
+        <polygon id="sourceRect" 
+            points="100,100 300,100 300,300 100,300" 
+            fill="blue" 
+            opacity="0.5"/>
+    
+        <!-- Circular distortion center marker -->
+        <circle cx="200" cy="200" r="50" fill="red"/>
+    </svg>
+</body>
+</html>
