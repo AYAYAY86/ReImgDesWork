@@ -1,0 +1,75 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <style>
+        body,
+        html {
+            margin: 0;
+            padding: 0;
+            width: 100%;
+            height: 100%;
+            overflow: hidden;
+        }
+
+        canvas {
+            display: block;
+            width: 100%;
+            height: 100%;
+        }
+    </style>
+
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Performance H5</title>
+</head>
+
+<body>
+
+    
+
+    
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/p5.js/1.9.0/p5.min.js"></script>
+
+
+    <script>
+
+//https://stackoverflow.com/questions/74334364/drawing-a-rectangle-with-mouse-position-in-p5js
+
+var x;
+var y;
+var x2;
+var y2;
+
+
+function setup() {
+  createCanvas(windowWidth, windowHeight);
+}
+
+function draw() {
+   x2 = mouseX;
+   y2 = mouseY;
+  //background(255);
+  if (mouseIsPressed) {
+    rectMode(CORNERS);
+    //translate(width/2,heigth/2)
+   rect(x, y, x2, y2);
+  
+  }
+}
+
+function mousePressed() {
+  x = mouseX;
+  y = mouseY;
+}
+
+function mouseReleased() {
+    
+  
+  
+  
+}
+    </script>
+</body>
+
+</html>

@@ -1,0 +1,110 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <style>
+        body,
+        html {
+            margin: 0;
+            padding: 0;
+            width: 100%;
+            height: 100%;
+            overflow: hidden;
+        }
+
+        canvas {
+            display: block;
+            width: 100%;
+            height: 100%;
+        }
+    </style>
+
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Performance H5</title>
+</head>
+
+<body>
+
+    
+
+    <script src='https://unpkg.com/hydra-synth'></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/p5.js/1.9.0/p5.min.js"></script>
+
+
+    <script>
+
+/*	
+	_hydra_texture // cc ojack.xyz + teddavis.org 2021
+	edit hydra code within // hydraSandbox tags for changes w/o recompiling p5!
+	cheatsheets: https://ojack.xyz/hydra-functions/ + https://hydra-book.naotohieda.com/
+*/
+
+// hydra canvas + init
+let hc = document.createElement('canvas') // hydra canvas + custom size
+hc.width = window.innerWidth
+hc.height = window.innerHeight
+let hydra = new Hydra({
+	detectAudio: false,
+	canvas: hc
+})
+noize = hydra.synth.noise //use noize with z beacause p5 noise
+
+let pg // store hydra texture
+let mySlider, threshSlider; 
+
+
+// sandbox - start
+noise(() => mySlider.value()) //()=> foo (foo is any variable)
+	
+	.scale(3)
+	.luma()
+	.thresh(() => threshSlider.value(),0.01)
+
+	.out()
+// sandbox - stop
+
+function setup() {
+
+	createCanvas(windowWidth, windowHeight, WEBGL)
+
+	pg = createGraphics(hc.width, hc.height)
+	noStroke()
+	box(height * 2)
+
+	mySlider = createSlider(0, 100, 1, .01)
+	mySlider.position(width / 2, 20)
+
+	threshSlider = createSlider(0, .9, .1, .01)
+	threshSlider.position(width / 2, 40)
+
+	background(0)
+}
+
+
+function draw() {
+	//background(0)
+
+	// grab + apply hydra texture
+
+	//mouseIsPressed ? pg.clear() : 0
+	
+	if(mouseIsPressed) pg.clear()
+	
+	pg.clear()
+	pg.drawingContext.drawImage(hc, 0, 0, pg.width, pg.height)
+	texture(pg)
+
+	//plane(width, height) // fill screen w/ texture
+
+	rotateX(radians(frameCount / 8))
+	rotateY(radians(frameCount / 4))
+	rotateZ(radians(frameCount / 2))
+	//torus(height/4, height/8, 50)
+	box(height/(2+sin(frameCount*0.01)*6))
+	// cylinder(height / (4 + sin(frameCount * 0.01) * 2.5))
+}
+    </script>
+</body>
+
+</html>
