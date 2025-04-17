@@ -1,0 +1,115 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <style>
+    body,
+    html {
+      margin: 0;
+      padding: 0;
+      width: 100%;
+      height: 100%;
+      overflow: hidden;
+    }
+
+    canvas {
+      display: block;
+      width: 100%;
+      height: 100%;
+    }
+  </style>
+  <link rel="stylesheet" type="text/css" href="style.css">
+  <meta charset="utf-8" />
+</head>
+
+<body>
+
+</body>
+<!-- <script src="hydra-synth.js"></script> -->
+<script src="https://unpkg.com/hydra-synth"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/p5.js/1.9.3/p5.js"></script>
+<script>
+
+  let hc = document.createElement('canvas')
+  hc.width = window.innerWidth
+  hc.height = window.innerHeight
+  document.body.appendChild(hc)
+  let hydra = new Hydra({ detectAudio: false, canvas: hc })
+  // hydra.setResolution(window.innerWidth*2, window.innerHeight*2) // retina res
+  noize = noise // use noize() since noise() is taken by p5js
+
+  let pg // store hydra texture
+
+
+
+  // sandbox - start
+  src(o0)
+    .layer(s0)
+
+    // .scrollY(0.002)
+    // .scrollX(0.002)
+    .scale(1.002, 1.002)
+    // .scroll(0.009, 1.001)
+    .out()
+  // sandbox  - stop
+
+  let img
+  let x, y, x2, y2;
+
+  function setup() {
+    createCanvas(windowWidth, windowHeight, WEBGL)
+    background(0)
+    pg = createGraphics(hc.width, hc.height)
+    s0.init({ src: drawingContext.canvas })
+
+
+
+  // Call repaint() when the button is pressed.
+  // button.mousePressed(repaint);
+
+  }
+
+  function preload() {
+    // load the image
+    img = loadImage('img/cursor1.png')
+  }
+
+  function draw() {
+
+
+    clear()
+
+
+      image(img, mouseX - width / 2, mouseY + height / 2, img.width / 6, img.height / 6)
+      pg.drawingContext.drawImage(hc, 0, 0, pg.width, pg.height)
+
+      let button = createButton('O');
+      button.position(width/2, height/2);
+      
+    //background(255);
+    if (mouseIsPressed) {
+      // clear()
+      // background(0)
+      x2 = mouseX - width/2;
+      y2 = mouseY - height/2;
+      rectMode(CORNERS);
+      fill(255)
+      translate(0, height)
+      stroke(0)
+      rect(x, y, x2, y2);
+      console.log(height / 2)
+    }
+    
+  }
+
+  function mousePressed() {
+    x = mouseX - width/2;
+    y = mouseY - height/2;
+  }
+
+  function mouseReleased() {
+
+  }
+</script>
+
+</html>

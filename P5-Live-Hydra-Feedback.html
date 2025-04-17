@@ -26,45 +26,36 @@
 
 <body>
 
-    
-
-    
+    <script src='https://unpkg.com/hydra-synth'></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/p5.js/1.9.0/p5.min.js"></script>
-
+    <script src="https://cdn.jsdelivr.net/gh/ffd8/hy5@main/hy5.js"></script>
 
     <script>
 
-//https://stackoverflow.com/questions/74334364/drawing-a-rectangle-with-mouse-position-in-p5js
-
-var x;
-var y;
-var x2;
-var y2;
-
-
 function setup() {
-  createCanvas(windowWidth, windowHeight);
+	createCanvas(windowWidth, windowHeight)
+	background(0)
 }
 
 function draw() {
-   x2 = mouseX;
-   y2 = mouseY;
-  //background(255);
-  if (mouseIsPressed) {
-    rectMode(CORNERS);
-    //translate(width/2,heigth/2)
-   rect(x, y, x2, y2);
-  
-  }
-}
 
-function mousePressed() {
-  x = mouseX;
-  y = mouseY;
-}
+	let xSpeed = 2.1 // rate of left-right
+	let ySpeed = 1 // rate of up-down
+	let sSpeed = 10 // rate of ellipse
 
-function mouseReleased() {
-  
+	fill(255)
+	stroke(255)
+	if(frameCount % 2 === 0) {
+		stroke(0)
+	}
+	strokeWeight(5)
+
+	let oscX = sin(frameCount * 0.01 * xSpeed) * height * .4
+	let oscY = cos(frameCount * 0.01 * ySpeed) * height * .4
+	let s = sin(frameCount * 0.01 * sSpeed) * 150
+
+	translate(width / 2, height / 2)
+	ellipse(oscX, oscY, s, s)
 }
     </script>
 </body>
