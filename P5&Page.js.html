@@ -1,0 +1,119 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Simple p5.js with page.js Example</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 20px;
+            text-align: center;
+        }
+        nav {
+            margin-bottom: 20px;
+        }
+        nav a {
+            margin: 0 10px;
+            text-decoration: none;
+            padding: 5px 10px;
+            background-color: #eee;
+            border-radius: 4px;
+        }
+        #canvas-container {
+            display: flex;
+            justify-content: center;
+            margin-top: 20px;
+        }
+    </style>
+    <!-- Load libraries from CDN -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/p5.js/1.6.0/p5.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/page.js/1.11.6/page.js"></script>
+</head>
+<body>
+    <h1 id="page-title">Circle Demo</h1>
+    
+    <nav>
+        <a href="/">Red Circle</a>
+        <a href="/blue">Blue Circle</a>
+        <a href="/green">Green Circle</a>
+    </nav>
+    
+    <div id="canvas-container"></div>
+
+    <script>
+        // Global variables
+        let currentSketch = null;
+        
+        // Create a simple circle sketch with configurable color
+        function createCircleSketch(circleColor) {
+            return function(p) {
+                let x, y;
+                let diameter = 80;
+                let speed = 2;
+                let xDirection = 1;
+                let yDirection = 1;
+                
+                p.setup = function() {
+                    p.createCanvas(400, 300);
+                    x = p.width / 2;
+                    y = p.height / 2;
+                };
+                
+                p.draw = function() {
+                    p.background(240);
+                    
+                    // Draw the circle
+                    p.fill(circleColor);
+                    p.noStroke();
+                    p.ellipse(x, y, diameter);
+                    
+                    // Move the circle
+                    x += speed * xDirection;
+                    y += speed * yDirection;
+                    
+                    // Bounce off edges
+                    if (x > p.width - diameter/2 || x < diameter/2) {
+                        xDirection *= -1;
+                    }
+                    if (y > p.height - diameter/2 || y < diameter/2) {
+                        yDirection *= -1;
+                    }
+                };
+            };
+        }
+        
+        // Function to switch between different sketches
+        function switchSketch(sketchFn, title) {
+            // Remove current sketch if it exists
+            if (currentSketch) {
+                currentSketch.remove();
+                currentSketch = null;
+            }
+            
+            // Update page title
+            document.getElementById('page-title').textContent = title;
+            
+            // Start new sketch
+            currentSketch = new p5(sketchFn, 'canvas-container');
+        }
+        
+        // Set up page.js routes
+        page('/', function() {
+            switchSketch(createCircleSketch('red'), 'Red Circle');
+        });
+        
+        page('/blue', function() {
+            switchSketch(createCircleSketch('blue'), 'Blue Circle');
+        });
+        
+        page('/green', function() {
+            switchSketch(createCircleSketch('rgb(0, 150, 50)'), 'Green Circle');
+        });
+        
+        // Initialize page.js
+        page();
+    </script>
+</body>
+</html>

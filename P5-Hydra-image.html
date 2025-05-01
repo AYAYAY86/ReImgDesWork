@@ -33,6 +33,8 @@
   let hc = document.createElement('canvas')
   hc.width = window.innerWidth
   hc.height = window.innerHeight
+  hc.style.position = 'absolute'; // Positionieren
+  hc.style.zIndex = '-1';
   document.body.appendChild(hc)
   let hydra = new Hydra({ detectAudio: false, canvas: hc })
   // hydra.setResolution(window.innerWidth*2, window.innerHeight*2) // retina res
@@ -48,29 +50,20 @@
 
     // .scrollY(0.002)
     // .scrollX(0.002)
-    // .scale(()=>position, ()=>posY)
-    .scale(1.003, 1.003)
-  // .scroll(.005, .005)
+    //.scale(1.009, 1.009)
+    //.scroll(0.0005, 1.0005)
     .out()
   // sandbox  - stop
 
   let img
   let x, y, x2, y2;
-  let rectColor;
-  let position
-  let posY
 
   function setup() {
-    createCanvas(windowWidth, windowHeight, WEBGL)
+    createCanvas(windowWidth, windowHeight)
     background(100)
     pg = createGraphics(hc.width, hc.height)
     s0.init({ src: drawingContext.canvas })
-
-    rectColor = color(255, 0, 0);
-
-    let button = createButton('Change Color');
-    button.position(width / 2, height / 2);
-    button.mousePressed(changeBackground)
+    noLoop()
 
 
 
@@ -81,51 +74,33 @@
 
   function preload() {
     // load the image
-    img = loadImage('img/cursor1.png')
+    img = loadImage('img/image-garden_2.png')
   }
 
   function draw() {
 
 
-    clear()
+    // clear()
+    background(0)
 
-
-      image(img, mouseX - width / 2, mouseY + height / 2, img.width / 6, img.height / 6)
+    // imageMode(CENTER)
+    // let bild = image(img, 0, 0, img.width/2, img.height/2)
+    let leftcorner = img.get( 0, 0, img.width/2, img.height/2)
       pg.drawingContext.drawImage(hc, 0, 0, pg.width, pg.height)
-
       
-      
-    //background(255);
-    if (mouseIsPressed) {
-      // clear()
-      // background(0)
-      x2 = mouseX - width/2;
-      y2 = mouseY - height/2;
-      rectMode(CORNERS);
-      fill(rectColor);
-      // noFill()
-      translate(0, height)
-      stroke(0)
-      rect(x, y, x2, y2);
-      
-    }
-    position = map(mouseX, 0, width, 1.001, 1.02);
-    posY = map(mouseY, 0, height, 1.001, 1.02);
-    console.log(position)
-  }
+    image(leftcorner, 0, 0)
 
-  function changeBackground() {
-    // Rechteckfarbe zufällig ändern
-    rectColor = color(random(255), random(255), random(255));
-  }
 
-  function mousePressed() {
-    x = mouseX - width/2;
-    y = mouseY - height/2;
-  }
+    fill(200)
+    rect(mouseX, mouseY, 200, 200);
 
-  function mouseReleased() {
+    console.log(mouseX)
 
+  //    if (mouseIsPressed) {
+  //   rect(mouseX, mouseY, 50, 50);
+  // }
+    
+    
   }
 </script>
 
