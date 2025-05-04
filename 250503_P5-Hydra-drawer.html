@@ -1,0 +1,113 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <style>
+    body,
+    html {
+      margin: 0;
+      padding: 0;
+      width: 100%;
+      height: 100%;
+      overflow: hidden;
+    }
+
+    canvas {
+      display: block;
+      width: 100%;
+      height: 100%;
+    }
+  </style>
+  <link rel="stylesheet" type="text/css" href="style.css">
+  <meta charset="utf-8" />
+</head>
+
+<body>
+
+</body>
+<!-- <script src="https://unpkg.com/hydra-synth"></script> -->
+<!-- <script src="https://cdnjs.cloudflare.com/ajax/libs/p5.js/1.9.3/p5.js"></script> -->
+<script src="libaries/hydra-synth.js"></script>
+<script src="libaries/p5.js"></script>
+<script>
+
+let hc = document.createElement('canvas')
+hc.width = window.innerWidth
+hc.height = window.innerHeight
+document.body.appendChild(hc)
+let hydra = new Hydra({ detectAudio: false, canvas: hc })
+// hydra.setResolution(window.innerWidth*2, window.innerHeight*2) // retina res
+noize = noise // use noize() since noise() is taken by p5js
+
+let pg // store hydra texture
+
+// sandbox - start
+src(o0)
+	.layer(s0)
+	//.scroll(1.01, 1.01)
+	//.scale(1.01)
+	.out()
+// sandbox  - stop
+
+let xoff = 0;
+let yoff = 1000;
+
+let px = 0;
+let py = 1000;
+
+function setup() {
+	createCanvas(windowWidth, windowHeight)
+	background(255)
+	pg = createGraphics(hc.width, hc.height)
+	s0.init({src: drawingContext.canvas })
+	stroke(0)
+	
+  
+}
+
+function draw() {
+	clear()
+	pg.drawingContext.drawImage(hc, 0, 0, pg.width, pg.height)
+
+  let newMouseX = map(mouseX, 0, width, -width/2, width/2);
+  let newMouseY = map(mouseY, 0, -height, height, 0)
+  let newPmouseY = map(pmouseY, 0, -height, height, 0)
+
+	fill(255)
+	stroke(0)
+	strokeWeight(5)
+  //ellipse(mouseX, newMouseY, 200)
+
+  px = noise(xoff) * width;
+  py = noise(yoff) * height;
+
+  let x = noise(xoff) * width;
+  let y = noise(yoff) * height;
+
+  //point(mouseX, newMouseY)
+  // line(pmouseX, newPmouseY, mouseX, newMouseY);
+  line(px, py, x, y);
+
+  console.log(mouseY, newMouseY)
+
+  xoff += 0.001;
+  yoff += 0.001;
+
+}
+
+function mouseDragged() {
+  let sw = map(sin(frameCount * 0.05), -1, 1, 3, 20); // remap to [3, 10]
+  strokeWeight(sw);
+  line(pmouseX, pmouseY, mouseX, mouseY);
+}
+  
+
+  function keyPressed(){
+	if(key == 'S'){
+		pg.save('P5LIVE_hydra.png') // save hydra texture
+	}
+}
+
+</script>
+
+</html>

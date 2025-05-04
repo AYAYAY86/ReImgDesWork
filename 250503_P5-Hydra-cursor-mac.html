@@ -41,6 +41,7 @@
   noize = noise // use noize() since noise() is taken by p5js
 
   let pg // store hydra texture
+  let effect = [0, 0, 0]
 
 
 
@@ -51,9 +52,10 @@
     // .scrollY(0.002)
     // .scrollX(0.002)
     //.scale(()=> posX, 1.002)
-    .scale(1.009, 1.009)
+    .scale(() => number, () => number)
     // .scale(1.02, 1.02)
-    .modulateScale(noize(3, .01), .01)
+    
+    .modulateScale(noize(() => effect[0], () => effect[1]), () => effect[2])
     // .scroll(0.009, 1.001)
     .out()
   // sandbox  - stop
@@ -66,7 +68,11 @@
   let oppositeX, oppositeY;
   let newMouseX, newMouseY;
 
-  let myRadio;
+  let checkboxes = [];
+
+  let number;
+
+  
 
   function setup() {
     createCanvas(windowWidth, windowHeight, WEBGL)
@@ -74,19 +80,15 @@
     pg = createGraphics(hc.width, hc.height)
     s0.init({ src: drawingContext.canvas })
 
-    myRadio = createRadio();
-    myRadio.position(0, 0);
-    myRadio.size(50);
-
-
-
-    // Call repaint() when the button is pressed.
-    // button.mousePressed(repaint);
+    for (let i = 0; i < 4; i++) {
+    let cb = createCheckbox('', false);
+    cb.position(10, 10 + i * 20); // dynamically space them vertically
+    checkboxes.push(cb);
+  }
 
   }
 
   function preload() {
-    // load the image
     img = loadImage('img/cursor1.png')
   }
 
@@ -100,48 +102,39 @@
     oppositeX = map(mouseX, 0, width, width/2, -width/2);
     oppositeY = map(mouseY, -height, 0, height/2, -height/2);
     
-    fill(0,233,24)
-    ellipse(newMouseX, newMouseY, 50)
-    fill(255)
-    ellipse(oppositeX, oppositeY, 50)
-
-    // rect(newMouseX, newMouseY, 50)
-    // rect(oppositeX, oppositeY, 50)
 
     image(img, newMouseX, newMouseY, img.width / 6, img.height / 6)
-    // image(img, newMouseY, newMouseX, img.width / 6, img.height / 6)
-    image(img, oppositeX, oppositeY, img.width / 6, img.height / 6)
+    // image(img, oppositeX, oppositeY, img.width / 6, img.height / 6)
 
     pg.drawingContext.drawImage(hc, 0, 0, pg.width, pg.height)
 
-    console.log()
+    
 
-    let button = createButton('O');
-    button.position(width / 2, height / 2);
+    if (checkboxes[0].checked()) {
+      number = 1.05
+    } else {
+      number = 1.0
+  }
+  
+  if (checkboxes[1].checked()) {
+    effect = [3, 0.01, 0.01];
+  } else {
+    effect = [0, 0, 0];
+  }
 
-    posX = map(mouseX, 0, width, .99, 1.01);
-   
+  if (checkboxes[2].checked()) {
+    image(img, oppositeX, oppositeY, img.width / 6, img.height / 6)
+  } else {
+  }
 
-    //background(255);
-    if (mouseIsPressed) {
-      // clear()
-      // background(0)
-      x2 = mouseX - width / 2;
-      y2 = mouseY - height / 2;
-      rectMode(CORNERS);
-      fill(255)
-      translate(0, height)
-      stroke(0)
-      rect(x, y, x2, y2);
-      console.log(height / 2)
-    }
+  if (checkboxes[3].checked()) {
+    number = 1.005
+  }
+  
 
   }
 
-  function mousePressed() {
-    x = mouseX - width / 2;
-    y = mouseY - height / 2;
-  }
+
 
   function keyPressed(){
 	if(key == 'S'){
@@ -149,9 +142,6 @@
 	}
 }
 
-  function mouseReleased() {
-
-  }
 </script>
 
 </html>
