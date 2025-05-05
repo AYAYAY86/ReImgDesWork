@@ -2,109 +2,48 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8">
-  <title>Hydra Behind p5.js</title>
+  <title>Paged.js A4 Layout</title>
   <style>
-    html, body {
-      margin: 0;
-      overflow: hidden;
-      background: black;
-    }
+ .pagedjs_page {
+  --pagedjs-string-title: "Moby Dick";
+  margin-top: 10mm;
+  margin-right: 20mm;
+  margin-bottom: 25mm;
+  margin-left: 15mm;
+}
 
-    canvas {
-      position: absolute;
-      top: 0;
-      left: 0;
-      display: block;
-    }
+.pagedjs_page .pagedjs_margin-bottom-left::after {
+  content: string(title);
+}
 
-    canvas.hydra-canvas {
-      z-index: 0;
-    }
-
-    canvas.p5-canvas {
-      z-index: 1;
-      pointer-events: none; /* optional: allow mouse interaction to pass through */
-    }
+.pagedjs_page .pagedjs_margin-bottom-center::after {
+  content: var(--pagedjs-string-title);
+  text-transform: uppercase;
+}
   </style>
 </head>
 <body>
-  <script src="https://cdn.jsdelivr.net/npm/p5@1.4.2/lib/p5.min.js"></script>
-  <script src="https://unpkg.com/hydra-synth"></script>
-  <script>
-    let useGradient = true;
-    let pg, hc, hydra;
-    let noize;
 
-    function setupHydra() {
-      hc = document.createElement('canvas');
-      hc.classList.add('hydra-canvas'); // ⬅ mark canvas for styling
-      hc.width = window.innerWidth;
-      hc.height = window.innerHeight;
-      document.body.appendChild(hc);
+  <div id="page-1" class="pagedjs_page">
+    <div class="pagedjs_pagebox">
+        <div class="pagedjs_margin pagedjs_margin-bottom-left hasContent">
+          <div class="pagedjs_margin-content">
+            <!-- ::after -->
+          </div>
+        </div>
+        <div class="pagedjs_margin pagedjs_margin-bottom-center hasContent">
+          <div class="pagedjs_margin-content">
+            <!-- ::after -->
+          </div>
+        </div>
+      </div>
+      <div class="pagedjs_area">
+        <!-- content of the page -->
+      </div>
+    </div>
+  </div>
 
-      hydra = new Hydra({
-        detectAudio: false,
-        canvas: hc
-      });
-
-      s0.init({ src: drawingContext.canvas });
-      updateHydra();
-    }
-
-    function updateHydra() {
-      let base = src(o0)
-        .layer(s0)
-        .scroll(1.01, 1.01)
-        .scale(1.01);
-
-      if (useGradient) {
-        base = base.modulate(gradient(1), 0.05);
-      }
-
-      base.out();
-    }
-
-    function setup() {
-      let cnv = createCanvas(windowWidth, windowHeight, WEBGL);
-      cnv.canvas.classList.add('p5-canvas'); // ⬅ mark p5 canvas for styling
-      angleMode(DEGREES);
-      background(0);
-
-      noize = noise; // now safe to access p5 noise
-      setupHydra();
-      pg = createGraphics(windowWidth, windowHeight);
-    }
-
-    function draw() {
-      clear();
-      pg.drawingContext.drawImage(hc, 0, 0, pg.width, pg.height);
-
-      rotateX(frameCount * 0.4);
-
-      fill(255);
-      stroke(0);
-      strokeWeight(0.5);
-
-      if (mouseIsPressed) {
-        fill(0);
-        stroke(255);
-      }
-
-      ellipse(0, 0, 600);
-
-      rotateY(frameCount * 0.8);
-      noStroke();
-      texture(pg);
-      torus(height / 4, height / 12);
-    }
-
-    function keyPressed() {
-      if (key === 'g') {
-        useGradient = !useGradient;
-        updateHydra();
-        console.log("Gradient toggled:", useGradient);
-      }
-    }
-  </script>
+  <!-- Load Paged.js -->
+  <script src="https://unpkg.com/pagedjs/dist/paged.polyfill.js"></script>
 </body>
 </html>

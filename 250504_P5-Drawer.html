@@ -1,0 +1,78 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>Multiple Canvases</title>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/p5.js/1.9.0/p5.min.js"></script>
+  <style>
+    body {
+      margin: 0;
+      padding: 0;
+      background: #ccc;
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: center;
+      align-items: center;
+      gap: 20px;
+      padding: 40px;
+    }
+
+    .canvas-container {
+      width: 300px;
+      height: 300px;
+      box-shadow: 0px 4px 16px rgba(0, 0, 0, 0.2);
+      background: white;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    canvas {
+      display: block;
+    }
+  </style>
+</head>
+<body>
+
+<div id="c1" class="canvas-container"></div>
+<div id="c2" class="canvas-container"></div>
+<div id="c3" class="canvas-container"></div>
+<div id="c4" class="canvas-container"></div>
+
+<script>
+function createSketch(containerId, bgColor) {
+  return (p) => {
+    let prevX = 0;
+    let prevY = 0;
+
+    p.setup = function() {
+      const canvas = p.createCanvas(300, 300); // Leave a bit of margin in the container
+      canvas.parent(containerId);
+      p.background(bgColor);
+
+  
+    };
+
+    p.draw = function() {
+      let pen1 = p.map(p.sin(p.frameCount * 0.1), -1, 1, 3, 20)
+      if (p.mouseIsPressed && p.mouseX >= 0 && p.mouseX <= p.width && p.mouseY >= 0 && p.mouseY <= p.height) {
+        p.stroke(0);
+        p.strokeWeight(pen1);
+        p.line(prevX, prevY, p.mouseX, p.mouseY);
+      }
+      prevX = p.mouseX;
+      prevY = p.mouseY;
+    };
+  };
+}
+
+new p5(createSketch("c1", "#ffffff"));
+new p5(createSketch("c2", "#ffffff"));
+new p5(createSketch("c3", "#ffffff"));
+new p5(createSketch("c4", "#ffffff"));
+new p5(createSketch("c5", "#ffffff"));
+new p5(createSketch("c6", "#ffffff"));
+</script>
+
+</body>
+</html>
