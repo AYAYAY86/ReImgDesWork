@@ -104,10 +104,14 @@
     
 
     image(img, newMouseX, newMouseY, img.width / 6, img.height / 6)
+    noStroke()
+    ellipse(newMouseX, newMouseY, 10)
     // image(img, oppositeX, oppositeY, img.width / 6, img.height / 6)
 
     pg.drawingContext.drawImage(hc, 0, 0, pg.width, pg.height)
 
+    let move = map(sin(frameCount*0.1), -1, 1, -.01, .01);
+    let move2 = map(sin(frameCount*0.1), -1, 1, 3, 15);
     
 
     if (checkboxes[0].checked()) {
@@ -117,7 +121,7 @@
   }
   
   if (checkboxes[1].checked()) {
-    effect = [3, 0.01, 0.01];
+    effect = [move2, move, 0.01];
   } else {
     effect = [0, 0, 0];
   }
