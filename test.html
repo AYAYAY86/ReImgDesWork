@@ -1,49 +1,63 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
-  <meta charset="UTF-8">
-  <title>Paged.js A4 Layout</title>
-  <style>
- .pagedjs_page {
-  --pagedjs-string-title: "Moby Dick";
-  margin-top: 10mm;
-  margin-right: 20mm;
-  margin-bottom: 25mm;
-  margin-left: 15mm;
-}
+    <title>
+        Hide the cursor in a webpage
+        using CSS and JavaScript
+    </title>
 
-.pagedjs_page .pagedjs_margin-bottom-left::after {
-  content: string(title);
-}
+    <style>
+        body {
+            text-align: center;
+            cursor: none;
+        }
 
-.pagedjs_page .pagedjs_margin-bottom-center::after {
-  content: var(--pagedjs-string-title);
-  text-transform: uppercase;
-}
-  </style>
+        #GFG_DIV {
+            background: green;
+            height: 100px;
+            width: 200px;
+            margin: auto;
+            color: white;
+        }
+
+        /* CSS style to hide cursor element */
+        .newClass {
+            cursor: none;
+        }
+    </style>
 </head>
+
 <body>
+    <h1 style="color:green;">
+        GeeksforGeeks
+    </h1>
 
-  <div id="page-1" class="pagedjs_page">
-    <div class="pagedjs_pagebox">
-        <div class="pagedjs_margin pagedjs_margin-bottom-left hasContent">
-          <div class="pagedjs_margin-content">
-            <!-- ::after -->
-          </div>
-        </div>
-        <div class="pagedjs_margin pagedjs_margin-bottom-center hasContent">
-          <div class="pagedjs_margin-content">
-            <!-- ::after -->
-          </div>
-        </div>
-      </div>
-      <div class="pagedjs_area">
-        <!-- content of the page -->
-      </div>
-    </div>
-  </div>
+    <h3>
+        Click on Button to Hide the Cursor from DIV
+    </h3>
 
-  <!-- Load Paged.js -->
-  <script src="https://unpkg.com/pagedjs/dist/paged.polyfill.js"></script>
+    <div id="GFG_DIV"></div>
+    <br>
+
+    <button onClick="GFG_Fun()">
+        Click Here
+    </button>
+
+    <p id="GFG"></p>
+
+    <!-- Script to hide cursor element -->
+    <script>
+        let elm = document.getElementById('GFG');
+        let div = document.getElementById('GFG_DIV');
+
+        /* Function to add class name to hide
+           cursor element */
+        function GFG_Fun() {
+            div.classList.add("newClass");
+            down.innerHTML = "Cursor is removed from DIV!";
+        }
+    </script>
 </body>
+
 </html>
