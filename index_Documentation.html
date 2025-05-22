@@ -1,40 +1,45 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>ReImgDeTools</title>
-    <style>
-        h1 {
-          font-size: 50px;
-          color: black;
-          font-family: sans-serif;
-          font-weight: bold;
-          text-transform: uppercase;
-          margin-bottom: 10px;
-        }
-        h2 {
-          font-size: 20px;
-          color: black;
-          font-family: sans-serif;
-          font-weight: bold;
-          text-transform: uppercase;
-        }
-        a {
-          display: block;
-          font-size: 50px;
-          color: blue;
-          text-decoration: none;
-          font-family: sans-serif;
-          font-weight: bold;
-          text-transform: uppercase;
-        }
-        a:hover {
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>ReImgDeTools</title>
+  <style>
+    h1 {
+      font-size: 50px;
       color: black;
-    }        
+      font-family: sans-serif;
+      font-weight: bold;
+      text-transform: uppercase;
+      margin-bottom: 10px;
+    }
+
+    h2 {
+      font-size: 20px;
+      color: black;
+      font-family: sans-serif;
+      font-weight: bold;
+      text-transform: uppercase;
+    }
+
+    a {
+      display: block;
+      font-size: 50px;
+      color: blue;
+      text-decoration: none;
+      font-family: sans-serif;
+      font-weight: bold;
+      text-transform: uppercase;
+    }
+
+    a:hover {
+      color: black;
+    }
 
     button {
-      background-color: lightgray; /* green */
+      background-color: lightgray;
+      /* green */
       color: white;
       padding: 12px 24px;
       border: none;
@@ -45,18 +50,105 @@
     }
 
     button:hover {
-      background-color: blue; /* darker green when hovered */
+      background-color: blue;
+      /* darker green when hovered */
     }
-      </style>
+
+    .doc-image {
+      width: 300px;
+      transition: transform 0.3s ease;
+      cursor: pointer;
+    }
+
+    .enlarged {
+      transform: scale(2);  /* Zoom in on click */
+      z-index: 10;
+      position: relative;
+    }
+
+    .small {
+      width: 200px;
+    }
+
+    .large {
+      width: 400px;
+    }
+
+    .img-block {
+  text-align: center;
+  margin: 20px;
+  display: inline-block;
+}
+
+.img-block p {
+  font-size: 14px;
+  color: #333;
+  margin-top: 5px;
+  font-family: sans-serif;
+}
+  </style>
 
 
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/p5.js/1.9.0/p5.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/p5.js/1.9.0/p5.min.js"></script>
 </head>
-<body>
-    <h1>ReImaging Design Tools</h1>
 
-    <a href="index.html">
-      <button>Experiment-Tools</button>
-    </a>
+<body>
+  <h1>ReImaging Design Tools</h1>
+
+  <a href="index.html">
+    <button>Experiment-Tools</button>
+  </a>
+
+<div class="img-block">
+  <img src="documentation/P5LIVE_hydra(5).png" alt="Design Tool" class="doc-image small">
+  <p>Hydra Sketch #5 – Initial Feedback</p>
+</div>
+
+<div class="img-block">
+  <img src="documentation/P5LIVE_hydra(6).png" alt="Design Tool" class="doc-image large">
+  <p>Hydra Sketch #6 – Layered Modulation</p>
+</div>
+
+<div class="img-block">
+  <img src="documentation/P5LIVE_hydra(7).png" alt="Design Tool" class="doc-image large">
+  <p>Hydra Sketch #7 – Pixel Fragmentation</p>
+</div>
+
+<div class="img-block">
+  <img src="documentation/P5LIVE_hydra(8).png" alt="Design Tool" class="doc-image large">
+  <p>Hydra Sketch #8 – Oscillation Trail</p>
+</div>
+
+<div class="img-block">
+  <img src="documentation/P5LIVE_hydra(8).png" alt="Design Tool" class="doc-image large">
+  <p>Hydra Sketch #8 – Alt. Version 1</p>
+</div>
+
+<div class="img-block">
+  <img src="documentation/P5LIVE_hydra(8).png" alt="Design Tool" class="doc-image large">
+  <p>Hydra Sketch #8 – Alt. Version 2</p>
+</div>
+
+<div class="img-block">
+  <img src="documentation/P5LIVE_hydra(8).png" alt="Design Tool" class="doc-image large">
+  <p>Hydra Sketch #8 – Alt. Version 3</p>
+</div>
+
+<div class="img-block">
+  <img src="documentation/Screenshot 2025-05-09 at 17-27-43 p5.js Example.png" alt="Design Tool" class="doc-image large">
+  <p>p5.js Screenshot – May 2025</p>
+</div>
+
+<script>
+  window.onload = () => {
+    document.querySelectorAll('.doc-image').forEach(img => {
+      img.addEventListener('click', () => {
+        img.classList.toggle('enlarged');
+      });
+    });
+  };
+</script>
+
 </body>
+
 </html>

@@ -44,8 +44,9 @@ let pg // store hydra texture
 // sandbox - start
 src(o0)
 	.layer(s0)
-	//.scroll(1.01, 1.01)
-	.scale(1.01)
+	//.scrollY(() => scaleSize)
+	.scale(1.008)
+  // .scale(() => scaleSize)
 	.out()
 // sandbox  - stop
 
@@ -54,6 +55,8 @@ let yoff = 1000;
 
 let px = 0;
 let py = 1000;
+
+let scaleSize
 
 function setup() {
 	createCanvas(windowWidth, windowHeight)
@@ -73,6 +76,9 @@ function draw() {
   let newMouseY = map(mouseY, 0, -height, height, 0)
   let newPmouseY = map(pmouseY, 0, -height, height, 0)
 
+  let scaleSize = map(sin(frameCount * .01), -1, 1, 1.001, 1.005)
+  console.log(scaleSize)
+
 	fill(255)
 	stroke(0)
 	strokeWeight(5)
@@ -87,8 +93,6 @@ function draw() {
   //point(mouseX, newMouseY)
   // line(pmouseX, newPmouseY, mouseX, newMouseY);
   line(px, py, x, y);
-
-  console.log(mouseY, newMouseY)
 
   xoff += 0.01;
   yoff += 0.01;

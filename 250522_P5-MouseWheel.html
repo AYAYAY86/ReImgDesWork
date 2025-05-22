@@ -1,0 +1,99 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>p5.js Example</title>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/p5.js/1.9.0/p5.min.js"></script>
+    <style>
+    /* Entfernt den Rahmen des p5.js-Canvas */
+    canvas {
+      border: none;
+      display: block; /* Entfernt eventuelle Scrollleisten */
+    }
+
+    body {
+      margin: 0; /* Entfernt den Standardabstand des Body */
+      overflow: hidden; /* Verhindert Scrollen */
+    }
+  </style>
+</head>
+<body>
+  <script>
+let circleSize = 50;
+let rectSize = 50;
+
+let circleActive = false;
+let rectActive = false;
+
+let lastActivated = ''; // 'circle' or 'rect'
+
+let drawingLayer; // Off-screen graphics layer
+
+function setup() {
+  createCanvas(windowWidth, windowHeight);
+  drawingLayer = createGraphics(windowWidth, windowHeight);
+  drawingLayer.background(255); // White background
+}
+
+function draw() {
+  // Show the saved drawing layer
+  image(drawingLayer, 0, 0);
+
+  // Show shape preview under cursor
+  noFill();
+  stroke(150);
+  strokeWeight(1);
+  if (circleActive) {
+    ellipse(mouseX, mouseY, circleSize);
+  } else if (rectActive) {
+    rectMode(CENTER);
+    rect(mouseX, mouseY, rectSize, rectSize);
+  }
+
+  // Draw shape only while mouse is pressed
+  if (mouseIsPressed) {
+    drawingLayer.noStroke();
+    drawingLayer.fill(0);
+
+    if (circleActive) {
+      drawingLayer.ellipse(mouseX, mouseY, circleSize);
+    } else if (rectActive) {
+      drawingLayer.rectMode(CENTER);
+      drawingLayer.rect(mouseX, mouseY, rectSize, rectSize);
+    }
+  }
+
+  // UI
+  noStroke();
+  fill(0);
+  textSize(12);
+  text("1 = Circle | 2 = Rect", 10, 20);
+  text("Scroll = Change Size | Hold Mouse = Draw", 10, 40);
+}
+
+function keyPressed() {
+  if (key === '1') {
+    circleActive = true;
+    rectActive = false;
+    lastActivated = 'circle';
+  } else if (key === '2') {
+    rectActive = true;
+    circleActive = false;
+    lastActivated = 'rect';
+  }
+}
+
+function mouseWheel(event) {
+  if (lastActivated === 'circle') {
+    circleSize -= event.delta * 0.1;
+    circleSize = max(5, circleSize);
+  } else if (lastActivated === 'rect') {
+    rectSize -= event.delta * 0.1;
+    rectSize = max(5, rectSize);
+  }
+  return false;
+}
+  </script>
+</body>
+</html>

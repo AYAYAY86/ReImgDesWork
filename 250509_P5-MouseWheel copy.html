@@ -1,0 +1,74 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>p5.js Example</title>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/p5.js/1.9.0/p5.min.js"></script>
+    <style>
+    /* Entfernt den Rahmen des p5.js-Canvas */
+    canvas {
+      border: none;
+      display: block; /* Entfernt eventuelle Scrollleisten */
+    }
+
+    body {
+      margin: 0; /* Entfernt den Standardabstand des Body */
+      overflow: hidden; /* Verhindert Scrollen */
+    }
+  </style>
+</head>
+<body>
+  <script>
+let circleSize = 50;
+let rectSize = 50;
+
+let circleActive = false;
+let rectActive = false;
+
+let lastActivated = ''; // 'circle' or 'rect'
+
+function setup() {
+  createCanvas(windowWidth, windowHeight);
+  background(200);
+}
+
+function draw() {
+  background(200);
+
+  fill(100);
+  text("Press 1 to toggle Circle, 2 to toggle Rect", 10, 20);
+  text("Scroll changes the size of last activated", 10, 40);
+
+  if (circleActive) {
+    ellipse(mouseX, mouseY, circleSize);
+  }
+
+  if (rectActive) {
+    rectMode(CENTER);
+    rect(mouseX, mouseY, rectSize, rectSize);
+  }
+}
+
+function keyPressed() {
+  if (key === '1') {
+    circleActive = !circleActive;
+    if (circleActive) lastActivated = 'circle';
+  } else if (key === '2') {
+    rectActive = !rectActive;
+    if (rectActive) lastActivated = 'rect';
+  }
+}
+
+function mouseWheel(event) {
+  if (lastActivated === 'circle') {
+    circleSize -= event.delta * 0.1;
+    circleSize = max(10, circleSize);
+  } else if (lastActivated === 'rect') {
+    rectSize -= event.delta * 0.1;
+    rectSize = max(10, rectSize);
+  }
+}
+  </script>
+</body>
+</html>

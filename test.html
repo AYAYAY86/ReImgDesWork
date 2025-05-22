@@ -1,46 +1,50 @@
 <!DOCTYPE html>
-<html lang="en">
+<html>
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>p5.js Example</title>
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/p5.js/1.9.0/p5.min.js"></script>
-    <style>
-    /* Entfernt den Rahmen des p5.js-Canvas */
-    canvas {
-      border: none;
-      display: block; /* Entfernt eventuelle Scrollleisten */
-    }
-
-    body {
-      margin: 0; /* Entfernt den Standardabstand des Body */
-      overflow: hidden; /* Verhindert Scrollen */
-    }
-  </style>
+  <meta charset="utf-8" />
+  <title>Hydra + p5.js Feedback Loop</title>
+  <style> body { margin: 0; overflow: hidden; } </style>
+  <script src="https://cdn.jsdelivr.net/npm/p5@1.4.2/lib/p5.min.js"></script>
+  <script src="https://hydra.ojack.xyz/build/hydra-synth.js"></script>
 </head>
 <body>
   <script>
-    let circleSize = 0;
+    let hc = document.createElement('canvas')
+    hc.width = window.innerWidth
+    hc.height = window.innerHeight
+    document.body.appendChild(hc)
+
+    let hydra = new Hydra({ detectAudio: false, canvas: hc })
+    hydra.setResolution(window.innerWidth * 2, window.innerHeight * 2)
+
+    let pg
+
+    // Setup Hydra feedback loop
+    src(o0)
+      .layer(src(s0))
+      .scale(0.995)
+      .modulateScale(osc(5, 0.1), 0.03)
+      .out()
 
     function setup() {
-      createCanvas(windowWidth, windowHeight);
-
-      describe(
-        'A gray square. A white circle at its center grows up when the user scrolls the mouse wheel.'
-      );
+      createCanvas(windowWidth, windowHeight)
+      s0.init({ src: drawingContext.canvas }) // p5 canvas into Hydra
+      pg = createGraphics(width, height)
+      background(0)
     }
 
     function draw() {
-      //background(200);
+      // draw hydra feedback into p5 graphics layer
+      pg.drawingContext.drawImage(hc, 0, 0, pg.width, pg.height)
 
-      // Draw the circle
-      circle(mouseX, mouseY, circleSize);
-    }
+      // display that layer to screen
+      image(pg, 0, 0)
 
-    // Increment circleSize when the user scrolls the mouse wheel.
-  function mouseWheel(event) {
-      circleSize -= event.delta * 0.1; // Verkleinere oder vergrößere den Kreis
-      circleSize = max(10, circleSize); // Verhindere, dass der Kreis zu klein wird
+      // draw text or interaction
+      fill(255)
+      textSize(48)
+      textAlign(CENTER, CENTER)
+      text('Hydra + p5.js', width / 2, height / 2)
     }
   </script>
 </body>

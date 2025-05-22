@@ -1,0 +1,80 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ReImgDeTools</title>
+    <style>
+        h1 {
+          font-size: 50px;
+          color: black;
+          font-family: sans-serif;
+          font-weight: bold;
+          text-transform: uppercase;
+          margin-bottom: 10px;
+        }
+        h2 {
+          font-size: 20px;
+          color: black;
+          font-family: sans-serif;
+          font-weight: bold;
+          text-transform: uppercase;
+        }
+        a {
+          display: block;
+          font-size: 50px;
+          color: blue;
+          text-decoration: none;
+          font-family: sans-serif;
+          font-weight: bold;
+          text-transform: uppercase;
+        }
+        a:hover {
+      color: black;
+    }        
+
+    button {
+      background-color: lightgray; /* green */
+      color: white;
+      padding: 12px 24px;
+      border: none;
+      border-radius: 30px;
+      font-size: 16px;
+      cursor: pointer;
+      margin-bottom: 20px;
+    }
+
+    button:hover {
+      background-color: blue; /* darker green when hovered */
+    }
+      </style>
+
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/p5.js/1.9.0/p5.min.js"></script>
+</head>
+<body>
+    <h1>ReImaging Design Tools</h1>
+
+    <a href="index.html">
+      <button>Experiment-Tools</button>
+    </a>
+
+  <div id="gallery"></div>
+
+  <script>
+    const gallery = document.getElementById('gallery');
+
+    for (let i = 1; i <= 30; i++) {
+      const fileName = `documentation/P5LIVE_hydra(${i}).png`;
+      const img = new Image();
+      img.src = fileName;
+      img.alt = "Design Tool";
+      img.width = i === 5 ? 100 : 300;
+
+      img.onload = () => gallery.appendChild(img);
+      img.onerror = () => img.remove();
+    }
+  </script>
+
+</body>
+</html>
