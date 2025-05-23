@@ -37,6 +37,22 @@
       color: black;
     }
 
+    .img-block a {
+      display: inline;
+      font-size: 14px;
+      color: #0066cc;
+      text-decoration: underline;
+      font-family: sans-serif;
+      font-weight: normal;
+      text-transform: none;
+      transition: color 0.3s ease;
+    }
+
+    .img-block a:hover {
+      color: #ff6600;
+      text-decoration: none;
+    }
+
     button {
       background-color: lightgray;
       /* green */
@@ -56,12 +72,11 @@
 
     .doc-image {
       width: 300px;
-      transition: transform 0.3s ease;
+      transition: width 0.9s ease;
       cursor: pointer;
     }
 
     .enlarged {
-      transform: scale(2);  /* Zoom in on click */
       z-index: 10;
       position: relative;
     }
@@ -75,17 +90,17 @@
     }
 
     .img-block {
-  text-align: center;
-  margin: 20px;
-  display: inline-block;
-}
+      text-align: center;
+      margin: 20px;
+      display: inline-block;
+    }
 
-.img-block p {
-  font-size: 14px;
-  color: #333;
-  margin-top: 5px;
-  font-family: sans-serif;
-}
+    .img-block p {
+      font-size: 14px;
+      color: #333;
+      margin-top: 5px;
+      font-family: sans-serif;
+    }
   </style>
 
 
@@ -99,56 +114,152 @@
     <button>Experiment-Tools</button>
   </a>
 
-<div class="img-block">
-  <img src="documentation/P5LIVE_hydra(5).png" alt="Design Tool" class="doc-image small">
-  <p>Hydra Sketch #5 – Initial Feedback</p>
-</div>
+  <div id="gallery"></div>
 
-<div class="img-block">
-  <img src="documentation/P5LIVE_hydra(6).png" alt="Design Tool" class="doc-image large">
-  <p>Hydra Sketch #6 – Layered Modulation</p>
-</div>
+  <script>
+    const images = [
+      {
+        src: "documentation/ML5-painter(1).png",
+        alt: "Design Tool",
+        class: "large",
+        caption: "4# cursor Sketch Hydra Feedback",
+        href: "_250523_P5-ML5.html"
+      },
+      {
+        src: "documentation/Screenshot 2025-05-09 at 17-27-43 p5.js Example.png",
+        alt: "Design Tool",
+        class: "large",
+        caption: "RandomExperiment",
+      },
+      {
+        src: "documentation/Screenshot 2025-04-20 at 11-47-38 Bérénice Serra - Critical Publishing - IDCE HGK Basel.png",
+        alt: "Design Tool",
+        class: "large",
+        caption: "Bérénice Serra - Critical Publishing - IDCE HGK Basel",
+      },
+      {
+        src: "documentation/P5LIVE_hydra(12).png",
+        alt: "Design Tool",
+        class: "large",
+        caption: "1# Random_Walker Hydra",
+        href: "_250503_P5-RandomWalkerHydra.html"
+      },
+       {
+        src: "documentation/P5LIVE_hydra(11).png",
+        alt: "Design Tool",
+        class: "large",
+        caption: "4# cursor Sketch Hydra Feedback",
+        href: "_250507_P5-MSPaint-Cursor.html"
+      },
+       {
+        src: "documentation/P5LIVE_hydra(10).png",
+        alt: "Design Tool",
+        class: "large",
+        caption: "Experiment Hydra Hue 2"
+      },
+       {
+        src: "documentation/P5LIVE_hydra(9).png",
+        alt: "Design Tool",
+        class: "large",
+        caption: "Experiment Hydra Hue"
+      },
+       {
+        src: "documentation/P5LIVE_hydra(8).png",
+        alt: "Design Tool",
+        class: "large",
+        caption: "3# cursor Sketch Hydra Feedback",
+        href: "_250507_P5-MSPaint-Cursor.html"
+      },
+      {
+        src: "documentation/P5LIVE_hydra(7).png",
+        alt: "Design Tool",
+        class: "large",
+        caption: "2# cursor Sketch Hydra Feedback",
+        href: "_250507_P5-MSPaint-Cursor.html"
+      },
+      {
+        src: "documentation/P5LIVE_hydra(6).png",
+        alt: "Design Tool",
+        class: "large",
+        caption: "1# cursor Sketch",
+        href: "_250507_P5-MSPaint-Cursor.html"
+      },
+      {
+        src: "documentation/P5LIVE_hydra(4).jpg",
+        alt: "Design Tool",
+        class: "large",
+        caption: "Cronenberg Naked Lunch Interface"
+      },
+      {
+        src: "documentation/hydra-2025-4-2-9.35.14.png",
+        alt: "Design Tool",
+        class: "large",
+        caption: "Image-Manipulation"
+      },
+      {
+        src: "documentation/Bildschirmfoto 2025-05-22 um 16.22.34.png",
+        alt: "Design Tool",
+        class: "large",
+        caption: "MS Paint Mouse Wheel",
+        href: "_250522_P5-MouseWheel-MS-Paint.html"
+      },
+      {
+        src: "documentation/Bildschirmfoto 2025-04-29 um 22.05.58.png",
+        alt: "Design Tool",
+        class: "large",
+        caption: "Older-Experiments"
+      },
+      {
+        src: "documentation/Bildschirmfoto 2025-04-25 um 16.24.35.png",
+        alt: "Design Tool",
+        class: "large",
+        caption: "Interview Nolween"
+      },
+      {
+        src: "documentation/Bildschirmfoto 2025-04-16 um 14.36.38.png",
+        alt: "Design Tool",
+        class: "large",
+        caption: "GUI-Quote"
+      }
+    ];
 
-<div class="img-block">
-  <img src="documentation/P5LIVE_hydra(7).png" alt="Design Tool" class="doc-image large">
-  <p>Hydra Sketch #7 – Pixel Fragmentation</p>
-</div>
+    const gallery = document.getElementById('gallery');
 
-<div class="img-block">
-  <img src="documentation/P5LIVE_hydra(8).png" alt="Design Tool" class="doc-image large">
-  <p>Hydra Sketch #8 – Oscillation Trail</p>
-</div>
+    images.forEach(img => {
+      const container = document.createElement('div');
+      container.className = 'img-block';
 
-<div class="img-block">
-  <img src="documentation/P5LIVE_hydra(8).png" alt="Design Tool" class="doc-image large">
-  <p>Hydra Sketch #8 – Alt. Version 1</p>
-</div>
+      const image = document.createElement('img');
+      image.src = img.src;
+      image.alt = img.alt;
+      image.className = `doc-image ${img.class}`;
 
-<div class="img-block">
-  <img src="documentation/P5LIVE_hydra(8).png" alt="Design Tool" class="doc-image large">
-  <p>Hydra Sketch #8 – Alt. Version 2</p>
-</div>
-
-<div class="img-block">
-  <img src="documentation/P5LIVE_hydra(8).png" alt="Design Tool" class="doc-image large">
-  <p>Hydra Sketch #8 – Alt. Version 3</p>
-</div>
-
-<div class="img-block">
-  <img src="documentation/Screenshot 2025-05-09 at 17-27-43 p5.js Example.png" alt="Design Tool" class="doc-image large">
-  <p>p5.js Screenshot – May 2025</p>
-</div>
-
-<script>
-  window.onload = () => {
-    document.querySelectorAll('.doc-image').forEach(img => {
-      img.addEventListener('click', () => {
-        img.classList.toggle('enlarged');
+      // ✅ Add click-to-enlarge functionality here
+      image.addEventListener('click', () => {
+        const isEnlarged = image.classList.toggle('enlarged');
+        if (isEnlarged) {
+          image.style.width = '50vw';
+        } else {
+          image.style.width = ''; // Reset to original class-based width
+        }
       });
-    });
-  };
-</script>
 
+      const caption = document.createElement('p');
+      if (img.href) {
+        const link = document.createElement('a');
+        link.href = img.href;
+        link.textContent = img.caption;
+        link.target = "_blank";        // ←-uncomment if you prefer new-tab
+        caption.appendChild(link);
+      } else {
+        caption.textContent = img.caption;
+      }
+
+      container.appendChild(image);
+      container.appendChild(caption);
+      gallery.appendChild(container);
+    });
+  </script>
 </body>
 
 </html>

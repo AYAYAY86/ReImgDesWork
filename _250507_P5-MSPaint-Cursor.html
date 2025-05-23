@@ -1,0 +1,223 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <style>
+    body,
+    html {
+      margin: 0;
+      padding: 0;
+      width: 100%;
+      height: 100%;
+      overflow: hidden;
+      cursor: none;
+    }
+
+    canvas {
+      display: block;
+      width: 100%;
+      height: 100%;
+    }
+  </style>
+  <link rel="stylesheet" type="text/css" href="style.css">
+  <meta charset="utf-8" />
+</head>
+
+<body>
+
+</body>
+<!-- <script src="hydra-synth.js"></script> -->
+<!-- <script src="https://unpkg.com/hydra-synth"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/p5.js/1.9.3/p5.js"></script> -->
+<script src="libaries/hydra-synth.js"></script>
+<script src="libaries/p5.js"></script>
+<script>
+
+  let hc = document.createElement('canvas')
+  hc.width = window.innerWidth
+  hc.height = window.innerHeight
+  document.body.appendChild(hc)
+  let hydra = new Hydra({ detectAudio: false, canvas: hc })
+  // hydra.setResolution(window.innerWidth*2, window.innerHeight*2) // retina res
+  noize = noise // use noize() since noise() is taken by p5js
+
+  let pg // store hydra texture
+  let effect = [0, 0, 0]
+
+
+
+  // sandbox - start
+
+  // src(s0)
+  // .modulateHue(src(s0).scale(.01,.05),100)
+  // .layer(osc(4,0.5,2).mask(shape(10,0.25,0.003).scale(.5).rotate(0.5)))
+  // .rotate(() => time * .20)
+  // .mask(shape(10,0.25,0.003).scale(1.5).scroll(() => -mouse.x / width,() => -mouse.y / height))
+  // .out(o1)
+
+  src(o0)
+    
+    .layer(o1)
+    .rotate(() => time * .000)
+    .layer(s0)
+    // .mask(o1,.02)
+
+    // .rotate(() => time%.01)
+
+    // .scrollY(0.002)
+    // .color(1, 1, 0)
+    // .colorama(.42)
+    .scrollX(() => number2)
+    //.scale(()=> posX, 1.002)
+    .scale(() => number, () => number)
+    // .scale(1.02, 1.02)
+    .modulateScale(noize(() => effect[0], () => effect[1]), () => effect[2])
+    
+    //.modulatePixelate(voronoi(30,.5),6500)
+    .modulateHue(src(o0).scale(1.01),1)
+  
+    // .scroll(0.009, 1.001)
+    .out(o0)
+  // sandbox  - stop
+
+  let img
+  let x, y, x2, y2;
+  let posX, posY;
+
+  let opposite
+  let oppositeX, oppositeY;
+  let newMouseX, newMouseY;
+
+  let checkboxes = [];
+
+  let number, number2;
+
+  let effectToggles = [false, false, false, false, false];
+
+  let names = ['Effect A', 'Effect B', 'Effect C', 'Effect D', 'Effect E', 'Effect F', 'Effect G', 'Effect H', 'Effect I', 'Effect J'];
+
+
+
+  function setup() {
+    createCanvas(windowWidth, windowHeight, WEBGL)
+    background(0)
+    pg = createGraphics(hc.width, hc.height)
+    s0.init({ src: drawingContext.canvas })
+
+    for (let i = 0; i < names.length; i++) {
+      let cb = createCheckbox(names[i], false);
+      cb.position(10, 10 + i * 20); // dynamically space them vertically
+      checkboxes.push(cb);
+    }
+
+    noCursor();
+
+  }
+
+  function preload() {
+    img = loadImage('img/cursor1.png')
+  }
+
+  function draw() {
+
+
+    clear()
+    newMouseX = map(mouseX, 0, width, -width / 2, width / 2);
+    newMouseY = map(mouseY, -height, 0, -height / 2, height / 2);
+
+    let newMouseXp = map(pmouseX, 0, width, -width / 2, width / 2);
+    let newMouseYp = map(pmouseY, -height, 0, -height / 2, height / 2);
+
+    oppositeX = map(mouseX, 0, width, width / 2, -width / 2);
+    oppositeY = map(mouseY, -height, 0, height / 2, -height / 2);
+
+    // push()
+    // stroke(255)
+    // strokeWeight(10)
+    // line(newMouseXp, newMouseYp, newMouseX, newMouseY);
+    // pop()
+
+    //image(img, newMouseX, newMouseY, img.width / 6, img.height / 6)
+    noStroke()
+
+    // image(img, oppositeX, oppositeY, img.width / 6, img.height / 6)
+
+    pg.drawingContext.drawImage(hc, 0, 0, pg.width, pg.height)
+
+    let move = map(sin(frameCount * 0.1), -1, 1, -.01, .01);
+    let move2 = map(sin(frameCount * 0.1), -1, 1, 3, 15);
+
+
+
+    if (!effectToggles[4] && !effectToggles[2] && !effectToggles[5]) {
+      image(img, newMouseX, newMouseY, img.width / 6, img.height / 6)
+    }
+
+    if (effectToggles[0]) {
+      number = 1.025;
+    } else {
+      number = 1.0;
+    }
+
+    if (effectToggles[1]) {
+      effect = [3, 0.1, 0.01];
+    } else {
+      effect = [0, 0, 0];
+    }
+
+    if (effectToggles[2]) {
+      image(img, oppositeX, oppositeY, img.width / 6, img.height / 6);
+    }
+
+    if (effectToggles[3]) {
+      number2 = 0.002;
+    } else {
+      number2 = 0.000;
+    }
+
+    if (effectToggles[4]) {
+      ellipse(newMouseX, newMouseY, 10)
+    }
+
+    if (effectToggles[5]) {
+      image(img, newMouseX, newMouseY, img.width*2, img.height*2)
+    }
+  }
+
+
+
+  function keyPressed() {
+    if (key == 'S') {
+      pg.save('P5LIVE_hydra.png') // save hydra texture
+    } else if (key === '1') {
+      effectToggles[0] = !effectToggles[0];
+      checkboxes[0].checked(effectToggles[0]); // Checkbox entsprechend dem Zustand umschalten
+    } else if (key === '2') {
+      effectToggles[1] = !effectToggles[1];
+      checkboxes[1].checked(effectToggles[1]); // Checkbox entsprechend dem Zustand umschalten
+    } else if (key === '3') {
+      effectToggles[2] = !effectToggles[2];
+      checkboxes[2].checked(effectToggles[2]); // Checkbox entsprechend dem Zustand umschalten
+    } else if (key === '4') {
+      effectToggles[3] = !effectToggles[3];
+      checkboxes[3].checked(effectToggles[3]); // Checkbox entsprechend dem Zustand umschalten
+    } else if (key === '5') {
+      effectToggles[4] = !effectToggles[4];
+      checkboxes[4].checked(!effectToggles[4]);
+    } else if (key === '6') {
+      effectToggles[5] = !effectToggles[5];
+      checkboxes[5].checked(!effectToggles[5]);
+    } else if (key === '0') {
+      effectToggles[6] = !effectToggles[6];
+      checkboxes[6].checked(!effectToggles[6]);
+    }
+    if (key === '0') {
+    background(0);
+  }
+
+
+  }
+
+</script>
+
+</html>

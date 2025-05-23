@@ -1,0 +1,86 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>p5.js Example</title>
+  <script src="libaries/p5.js"></script>
+  <script src="libaries/ML5.js"></script>
+    <style>
+    /* Entfernt den Rahmen des p5.js-Canvas */
+    canvas {
+      border: none;
+      display: block; /* Entfernt eventuelle Scrollleisten */
+    }
+
+    body {
+  margin: 0;
+  padding: 0;
+  display: grid;
+  place-items: center;
+  min-height: 100vh;
+}
+  </style>
+</head>
+<body>
+  <script>
+let handPose;
+let video;
+let hands = []
+let img;
+
+function preload() {
+  handPose = ml5.handPose({flipped: true});
+  img = loadImage('img/cursor1.png')
+}
+
+function setup() {
+  createCanvas(640, 480);
+  background(200)
+  // Create the webcam video and hide it
+  video = createCapture(VIDEO, {flipped: true});
+  video.size(640, 480);
+  video.hide();
+  noStroke()
+  handPose.detectStart(video, gotHands);
+  
+  pg = createGraphics(640, 480);
+  pg.clear();
+  
+}
+
+function draw() {
+  
+  fill(255,0,255)
+    
+   image(video, 0, 0, width, height)
+  //  background(200)
+  
+  if (hands.length > 0){
+    let index = hands[0].keypoints[8];
+    let thumb = hands[0].keypoints[4];
+    
+    //text('index', index.x, index.y)
+    //text('thumb', thumb.x, thumb.y)
+    pg.fill(0)
+    //pg.stroke(0)
+    //pg.ellipse(index.x, index.y, 10)
+    pg.image(img, index.x, index.y, img.width / 6, img.height / 6)
+    console.log(hands.length)
+  }
+  image(pg, 0, 0);
+
+}
+
+function gotHands(results){
+  hands = results
+}
+
+function keyPressed() {
+    if (key == 'S') {
+      save('ML5-painter.png')
+}
+}
+  </script>
+</body>
+</html>
