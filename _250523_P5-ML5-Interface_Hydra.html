@@ -1,0 +1,199 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>p5.js Example</title>
+  <script src="libaries/p5.js"></script>
+  <script src="libaries/hydra-synth.js"></script>
+  <script src="libaries/ML5.js"></script>
+  <style>
+    /* Entfernt den Rahmen des p5.js-Canvas */
+    canvas {
+      border: none;
+      display: block;
+      /* Entfernt eventuelle Scrollleisten */
+    }
+
+    body {
+      margin: 0;
+      padding: 0;
+      display: grid;
+      place-items: center;
+      min-height: 100vh;
+    }
+  </style>
+</head>
+
+<body>
+  <script>
+    /*
+    ----- Coding Tutorial by Patt Vira ----- 
+    Name: Interactive Fridge Circles
+    Video Tutorial: https://youtu.be/72pAzuD8tqE
+    
+    Connect with Patt: @pattvira
+    https://www.pattvira.com/
+    ----------------------------------------
+    */
+
+    let hc = document.createElement('canvas') // hydra canvas + custom size
+    hc.width = 640 // window.innerWidth // for full res
+    hc.height = 360 // window.innerHeight // for full res
+    let hydra = new Hydra({ detectAudio: false, canvas: hc })
+    noize = noise // use noize() since noise() is taken by p5js
+
+    let pg // store hydra texture
+    s0.initCam()
+    // sandbox - start
+
+    src(s0).scale(1, -1)
+    //.modulate(osc(() => sizeB,0.1,0.0),.5)
+    .thresh(() => point1, () => point2)
+    .out(o0)
+
+
+    //osc(() => sizeB, .1, .8)
+      //.mask(osc(10, .1).rotate(25))
+      // .kaleid(4)
+      //.repeatY(20)
+      // .modulate(noize(10))
+     // .out(o1)
+    
+    render(o0)
+    // sandbox - stop
+
+    class Circle {
+      constructor(x, y) {
+        this.x = x;
+        this.y = y;
+        this.angle = random(TWO_PI);
+        this.c = color(255);
+
+        this.pos = createVector(this.x, this.y);
+        this.w = 30;
+
+
+        this.fingerx = 0;
+        this.fingery = 0;
+      }
+
+      display() {
+        push();
+        translate(this.pos.x, this.pos.y);
+        rotate(this.angle);
+        fill(this.c);
+        ellipse(0, 0, this.w);
+        pop();
+
+        fill(255, 0, 0);
+        ellipse(this.fingerx, this.fingery, 30);
+      }
+
+      touch(thumbx, thumby, indexx, indexy) {
+        let distBetweenFingers = dist(thumbx, thumby, indexx, indexy);
+        this.fingerx = abs(thumbx - indexx) + min(thumbx, indexx);
+        this.fingery = abs(thumby - indexy) + min(thumby, indexy);
+
+        let distFromFingers = dist(this.pos.x, this.pos.y, this.fingerx, this.fingery);
+
+        if (distBetweenFingers < 40 && distFromFingers < this.w / 2) {
+          this.c = color(255, 0, 0);
+          this.pos.x = this.fingerx;
+          this.pos.y = this.fingery;
+        } else {
+          this.c = color(255);
+        }
+      }
+    }
+
+    let video; let handPose; let hands = [];
+    let font; let size = 35;
+    let Circles = []; let num = 5;
+    let backcolor;
+    let point1, point2, point3, point4, point5;
+
+    function preload() {
+      handPose = ml5.handPose({ flipped: true });
+    }
+
+    function setup() {
+      //setResolution(.5)
+      createCanvas(640, 480);
+      // Detect video & load ML model
+      video = createCapture(VIDEO, { flipped: true });
+      video.hide();
+      handPose.detectStart(video, gotHands);
+
+      // Create Circle objects
+      for (let i = 0; i < num; i++) {
+        let x = width/2; // Start at x=80, spacing of 80px
+        let y = 30 + (i * 40); // Top position
+        Circles[i] = new Circle(x, y);
+      }
+
+      pg = createGraphics(hc.width, hc.height)
+    }
+
+    function draw() {
+
+      background(255)
+      // Display video and detect index and thumb position
+      //image(video, 0, 0, width, height);
+
+      //pg.clear()
+      pg.drawingContext.drawImage(hc, 0, 0, pg.width, pg.height)
+      image(pg, 0, 0, width, height);
+
+      if (hands.length > 0) {
+        let index = hands[0].keypoints[8];
+        let thumb = hands[0].keypoints[4];
+    
+        console.log(index)
+
+        noFill();
+        stroke(0, 255, 0);
+        text("index", index.x, index.y);
+        text("thumb", thumb.x, thumb.y);
+
+        for (let i = 0; i < num; i++) {
+          Circles[i].touch(thumb.x, thumb.y, index.x, index.y);
+        }
+
+      }
+
+      point1 = map(Circles[4].pos.x, 0, width, -0.5, 0.8)
+      point2 = map(Circles[3].pos.x, width/2, 0, 0.01, 0.5)
+
+      //console.log("Circle 0 x position:", Circles[0].pos.x); 
+      //let sizeC = map(Circles[0].pos.x, 0, width, 0, 300)
+      let sizeC = Circles[0].pos.x
+      
+
+     // backcolor = map(Circles[0].pos.x, 0, width, 0.5, 0.8)
+      //background(255, backcolor);
+
+      push()
+      fill(0, 0, 0, 100)
+      //ellipse(Circles[1].pos.x, Circles[1].pos.y, sizeC, sizeC + sizeB)
+      pop()
+
+      for (let i = 0; i < num; i++) {
+        Circles[i].display();
+      }
+    }
+
+    function gotHands(results) {
+      hands = results;
+    }
+
+    function keyPressed() {
+      if (key == 'S') {
+        save('ML5-painter.png')
+      }
+    }
+  </script>
+</body>
+
+</html>
