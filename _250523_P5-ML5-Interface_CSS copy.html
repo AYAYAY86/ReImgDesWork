@@ -1,0 +1,243 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>p5.js Example</title>
+  <script src="libaries/p5.js"></script>
+  <script src="libaries/ML5.js"></script>
+    <style>
+ body {
+            font-family: Arial, sans-serif;
+            text-align: center;
+            background-color: #f0f0f0;
+            margin: 0;
+            padding: 20px;
+            position: relative;
+        }
+
+        #canvas-container {
+            position: relative;
+            display: inline-block; 
+        }
+
+        #text-title {
+            position: absolute;
+           
+            word-break: keep-all;
+            /* hyphens: auto; */
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            color: white;
+            margin: 0;
+            transition: all 0.1s ease;
+            font-weight: bold;
+            text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.5);
+            z-index: 10;
+            pointer-events: none;
+            /* white-space: nowrap; */
+            /* max-width: 380px; */
+            overflow: visible;
+            line-height: 1;
+        }
+        
+        #canvas-container {
+            position: relative;
+            display: inline-block;
+            margin: 60px auto;
+        }
+  </style>
+</head>
+<body>
+   <div id="canvas-container">
+        <h1 id="text-title">We don’t need more authorships, we need to open to more companionships, partnerships, and other kinds of relationships! </h1>
+    </div>
+  <script>
+/*
+----- Coding Tutorial by Patt Vira ----- 
+Name: Interactive Fridge Circles
+Video Tutorial: https://youtu.be/72pAzuD8tqE
+
+Connect with Patt: @pattvira
+https://www.pattvira.com/
+----------------------------------------
+*/
+
+class Circle {
+  constructor(x, y) {
+    this.x = x;
+    this.y = y;
+    this.angle = random(TWO_PI);
+    this.c = color(0);
+    
+    this.pos = createVector(this.x, this.y);
+    this.w = 30;
+
+    
+    this.fingerx = 0;
+    this.fingery = 0;
+  }
+  
+  display() {
+    push();
+    translate(this.pos.x, this.pos.y);
+    rotate(this.angle);
+    noStroke();
+    fill(this.c);
+    ellipse(0, 0, this.w);
+    pop();
+    
+    fill(0);
+    ellipse(this.fingerx, this.fingery, 10, 10);
+  }
+  
+  touch(thumbx, thumby, indexx, indexy) {
+    let distBetweenFingers = dist(thumbx, thumby, indexx, indexy);
+    this.fingerx = abs(thumbx - indexx) + min(thumbx, indexx);
+    this.fingery = abs(thumby - indexy) + min(thumby, indexy);
+    
+    let distFromFingers = dist(this.pos.x, this.pos.y, this.fingerx, this.fingery);
+    
+    if (distBetweenFingers < 40 && distFromFingers < this.w/2) {
+      this.c = color(255, 0, 0);
+      this.pos.x = this.fingerx;
+      this.pos.y = this.fingery;
+    } else {
+      this.c = color(255);
+    }
+  }
+}
+
+let video; let handPose; let hands = [];
+let font; let size = 35;
+let Circles = []; let num = 5;
+let backcolor;
+
+function preload() {
+  handPose = ml5.handPose({flipped: true});
+}
+
+function setup() {
+  let canvas = createCanvas(640, 480);
+  canvas.parent('canvas-container');
+  // Detect video & load ML model
+  // video = createCapture(VIDEO, {flipped: true});
+  // video.hide();
+  // handPose.detectStart(video, gotHands);
+  
+  // Create Circle objects
+  for (let i=0; i<num; i++) {
+    let x = 30; // Start at x=80, spacing of 80px
+    let y = 150  + (i * 40); // Top position
+    Circles[i] = new Circle(x, y);
+  }
+  
+  // pg = createGraphics(width, height)
+}
+
+let angle = 0;
+let radius = 100;
+
+function draw() {
+  
+  
+  // Display video and detect index and thumb position
+  // image(video, 0, 0, width, height);
+  
+  if (hands.length > 0) {
+    let index = hands[0].keypoints[8];
+    let thumb = hands[0].keypoints[4];
+    
+    noFill();
+    stroke(0, 255, 0);
+    text("index", index.x, index.y);
+    text("thumb", thumb.x, thumb.y);
+  
+    for (let i=0; i<num; i++) {
+      Circles[i].touch(thumb.x, thumb.y, index.x, index.y);
+    }
+
+  }
+  
+   //console.log("Circle 0 x position:", Circles[0].pos.x); 
+   //let sizeC = map(Circles[0].pos.x, 0, width, 0, 300)
+  // let sizeC = Circles[0].pos.x
+  //  let sizeB = map(Circles[2].pos.x, sizeC, width, 0, 300)
+   
+  backcolor = map(Circles[3].pos.x, 0, width/2, 0, 255)
+  backcolor2 = map(Circles[3].pos.y, 0, height, 0, 255)
+  background(0, 255);
+
+  let centerX = width / 2;
+  let centerY = height / 2;
+
+  // Compute x and y using sin and cos
+  let x = centerX + cos(angle) * radius;
+  let y = centerY + sin(angle) * radius;
+
+  let x1 = centerX + cos(angle) * -50;
+  let y2 = centerY + sin(angle) * -50;
+
+  fill(255, 100, 150);
+  ellipse(x, y, 50, 50); // draw the moving ellipse
+
+  ellipse(x1, y2, 50, 50); 
+
+  angle += 0.02; // change the angle for the next frame
+
+
+
+
+
+  let textElement = select('#text-title');
+
+  console.log(y)
+
+  let textSize = map(x, 200, 400, 10, 50);
+  textElement.style('font-size', textSize + 'px');
+
+  let lineheight = map(y, 200, 400, 60, 20);
+  textElement.style('line-height', lineheight + 'px');
+
+  let spacing = map(x1, 200, 400, -2, 30);
+  textElement.style('letter-spacing', spacing + 'px');
+
+//   let alignment = map(Circles[2].pos.x, 0, width/2, 0, 2);
+// if (alignment < 0.66) {
+//     textElement.style('text-align', 'left');
+// } else if (alignment < 1.33) {
+//     textElement.style('text-align', 'center');
+// } else {
+//     textElement.style('text-align', 'right');
+// }
+
+  let blur = map(y2, 200, 400, -2, 10);
+  textElement.style('filter', 'blur(' + blur + 'px)');
+
+
+  // let textSize = map(mouseX, 0, width, 40, 140);
+  // textElement.style('font-size', textSize + 'px');
+   
+  //  push()
+  // fill(0, 0, 0, 100)
+  // ellipse(Circles[1].pos.x,Circles[1].pos.y,sizeC, sizeC + sizeB)
+  // pop()
+  
+  for (let i=0; i<num; i++) {
+    Circles[i].display();
+  }
+}
+
+function gotHands(results) {
+  hands = results;
+}
+
+function keyPressed() {
+    if (key == 'S') {
+      save('ML5-painter.png')
+}
+}
+  </script>
+</body>
+</html>

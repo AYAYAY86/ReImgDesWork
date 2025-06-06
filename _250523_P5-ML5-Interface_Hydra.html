@@ -110,7 +110,7 @@
 
     let video; let handPose; let hands = [];
     let font; let size = 35;
-    let Circles = []; let num = 5;
+    let Circles = []; let num = 2;
     let backcolor;
     let point1, point2, point3, point4, point5;
 
@@ -163,12 +163,12 @@
 
       }
 
-      point1 = map(Circles[4].pos.x, 0, width, -0.5, 0.8)
-      point2 = map(Circles[3].pos.x, width/2, 0, 0.01, 0.5)
+      point1 = map(Circles[0].pos.x, 0, width, -0.5, 0.8)
+      point2 = map(Circles[1].pos.x, width/2, 0, 0.01, 0.5)
 
       //console.log("Circle 0 x position:", Circles[0].pos.x); 
       //let sizeC = map(Circles[0].pos.x, 0, width, 0, 300)
-      let sizeC = Circles[0].pos.x
+      // let sizeC = Circles[0].pos.x
       
 
      // backcolor = map(Circles[0].pos.x, 0, width, 0.5, 0.8)
