@@ -4,129 +4,179 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Circle Controls Text Size</title>
+    <title>JOYSTICK Raster Controller</title>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/p5.js/1.7.0/p5.min.js"></script>
     <style>
-        body, html {
-    margin: 0;
-    padding: 0;
-    width: 100vw;
-    height: 100vh;
-    box-sizing: border-box;
-}
+        body,
+        html {
+            margin: 0;
+            padding: 0;
+            width: 100vw;
+            height: 100vh;
+            box-sizing: border-box;
+            background: #fff;
+        }
 
-#canvas-container {
-    position: relative;
-    display: block;
-    margin: 0;
-    width: 100vw;
-    height: 100vh;
-}
-
-        #text-title {
+        #joystick-list {
             position: absolute;
             top: 50%;
             left: 50%;
             transform: translate(-50%, -50%);
-            color: white;
-            margin: 0;
-            transition: all 0.1s ease;
-            font-weight: bold;
-            text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.5);
-            z-index: 10;
-            pointer-events: none;
-            /* white-space: nowrap; */
-            /* max-width: 380px; */
-            overflow: visible;
-            line-height: 1;
-            text-align: center;
+            z-index: 20;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
         }
 
-        #canvas-container {
-            position: relative;
-            display: inline-block;
-            margin: 60px auto;
+        #joystick-list div {
+            display: flex;
+            justify-content: center;
+        }
+
+        #joystick-list span {
+            margin: 10px;
+            font-weight: bold;
+            font-size: 2rem;
+            color: black;
+            transition: all 0.1s;
+            font-family: Arial, sans-serif;
         }
     </style>
 </head>
 
 <body>
-    <div id="canvas-container">
-        <h1 id="text-title">Move your mouse to change my size!</h1>
-        <!-- <h1 id="text-title">.</h1> -->
-    </div>
-
+    <div id="joystick-list"></div>
     <script>
+        // Grid-Parameter
+        let rows = 1;
+        let cols = 1;
+        let patternOffset = 0;
+        let patternArrangement = 1;
+        const container = document.getElementById('joystick-list');
 
-        let gamepad;
-        let x, y;
-
-        let fontIsCourier = false;
+        // Schriftarten
+        const fonts = [
+            'Arial, sans-serif',
+            'Courier New, monospace',
+            'Times New Roman, serif',
+            'Verdana, sans-serif',
+            'Georgia, serif',
+            'Comic Sans MS, cursive, sans-serif',
+            'Impact, fantasy',
+            'Tahoma, Geneva, sans-serif'
+        ];
+        let currentFontIndex = 0;
         let lastButton1State = false;
 
-        function setup() {
-            let canvas = createCanvas(windowWidth, windowHeight);
-            canvas.parent('canvas-container');
+        // Style-Parameter
+        let fontSizeValue = 32;
+        let myWordSpacing = 32;
+        let myLetterSpacing = 0;
+        let myWordMargin = 0;
+        let red = 0;
+        let green = 0;
+        let summe = 0;
+
+        // Grid bauen
+        function buildGrid() {
+            container.innerHTML = '';
+            for (let i = 0; i < rows; i++) {
+                const rowDiv = document.createElement('div');
+                let dynamicCols = cols + ((i + patternOffset) % patternArrangement);
+                for (let j = 0; j < dynamicCols; j++) {
+                    const span = document.createElement('span');
+                    span.textContent = "JOYSTICK";
+                    span.style.fontFamily = fonts[currentFontIndex];
+                    span.style.fontSize = fontSizeValue + 'px';
+                    span.style.lineHeight = myWordSpacing + 'px';
+                    span.style.letterSpacing = myLetterSpacing + 'px';
+                    span.style.margin = myWordMargin + 'px';
+                    span.style.color = `rgb(${Math.round(red)},${Math.round(green)},255)`;
+                    rowDiv.appendChild(span);
+                }
+                container.appendChild(rowDiv);
+            }
         }
 
-        function draw() {
-            background(220);
-            let textElement = select('#text-title');
+        buildGrid();
 
-
-            let gamepads = navigator.getGamepads();
-            gamepad = gamepads[0];
-
-            // console.log(gamepad);
+        // Gamepad-Logik
+        function checkGamepad() {
+            const gamepads = navigator.getGamepads();
+            const gamepad = gamepads[0];
 
             if (gamepad) {
-                x = gamepad.axes[0];
-                y = gamepad.axes[1];
-
-                fill(100, 100, 255);
-                ellipse(width / 2 + x * width/2, height / 2 + y * height/2, 50);
-
-
-
-                let textSize = map(x * 200, 0, width, height/10, height);
-                textElement.style('font-size', textSize + 'px');
-
-                let wordSpacing = map(y * 200, 0, height, textSize, height);
-                textElement.style('line-height', wordSpacing + 'px');
-
-            if (gamepad.buttons[1].pressed) {
-            fontIsCourier = true;
-        }
-
-        let button1Pressed = gamepad.buttons[1].pressed;
-        if (button1Pressed && !lastButton1State) {
-            fontIsCourier = !fontIsCourier;
-        }
-        lastButton1State = button1Pressed;
-
-        // Font setzen je nach Zustand
-        if (fontIsCourier) {
-            textElement.style('font-family', 'Courier New, monospace');
-        } else {
-            textElement.style('font-family', 'Arial, sans-serif');
-        }
-
-
-
-                for (let i = 0; i < gamepad.buttons.length; i++) {
-                    if (gamepad.buttons[i].pressed) {
-                        ;
-                        text("Button " + i + " pressed", width / 2, height / 2 + i * 20);
-                    }
+                // Schriftart wechseln (Button 1)
+                let button1Pressed = gamepad.buttons[1].pressed;
+                if (button1Pressed && !lastButton1State) {
+                    currentFontIndex = (currentFontIndex + 1) % fonts.length;
+                    document.querySelectorAll('#joystick-list span').forEach(span => {
+                        span.style.fontFamily = fonts[currentFontIndex];
+                    });
                 }
-            } else {
-                fill(150);
-                text("Press any button on your controller…", width / 2, height / 2);
+                lastButton1State = button1Pressed;
 
+                // Schriftgröße & Zeilenabstand (Button 2 + Stick)
+                if (gamepad.buttons[2].pressed) {
+                    fontSizeValue += gamepad.axes[0] * 2;
+                    fontSizeValue = Math.max(10, Math.min(200, fontSizeValue));
+                    myWordSpacing += gamepad.axes[1] * 2;
+                    myWordSpacing = Math.max(10, Math.min(200, myWordSpacing));
+                }
+                document.querySelectorAll('#joystick-list span').forEach(span => {
+                    span.style.fontSize = fontSizeValue + 'px';
+                    span.style.lineHeight = myWordSpacing + 'px';
+                });
 
+                // Grid-Pattern ändern (Button 5 + Stick)
+                if (gamepad.buttons[5].pressed) {
+                    patternOffset += gamepad.axes[0] * 0.1;
+                    patternOffset = Math.max(0, Math.min(10, patternOffset));
+                    patternArrangement += gamepad.axes[1] * 0.1;
+                    patternArrangement = Math.max(1, Math.min(3, patternArrangement));
+                    buildGrid();
+                }
+
+                // Grid-Größe ändern (Button 4 + Stick)
+                if (gamepad.buttons[4].pressed) {
+                    cols += gamepad.axes[0] / 5;
+                    cols = Math.max(1, Math.round(cols));
+                    rows += gamepad.axes[1] / 5;
+                    rows = Math.max(1, Math.round(rows));
+                    buildGrid();
+                }
+
+                // Letter-Spacing & Margin (Button 3 + Stick)
+                if (gamepad.buttons[3].pressed) {
+                    myLetterSpacing += gamepad.axes[0];
+                    myWordMargin += gamepad.axes[1];
+                    document.querySelectorAll('#joystick-list span').forEach(span => {
+                        span.style.letterSpacing = myLetterSpacing + 'px';
+                        span.style.margin = myWordMargin + 'px';
+                    });
+                }
+
+                // Farbe ändern (Button 0 + Stick)
+                if (gamepad.buttons[0].pressed) {
+                    red += gamepad.axes[0] * 5;
+                    green += gamepad.axes[1] * 5;
+                    red = Math.max(0, Math.min(255, red));
+                    green = Math.max(0, Math.min(255, green));
+                    let currentColor = `rgb(${Math.round(red)},${Math.round(green)},255)`;
+                    document.querySelectorAll('#joystick-list span').forEach(span => {
+                        span.style.color = currentColor;
+                    });
+                }
+
+                // Seite neu laden (Button 16)
+                if (gamepad.buttons[16] && gamepad.buttons[16].pressed) {
+                    location.reload();
+                }
             }
 
+            requestAnimationFrame(checkGamepad);
         }
+        checkGamepad();
     </script>
 </body>
 
