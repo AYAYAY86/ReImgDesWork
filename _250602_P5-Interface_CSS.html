@@ -49,8 +49,11 @@
     <div id="canvas-container">
         <h1 id="text-title">Move your mouse to change my size!</h1>
     </div>
+
+    
     
     <script>
+
         function setup() {
             let canvas = createCanvas(400, 400);
             canvas.parent('canvas-container');
@@ -72,7 +75,7 @@
             textElement.style('font-size', textSize + 'px');
             
             // Mouse Y controls word spacing (tracking)
-            let wordSpacing = map(mouseY, 0, height, -100, 200);
+            let wordSpacing = map(mouseY, 0, height, 20, 200);
             textElement.style('line-height', wordSpacing + 'px');
 
             console.log(`Text Size: ${textSize}px, Word Spacing: ${wordSpacing}px`);

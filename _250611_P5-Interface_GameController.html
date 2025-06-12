@@ -1,0 +1,77 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Circle Controls Text Size</title>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/p5.js/1.7.0/p5.min.js"></script>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            text-align: center;
+            background-color: #f0f0f0;
+            margin: 0;
+            padding: 20px;
+            position: relative;
+        }
+
+        #canvas-container {
+            position: relative;
+            display: inline-block;
+        }
+
+        
+        #canvas-container {
+            position: relative;
+            display: inline-block;
+            margin: 60px auto;
+        }
+    </style>
+</head>
+<body>
+
+    
+    <script>
+let gamepad;
+
+function setup() {
+  createCanvas(400, 400);
+  textAlign(CENTER, CENTER);
+  
+}
+
+function draw() {
+  background(220);
+
+  // Gamepad aktualisieren
+  let gamepads = navigator.getGamepads();
+  gamepad = gamepads[0];
+
+  if (gamepad) {
+    fill(0);
+    text("Gamepad connected", width / 2, height / 2 - 40);
+
+    console.log(gamepad);
+
+    // Beispiel: Achsen (z. B. Joystick) anzeigen
+    let x = gamepad.axes[0]; // linker Stick X
+    let y = gamepad.axes[1]; // linker Stick Y
+
+    fill(100, 100, 255);
+    ellipse(width / 2 + x * 200, height / 2 + y * 200, 50);
+
+    // Beispiel: Buttons anzeigen
+    for (let i = 0; i < gamepad.buttons.length; i++) {
+      if (gamepad.buttons[i].pressed) {
+        text("Button " + i + " pressed", width / 2, height / 2 + i * 20);
+      }
+    }
+  } else {
+    fill(150);
+    text("Press any button on your controller…", width / 2, height / 2);
+  }
+  //noLoop()
+}
+    </script>
+</body>
+</html>

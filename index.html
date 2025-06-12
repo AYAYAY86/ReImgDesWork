@@ -1,76 +1,110 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>ReImgDeTools</title>
-    <style>
-        h1 {
-          font-size: 50px;
-          color: black;
-          font-family: sans-serif;
-          font-weight: bold;
-          text-transform: uppercase;
-          margin-bottom: 10px;
-        }
-        h2 {
-          font-size: 20px;
-          color: black;
-          font-family: sans-serif;
-          font-weight: bold;
-          text-transform: uppercase;
-        }
-        a {
-          display: block;
-          font-size: 50px;
-          color: blue;
-          text-decoration: none;
-          font-family: sans-serif;
-          font-weight: bold;
-          text-transform: uppercase;
-        }
-        a:hover {
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>ReImgDeTools</title>
+  <style>
+    body,
+    html {
+      margin: 20px;
+      padding: 0;
+      width: 100%;
+      height: 100%;
+      overflow: hidden;
+      text-align: center;
+    }
+
+    h1 {
+      font-size: 50px;
       color: black;
-    }        
+      font-family: sans-serif;
+      font-weight: bold;
+      text-transform: uppercase;
+      margin-bottom: 10px;
+    }
+
+    h2 {
+      font-size: 20px;
+      color: black;
+      font-family: sans-serif;
+      font-weight: bold;
+      text-transform: uppercase;
+    }
+
+    a {
+      display: block;
+      font-size: 50px;
+      color: blue;
+      text-decoration: none;
+      font-family: sans-serif;
+      font-weight: bold;
+      text-transform: uppercase;
+    }
+
+    a:hover {
+      color: black;
+    }
+
+    .button-container {
+      display: flex;
+      gap: 10px;
+      justify-content: center;
+      position: relative;
+    }
 
     button {
-      background-color: lightgray; /* green */
+      background-color: lightgray;
       color: white;
       padding: 12px 24px;
       border: none;
       border-radius: 30px;
       font-size: 16px;
       cursor: pointer;
-      margin-bottom: 20px;
+      display: inline-block;
+      margin-right: 5px;
+      margin-bottom: 30px;
+      width: 160px;
+      height: 50px;
     }
 
     button:hover {
-      background-color: blue; /* darker green when hovered */
+      background-color: blue;
+      /* darker green when hovered */
     }
-      </style>
+  </style>
 
 
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/p5.js/1.9.0/p5.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/p5.js/1.9.0/p5.min.js"></script>
 </head>
-<body>
-    <h1>ReImaging Design Tools</h1>
 
+<body>
+  <h1>ReImaging Design Tools</h1>
+
+  <div class="button-container">
     <a href="index_Documentation.html">
       <button>Documentation</button>
     </a>
-    
-    <a href="_250507_P5-MSPaint-Cursor.html"> MS Paint Cursor</a>
-    <a href="_250503_P5-RandomWalkerHydra.html">Random Walker</a>
-    <a href="_250505_P5-RandomWalkerPen.html">Random Walker Pen</a>
-    <a href="_250504_P5-PenMultipleCanvas.html">Pencile</a>
-    <a href="_250522_P5-MouseWheel-MS-Paint.html">Random Pencile</a>
-    <a href="_250504_P5-UI-Essay.html">UI Essay</a>
-    <a href="_250507_P5-Hydra-Synths-Layers.html">UI Essay</a>
+
+    <a href="index_Documentation _Human-Computer-Interactions.html">
+      <button>HCInterface</button>
+    </a>
+  </div>
+
+  <a href="_250507_P5-MSPaint-Cursor.html"> MS Paint Cursor</a>
+  <a href="_250503_P5-RandomWalkerHydra.html">Random Walker</a>
+  <a href="_250505_P5-RandomWalkerPen.html">Random Walker Pen</a>
+  <a href="_250504_P5-PenMultipleCanvas.html">Pencile</a>
+  <a href="_250522_P5-MouseWheel-MS-Paint.html">Random Pencile</a>
+  <a href="_250504_P5-UI-Essay.html">UI Essay</a>
+  <a href="_250507_P5-Hydra-Synths-Layers.html">UI Essay</a>
 
 
-    <!-- <a href="HY5-feedback.html">FEEDBACK</a>
+  <!-- <a href="HY5-feedback.html">FEEDBACK</a>
     <a href="HY5-images.html">feedback-images</a>
     <a href="HY5-Artefakts.html">artefacts</a>
     <a href="HY5-DrawRectangle.html">Draw Rectangles</a> -->
 </body>
+
 </html>

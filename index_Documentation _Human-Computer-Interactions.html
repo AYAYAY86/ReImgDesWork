@@ -6,15 +6,15 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>ReImgDeTools</title>
   <style>
-     body,
+    body,
     html {
       margin: 20px;
       padding: 0;
       width: 100%;
       height: 100%;
-      /* overflow: hidden; */
       text-align: center;
     }
+
     h1 {
       font-size: 50px;
       color: black;
@@ -33,7 +33,7 @@
     }
 
     a {
-      display: block;
+      display: inline-block;
       font-size: 50px;
       color: blue;
       text-decoration: none;
@@ -62,7 +62,6 @@
       text-decoration: none;
     }
 
-
     .button-container {
       display: flex;
       gap: 10px;
@@ -70,8 +69,10 @@
       position: relative;
     }
 
+
     button {
       background-color: lightgray;
+      /* green */
       color: white;
       padding: 12px 24px;
       border: none;
@@ -120,23 +121,18 @@
       font-family: sans-serif;
     }
   </style>
-
-
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/p5.js/1.9.0/p5.min.js"></script>
 </head>
 
 <body>
   <h1>ReImaging Design Tools</h1>
 
-
-    <div class="button-container">
-    
-  <a href="index.html">
-    <button>Tools</button>
-  </a>
-   <a href="index.html">
-    <button>HCInterface</button>
-  </a>
+  <div>
+    <a href="index.html">
+      <button>Tools</button>
+    </a>
+    <a href="index.html">
+      <button>Documentation</button>
+    </a>
   </div>
 
   <div id="gallery"></div>
@@ -144,109 +140,56 @@
   <script>
     const images = [
       {
-        src: "documentation/ML5-painter(1).png",
+        src: "https://lh7-us.googleusercontent.com/JtvAM12uWvlprQ5rtxSxKdmWzdg1tUj7zOp7RRYTkJ0A-mCxd4wfXZz_iKn9fgA3egB5TKwk3Ob5iogqMdp4GW-KbBPXBrPajUpw1NtDqFvQNxMFqWlnD-UNj6QN_sGq-oJPOL5bwUyH120TIKrCJ70",
         alt: "Design Tool",
         class: "large",
-        caption: "4# cursor Sketch Hydra Feedback",
-        href: "_250523_P5-ML5.html"
+        caption: "The First Computer Mouse (1964). Source: APIC",
+        href: "https://blog.apifornia.com/hci-60-70/"
       },
       {
-        src: "documentation/Screenshot 2025-05-09 at 17-27-43 p5.js Example.png",
+        src: "https://lh7-us.googleusercontent.com/CgdFrEL7gb6zclFXdSr4oQh7T5A2tDsJYATFemQJHf8gmW9pUutfohKc--n9ay-yR0c5W0RXHzchydFFuTomVdeQvgaYaGmgGgS9idhuWtvARO1iTkd-1eQyMLTSS82uv3HJoV_caUmXJQq3jX2DPzg",
         alt: "Design Tool",
         class: "large",
-        caption: "RandomExperiment",
+        caption: "The First Commercially Available Mouse (part of the Xerox 8010 computer) (1981)",
+        href: "https://blog.apifornia.com/hci-60-70/"
       },
       {
-        src: "documentation/Screenshot 2025-04-20 at 11-47-38 Bérénice Serra - Critical Publishing - IDCE HGK Basel.png",
+        src: "https://morphocode.com/wp-content/uploads/2020/02/morphocode-sutherland-sketchpad-demo-1963-scaled.jpg",
         alt: "Design Tool",
         class: "large",
-        caption: "Bérénice Serra - Critical Publishing - IDCE HGK Basel",
+        caption: "Demonstration of the Sketchpad Program (1963)",
+        href: "https://youtu.be/5RyU50qbvzQ"
       },
       {
-        src: "documentation/P5LIVE_hydra(12).png",
+        src: "https://filmobsessive.com/wp-content/uploads/2019/09/MV5BYTJiZDVlZTAtMzU4NC00MTVkLTk4YmYtOWY4ODM1ZjlkNDViXkEyXkFqcGdeQXVyNjUxMjc1OTM@._V1_.jpg",
         alt: "Design Tool",
         class: "large",
-        caption: "1# Random_Walker Hydra",
-        href: "_250503_P5-RandomWalkerHydra.html"
-      },
-       {
-        src: "documentation/P5LIVE_hydra(11).png",
-        alt: "Design Tool",
-        class: "large",
-        caption: "4# cursor Sketch Hydra Feedback",
-        href: "_250507_P5-MSPaint-Cursor.html"
-      },
-       {
-        src: "documentation/P5LIVE_hydra(10).png",
-        alt: "Design Tool",
-        class: "large",
-        caption: "Experiment Hydra Hue 2"
-      },
-       {
-        src: "documentation/P5LIVE_hydra(9).png",
-        alt: "Design Tool",
-        class: "large",
-        caption: "Experiment Hydra Hue"
-      },
-       {
-        src: "documentation/P5LIVE_hydra(8).png",
-        alt: "Design Tool",
-        class: "large",
-        caption: "3# cursor Sketch Hydra Feedback",
-        href: "_250507_P5-MSPaint-Cursor.html"
+        caption: "David Cronenberg's 'Naked Lunch' (1991) - A film adaptation of William S. Burroughs' novel",
+        href: "https://publikationen.ub.uni-frankfurt.de/frontdoor/index/index/year/2010/docId/13815"
       },
       {
-        src: "documentation/P5LIVE_hydra(7).png",
+        src: "https://blogger.googleusercontent.com/img/b/R29vZ2xl/AVvXsEjXx6uvEpm7azELSyQKu0zMH_fCfMsz_0qSaD0ABQ3nMz4tPBhV21zYfuHgJJmwoRGlO-iEQVuLflcYU4Y8qEm0F9B1EIZC214AeINN4SUa8dsz7aRpamyzIiqoklu6cb69JSP4/s1600/mainnaked.jpg",
         alt: "Design Tool",
         class: "large",
-        caption: "2# cursor Sketch Hydra Feedback",
-        href: "_250507_P5-MSPaint-Cursor.html"
+        caption: "David Cronenberg's 'Naked Lunch' (1991) - A film adaptation of William S. Burroughs' novel",
+        href: "https://publikationen.ub.uni-frankfurt.de/frontdoor/index/index/year/2010/docId/13815"
       },
       {
-        src: "documentation/P5LIVE_hydra(6).png",
+        src: "https://nachdemfilm.de/sites/default/files/styles/9col/public/2018-04/NiederMitDerRealit%C3%A4t_Teaser.jpg?itok=vP1Y7zTl",
         alt: "Design Tool",
         class: "large",
-        caption: "1# cursor Sketch",
-        href: "_250507_P5-MSPaint-Cursor.html"
+        caption: "David Cronenberg's 'Existenz' (1999) - Fusion of Flesh and Technology",
+        href: "https://lux.lawrence.edu/cgi/viewcontent.cgi?article=1208&context=luhp"
       },
       {
-        src: "documentation/P5LIVE_hydra(4).jpg",
+        src: "https://static1.moviewebimages.com/wordpress/wp-content/uploads/2022/07/eXistenZ-1.jpg?q=50&fit=crop&w=825&dpr=1.5",
         alt: "Design Tool",
         class: "large",
-        caption: "Cronenberg Naked Lunch Interface"
+        caption: "David Cronenberg's 'Existenz' (1999) - Fusion of Flesh and Technology  - Bioports",
+        href: "https://movieweb.com/existenz-david-cronenberg-movie-virtual-reality/"
       },
-      {
-        src: "documentation/hydra-2025-4-2-9.35.14.png",
-        alt: "Design Tool",
-        class: "large",
-        caption: "Image-Manipulation"
-      },
-      {
-        src: "documentation/Bildschirmfoto 2025-05-22 um 16.22.34.png",
-        alt: "Design Tool",
-        class: "large",
-        caption: "MS Paint Mouse Wheel",
-        href: "_250522_P5-MouseWheel-MS-Paint.html"
-      },
-      {
-        src: "documentation/Bildschirmfoto 2025-04-29 um 22.05.58.png",
-        alt: "Design Tool",
-        class: "large",
-        caption: "Older-Experiments"
-      },
-      {
-        src: "documentation/Bildschirmfoto 2025-04-25 um 16.24.35.png",
-        alt: "Design Tool",
-        class: "large",
-        caption: "Interview Nolween"
-      },
-      {
-        src: "documentation/Bildschirmfoto 2025-04-16 um 14.36.38.png",
-        alt: "Design Tool",
-        class: "large",
-        caption: "GUI-Quote"
-      }
     ];
+
 
     const gallery = document.getElementById('gallery');
 
@@ -263,7 +206,7 @@
       image.addEventListener('click', () => {
         const isEnlarged = image.classList.toggle('enlarged');
         if (isEnlarged) {
-          image.style.width = '50vw';
+          image.style.width = '25vw';
         } else {
           image.style.width = ''; // Reset to original class-based width
         }

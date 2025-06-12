@@ -1,0 +1,133 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Circle Controls Text Size</title>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/p5.js/1.7.0/p5.min.js"></script>
+    <style>
+        body, html {
+    margin: 0;
+    padding: 0;
+    width: 100vw;
+    height: 100vh;
+    box-sizing: border-box;
+}
+
+#canvas-container {
+    position: relative;
+    display: block;
+    margin: 0;
+    width: 100vw;
+    height: 100vh;
+}
+
+        #text-title {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            color: white;
+            margin: 0;
+            transition: all 0.1s ease;
+            font-weight: bold;
+            text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.5);
+            z-index: 10;
+            pointer-events: none;
+            /* white-space: nowrap; */
+            /* max-width: 380px; */
+            overflow: visible;
+            line-height: 1;
+            text-align: center;
+        }
+
+        #canvas-container {
+            position: relative;
+            display: inline-block;
+            margin: 60px auto;
+        }
+    </style>
+</head>
+
+<body>
+    <div id="canvas-container">
+        <h1 id="text-title">Move your mouse to change my size!</h1>
+        <!-- <h1 id="text-title">.</h1> -->
+    </div>
+
+    <script>
+
+        let gamepad;
+        let x, y;
+
+        let fontIsCourier = false;
+        let lastButton1State = false;
+
+        function setup() {
+            let canvas = createCanvas(windowWidth, windowHeight);
+            canvas.parent('canvas-container');
+        }
+
+        function draw() {
+            background(220);
+            let textElement = select('#text-title');
+
+
+            let gamepads = navigator.getGamepads();
+            gamepad = gamepads[0];
+
+            // console.log(gamepad);
+
+            if (gamepad) {
+                x = gamepad.axes[0];
+                y = gamepad.axes[1];
+
+                fill(100, 100, 255);
+                ellipse(width / 2 + x * width/2, height / 2 + y * height/2, 50);
+
+
+
+                let textSize = map(x * 200, 0, width, height/10, height);
+                textElement.style('font-size', textSize + 'px');
+
+                let wordSpacing = map(y * 200, 0, height, textSize, height);
+                textElement.style('line-height', wordSpacing + 'px');
+
+            if (gamepad.buttons[1].pressed) {
+            fontIsCourier = true;
+        }
+
+        let button1Pressed = gamepad.buttons[1].pressed;
+        if (button1Pressed && !lastButton1State) {
+            fontIsCourier = !fontIsCourier;
+        }
+        lastButton1State = button1Pressed;
+
+        // Font setzen je nach Zustand
+        if (fontIsCourier) {
+            textElement.style('font-family', 'Courier New, monospace');
+        } else {
+            textElement.style('font-family', 'Arial, sans-serif');
+        }
+
+
+
+                for (let i = 0; i < gamepad.buttons.length; i++) {
+                    if (gamepad.buttons[i].pressed) {
+                        ;
+                        text("Button " + i + " pressed", width / 2, height / 2 + i * 20);
+                    }
+                }
+            } else {
+                fill(150);
+                text("Press any button on your controller…", width / 2, height / 2);
+
+
+            }
+
+        }
+    </script>
+</body>
+
+</html>
