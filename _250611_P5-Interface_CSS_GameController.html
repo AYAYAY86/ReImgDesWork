@@ -5,27 +5,36 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>JOYSTICK Raster Controller</title>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/p5.js/1.7.0/p5.min.js"></script>
     <style>
         body,
-        html {
+        html,
+        body {
+            height: 100%;
+            width: 100%;
             margin: 0;
             padding: 0;
-            width: 100vw;
-            height: 100vh;
+            position: relative;
             box-sizing: border-box;
             background: #fff;
         }
 
+        #canvas-container {
+            display: none;
+            /* Canvas wird nicht mehr benötigt */
+        }
+
         #joystick-list {
-            position: absolute;
-            top: 50%;
-            left: 50%;
-            transform: translate(-50%, -50%);
-            z-index: 20;
+            position: relative;
+            margin: auto;
+            background: #fff;
             display: flex;
             flex-direction: column;
             align-items: center;
+            justify-content: center;
+            box-shadow: 0 0 20px #ccc;
+            aspect-ratio: 1191 / 1684;
+            /* Hält das Seitenverhältnis */
+            overflow: hidden;
         }
 
         #joystick-list div {
@@ -34,7 +43,7 @@
         }
 
         #joystick-list span {
-            margin: 10px;
+            margin: 1px;
             font-weight: bold;
             font-size: 2rem;
             color: black;
@@ -47,14 +56,33 @@
 <body>
     <div id="joystick-list"></div>
     <script>
-        // Grid-Parameter
+
+
         let rows = 1;
         let cols = 1;
-        let patternOffset = 0;
-        let patternArrangement = 1;
         const container = document.getElementById('joystick-list');
 
-        // Schriftarten
+        let patternOffset = 0;
+        let patternArrangement = 1;
+
+        function buildGrid() {
+            container.innerHTML = '';
+            for (let i = 0; i < rows; i++) {
+                const rowDiv = document.createElement('div');
+                // Offset für das Muster
+                let dynamicCols = cols + ((i + patternOffset) % patternArrangement);
+                for (let j = 0; j < dynamicCols; j++) {
+                    const span = document.createElement('span');
+                    span.textContent = "JOYSTICK";
+                    rowDiv.appendChild(span);
+                }
+                container.appendChild(rowDiv);
+            }
+        }
+
+        buildGrid();
+
+        // Controller-Logik
         const fonts = [
             'Arial, sans-serif',
             'Courier New, monospace',
@@ -68,45 +96,118 @@
         let currentFontIndex = 0;
         let lastButton1State = false;
 
-        // Style-Parameter
+        let summe = 0;
         let fontSizeValue = 32;
         let myWordSpacing = 32;
+
         let myLetterSpacing = 0;
         let myWordMargin = 0;
-        let red = 0;
-        let green = 0;
-        let summe = 0;
 
-        // Grid bauen
-        function buildGrid() {
-            container.innerHTML = '';
-            for (let i = 0; i < rows; i++) {
-                const rowDiv = document.createElement('div');
-                let dynamicCols = cols + ((i + patternOffset) % patternArrangement);
-                for (let j = 0; j < dynamicCols; j++) {
-                    const span = document.createElement('span');
-                    span.textContent = "JOYSTICK";
-                    span.style.fontFamily = fonts[currentFontIndex];
-                    span.style.fontSize = fontSizeValue + 'px';
-                    span.style.lineHeight = myWordSpacing + 'px';
-                    span.style.letterSpacing = myLetterSpacing + 'px';
-                    span.style.margin = myWordMargin + 'px';
-                    span.style.color = `rgb(${Math.round(red)},${Math.round(green)},255)`;
-                    rowDiv.appendChild(span);
-                }
-                container.appendChild(rowDiv);
+        let red = 0;
+        let green = 0
+
+        let isPosterMode = false;
+        let lastButton9State = false;
+
+        let lastButton8State = false;
+
+        function setGridSize() {
+            const grid = document.getElementById('joystick-list');
+            if (isPosterMode) {
+                // Postergröße (A4) und zentriert
+                grid.style.position = 'absolute';
+                grid.style.top = '0';
+                grid.style.left = '0';
+                grid.style.right = '0';
+                grid.style.bottom = '0';
+                grid.style.width = '';
+                grid.style.height = '';
+                grid.style.maxWidth = '595px';
+                grid.style.maxHeight = '842px';
+                grid.style.aspectRatio = '595 / 842';
+                grid.style.margin = 'auto';
+            } else {
+                // Bildschirmfüllend
+                grid.style.position = 'relative';
+                grid.style.top = '';
+                grid.style.left = '';
+                grid.style.right = '';
+                grid.style.bottom = '';
+                grid.style.width = '100vw';
+                grid.style.height = '100vh';
+                grid.style.maxWidth = '';
+                grid.style.maxHeight = '';
+                grid.style.aspectRatio = '595 / 842';
+                grid.style.margin = '0';
             }
         }
+        setGridSize();
 
-        buildGrid();
-
-        // Gamepad-Logik
         function checkGamepad() {
+
+
             const gamepads = navigator.getGamepads();
             const gamepad = gamepads[0];
 
             if (gamepad) {
-                // Schriftart wechseln (Button 1)
+                gamepad.buttons.forEach((btn, idx) => {
+                    if (btn.pressed) {
+                        console.log("Button " + idx + " pressed");
+                    }
+                });
+
+            }
+
+
+
+            if (gamepad) {
+
+                if (gamepad.buttons[8] && gamepad.buttons[8].pressed && !lastButton8State) {
+                    // Zufällige Schriftart
+                    currentFontIndex = Math.floor(Math.random() * fonts.length);
+
+                    // Zufällige Farbe
+                    // red = Math.floor(Math.random() * 256);
+                    // green = Math.floor(Math.random() * 256);
+
+                    // Zufällige Schriftgröße und Zeilenabstand
+                    fontSizeValue = Math.floor(Math.random() * 100) + 20;
+                    myWordSpacing = Math.floor(Math.random() * 100) + 20;
+
+                    // Zufällige Gridgröße
+                    cols = Math.floor(Math.random() * 10) + 2;
+                    rows = Math.floor(Math.random() * 10) + 2;
+
+                    // Grid neu bauen und Styles anwenden
+                    buildGrid();
+                    document.querySelectorAll('#joystick-list span').forEach(span => {
+                        span.style.fontFamily = fonts[currentFontIndex];
+                        span.style.fontSize = fontSizeValue + 'px';
+                        span.style.lineHeight = myWordSpacing + 'px';
+                        // span.style.color = `rgb(${red},${green},255)`;
+                    });
+                }
+                lastButton8State = gamepad.buttons[8] && gamepad.buttons[8].pressed;
+
+                let button9Pressed = gamepad.buttons[9] && gamepad.buttons[9].pressed;
+                if (button9Pressed && !lastButton9State) {
+                    isPosterMode = !isPosterMode;
+                    setGridSize();
+                }
+                lastButton9State = button9Pressed;
+
+                if (gamepad.buttons[5].pressed) {
+
+                    patternOffset += gamepad.axes[0] * .1;
+                    patternOffset = Math.max(0, Math.min(10, patternOffset));
+
+                    patternArrangement += gamepad.axes[1] * .1;
+                    patternArrangement = Math.max(1, Math.min(3, patternArrangement));
+
+                    buildGrid();
+
+                };
+
                 let button1Pressed = gamepad.buttons[1].pressed;
                 if (button1Pressed && !lastButton1State) {
                     currentFontIndex = (currentFontIndex + 1) % fonts.length;
@@ -116,63 +217,83 @@
                 }
                 lastButton1State = button1Pressed;
 
-                // Schriftgröße & Zeilenabstand (Button 2 + Stick)
+
+
                 if (gamepad.buttons[2].pressed) {
-                    fontSizeValue += gamepad.axes[0] * 2;
-                    fontSizeValue = Math.max(10, Math.min(200, fontSizeValue));
-                    myWordSpacing += gamepad.axes[1] * 2;
-                    myWordSpacing = Math.max(10, Math.min(200, myWordSpacing));
-                }
-                document.querySelectorAll('#joystick-list span').forEach(span => {
-                    span.style.fontSize = fontSizeValue + 'px';
-                    span.style.lineHeight = myWordSpacing + 'px';
-                });
-
-                // Grid-Pattern ändern (Button 5 + Stick)
-                if (gamepad.buttons[5].pressed) {
-                    patternOffset += gamepad.axes[0] * 0.1;
-                    patternOffset = Math.max(0, Math.min(10, patternOffset));
-                    patternArrangement += gamepad.axes[1] * 0.1;
-                    patternArrangement = Math.max(1, Math.min(3, patternArrangement));
-                    buildGrid();
+                    // Zum Beispiel: Achse 0 (links/rechts) steuert die Summe
+                    summe += gamepad.axes[0]; // oder z.B. summe += gamepad.axes[0] * 0.1;
+                    // Optional: Begrenzen
+                    summe = Math.max(0, Math.min(100, summe));
+                    // Ausgabe zur Kontrolle
+                    console.log("Summe:", summe);
                 }
 
-                // Grid-Größe ändern (Button 4 + Stick)
-                if (gamepad.buttons[4].pressed) {
-                    cols += gamepad.axes[0] / 5;
-                    cols = Math.max(1, Math.round(cols));
-                    rows += gamepad.axes[1] / 5;
-                    rows = Math.max(1, Math.round(rows));
-                    buildGrid();
-                }
+                if (gamepad) {
+                    if (gamepad.buttons[2].pressed) {
 
-                // Letter-Spacing & Margin (Button 3 + Stick)
-                if (gamepad.buttons[3].pressed) {
-                    myLetterSpacing += gamepad.axes[0];
-                    myWordMargin += gamepad.axes[1];
+                        fontSizeValue += gamepad.axes[0] * 2;
+                        myWordSpacing += gamepad.axes[1] * 2;
+
+                    }
+
                     document.querySelectorAll('#joystick-list span').forEach(span => {
-                        span.style.letterSpacing = myLetterSpacing + 'px';
-                        span.style.margin = myWordMargin + 'px';
+                        span.style.fontSize = fontSizeValue + 'px';
+                        span.style.lineHeight = myWordSpacing + 'px';
                     });
                 }
 
-                // Farbe ändern (Button 0 + Stick)
-                if (gamepad.buttons[0].pressed) {
-                    red += gamepad.axes[0] * 5;
-                    green += gamepad.axes[1] * 5;
-                    red = Math.max(0, Math.min(255, red));
-                    green = Math.max(0, Math.min(255, green));
-                    let currentColor = `rgb(${Math.round(red)},${Math.round(green)},255)`;
-                    document.querySelectorAll('#joystick-list span').forEach(span => {
-                        span.style.color = currentColor;
-                    });
+                if (gamepad) {
+                    if (gamepad.buttons[4].pressed) {
+                        cols += gamepad.axes[0] / 5;
+                        rows += gamepad.axes[1] / 5;
+
+                        cols = Math.max(1, Math.min(30, cols));
+                        rows = Math.max(1, Math.min(30, rows));
+
+                        buildGrid();
+                    }
                 }
 
-                // Seite neu laden (Button 16)
-                if (gamepad.buttons[16] && gamepad.buttons[16].pressed) {
-                    location.reload();
+                if (gamepad) {
+                    if (gamepad.buttons[3].pressed) {
+
+                        myLetterSpacing += gamepad.axes[0];
+                        myWordMargin += gamepad.axes[1];
+
+                        document.querySelectorAll('#joystick-list span').forEach(span => {
+                            span.style.letterSpacing = myLetterSpacing + 'px';
+                            span.style.margin = myWordMargin + 'px';
+                        });
+                    }
                 }
+
+
+                // if (gamepad.buttons[0].pressed) {
+
+
+
+                //     red += gamepad.axes[0] * 5;
+                //     // Begrenzen auf 0–255
+
+                //     green += gamepad.axes[1] * 5;
+
+                //     red = Math.max(0, Math.min(255, red));
+                //     green = Math.max(0, Math.min(255, green)); // Begrenzen auf 0–255
+
+                //     let currentColor = "rgb(" + Math.round(red) + "," + Math.round(green) + ", 255)";
+                //     document.querySelectorAll('#joystick-list span').forEach(span => {
+                //         span.style.color = currentColor;
+                //     });
+
+                //     console.log("Current Color:", currentColor);
+                // }
+
+                // if (gamepad.buttons[16] && gamepad.buttons[16].pressed) {
+                //     location.reload();
+                // }
             }
+
+
 
             requestAnimationFrame(checkGamepad);
         }
