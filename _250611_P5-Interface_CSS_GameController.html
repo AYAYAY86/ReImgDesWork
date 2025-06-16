@@ -149,14 +149,18 @@
             const gamepads = navigator.getGamepads();
             const gamepad = gamepads[0];
 
-            if (gamepad) {
-                gamepad.buttons.forEach((btn, idx) => {
-                    if (btn.pressed) {
-                        console.log("Button " + idx + " pressed");
-                    }
-                });
+            // if (gamepad) {
+            //     gamepad.buttons.forEach((btn, idx) => {
+            //         if (btn.pressed) {
+            //             console.log("Button " + idx + " pressed");
+            //         }
+            //     });
 
-            }
+            // }
+
+            if (gamepad) {
+                console.log(gamepad); // Zeigt das komplette Gamepad-Objekt in der Konsole
+            }   
 
 
 

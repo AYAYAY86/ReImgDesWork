@@ -1,0 +1,187 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <style>
+    body,
+    html,
+    body {
+      height: 100%;
+      width: 100%;
+      margin: 0;
+      padding: 0;
+      position: relative;
+    }
+
+    canvas {
+      display: block;
+      margin: auto;
+      position: absolute;
+      top: 0;
+      left: 0;
+      bottom: 0;
+      right: 0;
+    }
+  </style>
+  <link rel="stylesheet" type="text/css" href="style.css">
+  <meta charset="utf-8" />
+</head>
+
+<body>
+
+</body>
+<!-- <script src="hydra-synth.js"></script> -->
+<!-- <script src="https://unpkg.com/hydra-synth"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/p5.js/1.9.3/p5.js"></script> -->
+<script src="libaries/hydra-synth.js"></script>
+<script src="libaries/p5.min.js"></script>
+<script>
+
+  /*
+  COLOR TRACKING (BONUS)
+  So far, we've looked at how to process images but we haven't been extracting much information from them (ie the "vision" part of "computer vision"). Detecting things like faces is very complex and is the result of decades of research, so we'll start much more simply: detecing if a single color is present in an image. 
+  
+  If you have control over the context (ie objects in the scene, lighting, and background) this can work really well. In the real world, though, light and cameras can be really variable. The "tolerance" variable helps here a bit, giving more flexibility for matching.
+  
+  CHALLENGES
+  1. Can you save the previously selected color so, when the user comes back, they start where they left off? (Hint: see storeItem() for details.)
+  2. You'll notice that our tracking is a bit jumpy. One way to fix that is to perform a running average of the location, a process called "smoothing." Can you implement this? (Hint: you'll need an array of points, which is constantly shifted and  averaged.)
+  3. Another way we might improve our system is by first looking for the color in the region it was last found; if it's not there, then looking at the entire image. Can you implement this?
+  
+  */
+
+  // How much wiggle-room is allowed when matching the color?
+  let tolerance = 5;
+
+  // Color to look for (set with mouse click)
+  let colorToMatch;
+
+  let video;
+
+  let smoothedPositions = [];
+
+  let pg; // p5.Graphics-Objekt
+
+  function setup() {
+    background(0)
+    storeItem('selectedColors', []);
+    createCanvas(windowWidth, windowHeight);
+
+    // An initial color to look for
+    colorToMatch = color(255, 150, 0);
+
+    let savedColors = getItem('selectedColors');
+    if (savedColors && savedColors.length > 0) {
+      colorToMatch = color(savedColors[0][0], savedColors[0][1], savedColors[0][2]);
+    }
+
+    // Webcam capture
+    video = createCapture(VIDEO, { flipped: true });
+    video.size(640, 480);
+    video.hide();
+
+    // p5.Graphics-Objekt in Videogröße
+    pg = createGraphics(video.width, video.height);
+  }
+
+  function draw() {
+    background(0);
+    let x = (width - video.width) / 2;
+    let y = (height - video.height) / 2;
+    image(video, x, y);
+
+    // Grafik-Buffer NICHT leeren, damit die Kreise eine Spur hinterlassen
+    pg.clear();
+
+    let savedColors = getItem('selectedColors') || [];
+    // Initialisiere smoothedPositions mit der aktuellen Position, falls noch nicht vorhanden
+    for (let i = 0; i < savedColors.length; i++) {
+      if (!smoothedPositions[i]) {
+        let firstPx = findColor(video, [savedColors[i][0], savedColors[i][1], savedColors[i][2]], tolerance);
+        if (firstPx !== undefined) {
+          smoothedPositions[i] = createVector(firstPx.x, firstPx.y);
+        } else {
+          smoothedPositions[i] = createVector(0, 0);
+        }
+      }
+    }
+
+    for (let i = 0; i < savedColors.length; i++) {
+      let c = color(savedColors[i][0], savedColors[i][1], savedColors[i][2]);
+      let firstPx = findColor(video, [savedColors[i][0], savedColors[i][1], savedColors[i][2]], tolerance);
+
+      if (firstPx !== undefined) {
+        smoothedPositions[i].x = lerp(smoothedPositions[i].x, firstPx.x, 0.2);
+        smoothedPositions[i].y = lerp(smoothedPositions[i].y, firstPx.y, 0.2);
+
+        pg.fill(c);
+        pg.noStroke()
+        pg.circle(smoothedPositions[i].x, smoothedPositions[i].y, 30);
+
+            pg.fill(255);
+    pg.textSize(16);
+    pg.textAlign(LEFT, TOP);
+    pg.text(
+      `x: ${smoothedPositions[i].x.toFixed(0)}\ny: ${smoothedPositions[i].y.toFixed(0)}`,
+      smoothedPositions[i].x + 20,
+      smoothedPositions[i].y - 15
+    );
+      }
+    }
+
+    // Das pg-Objekt an der gleichen Stelle wie das Video anzeigen
+    image(pg, x, y);
+  }
+
+  function mousePressed() {
+    loadPixels();
+    let pickedColor = get(mouseX, mouseY);
+    let allColors = getItem('selectedColors') || [];
+    allColors.push([red(pickedColor), green(pickedColor), blue(pickedColor)]);
+    storeItem('selectedColors', allColors);
+  }
+
+  // Find the first instance of a color in an image and return the location
+  function findColor(input, c, tolerance) {
+
+    // If we don't have video yet (ie the sketch just started), then return undefined
+    if (input.width === 0 || input.height === 0) {
+      return undefined;
+    }
+
+    // Grab rgb from color to match
+    let matchR = c[0];
+    let matchG = c[1];
+    let matchB = c[2];
+
+    // Look for the color! In this case, we look across each row working our way down the image – depending on your project, you might want to scan across instead
+    input.loadPixels();
+    for (let y = 0; y < input.height; y++) {
+      for (let x = 0; x < input.width; x++) {
+
+        // Current pixel color
+        let index = (y * video.width + x) * 4;
+        let r = video.pixels[index];
+        let g = video.pixels[index + 1];
+        let b = video.pixels[index + 2];
+
+        // If our color detection has no wiggle-room (either the color matches perfectly or isn't seen at all) then it won't work very well in real-world conditions to overcome this, we check if the rgb values are within a certain range – if they are, we consider it a match
+        if (r >= matchR - tolerance && r <= matchR + tolerance &&
+          g >= matchG - tolerance && g <= matchG + tolerance &&
+          b >= matchB - tolerance && b <= matchB + tolerance) {
+
+          // Send back the x/y location immediately (faster, since we stop the loop)
+          return createVector(x, y);
+        }
+      }
+    }
+
+    // If no match was found, return 'undefined'
+    return undefined;
+  }
+
+
+
+</script>
+
+</html>
