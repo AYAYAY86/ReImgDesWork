@@ -7,92 +7,26 @@
 </head>
 <body>
   <script>
-let slider, button, dropdown, checkbox, radio, input, colorPicker, vSlider;
-let sliderValue = 100;
-let vSliderValue = 100;
-let dropdownValue = 'A';
-let checkboxValue = false;
-let radioValue = 'one';
-let inputValue = '';
-let pickedColor = '#ff0000';
+let points = [];
 
 function setup() {
   createCanvas(600, 400);
-
-  // Horizontal Slider
-  slider = createSlider(0, 255, 100);
-  slider.position(20, 20);
-  slider.input(() => sliderValue = slider.value());
-
-  // Vertikaler Slider (weiter rechts und weiter unten platzieren)
-  vSlider = createSlider(0, 255, 100);
-  vSlider.position(120, 60); // x=180, y=60 (damit er nicht überlappt)
-  vSlider.style('width', '120px');
-  vSlider.input(() => vSliderValue = vSlider.value());
-  vSlider.style('transform', 'rotate(-90deg)');
-
-  // Button
-  button = createButton('Click me');
-  button.position(20, 60);
-  button.mousePressed(() => alert('Button clicked!'));
-
-  // Dropdown (Select)
-  dropdown = createSelect();
-  dropdown.position(20, 100);
-  dropdown.option('A');
-  dropdown.option('B');
-  dropdown.option('C');
-  dropdown.option('D');
-  dropdown.option('E');
-  dropdown.option('F');
-  dropdown.changed(() => dropdownValue = dropdown.value());
-
-  // Checkbox
-  checkbox = createCheckbox('Checkbox', false);
-  checkbox.position(20, 140);
-  checkbox.changed(() => checkboxValue = checkbox.checked());
-
-  // Radio Buttons
-  radio = createRadio();
-  radio.option('one');
-  radio.option('two');
-  radio.option('three');
-  radio.position(20, 180);
-  radio.changed(() => radioValue = radio.value());
-
-  // Text Input
-  input = createInput('');
-  input.position(20, 230);
-  input.input(() => inputValue = input.value());
-
-  // Color Picker
-  colorPicker = createColorPicker('#ff0000');
-  colorPicker.position(20, 270);
-  colorPicker.input(() => pickedColor = colorPicker.value());
+  background(255);
 }
 
 function draw() {
-  background(220);
+  background(255);
 
-  fill(sliderValue);
-  rect(200, 20, 100, 30);
-
-  fill(vSliderValue);
-  rect(350, 20, 30, 100);
-
-  fill(pickedColor);
-  ellipse(250, 80, 50);
-
-  fill(0);
-  textSize(16);
-  text('Slider value: ' + sliderValue, 320, 40);
-  text('Vertical slider: ' + vSliderValue, 320, 70);
-  text('Dropdown: ' + dropdownValue, 320, 100);
-  text('Checkbox: ' + (checkboxValue ? 'checked' : 'unchecked'), 320, 130);
-  text('Radio: ' + radioValue, 320, 160);
-  text('Text input: ' + inputValue, 320, 190);
-  text('Color: ' + pickedColor, 320, 220);
+  // Draw the line from stored points
+  noFill();
+  stroke(0);
+  beginShape();
+  for (let pt of points) {
+    vertex(pt.x, pt.y);
+  }
+  endShape();
 }
+
   </script>
 </body>
 </html>
