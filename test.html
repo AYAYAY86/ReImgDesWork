@@ -1,32 +1,58 @@
 <!DOCTYPE html>
-<html lang="de">
+<html lang="en">
 <head>
-  <meta charset="UTF-8">
-  <title>p5.js GUI Elemente Übersicht</title>
-  <script src="libaries/p5.min.js"></script>
+  <meta charset="UTF-8" />
+  <title>p5.js Code Editor</title>
+  <style>
+    body { font-family: sans-serif; padding: 20px; }
+    textarea { width: 100%; height: 200px; font-family: monospace; }
+    iframe { width: 100%; height: 400px; border: 1px solid #ccc; margin-top: 20px; }
+    button { margin-top: 10px; }
+  </style>
 </head>
 <body>
-  <script>
-let points = [];
 
+<textarea id="editor">// Write your p5.js sketch here
 function setup() {
-  createCanvas(600, 400);
-  background(255);
+  createCanvas(400, 400);
 }
 
 function draw() {
-  background(255);
-
-  // Draw the line from stored points
-  noFill();
-  stroke(0);
-  beginShape();
-  for (let pt of points) {
-    vertex(pt.x, pt.y);
-  }
-  endShape();
+  background(200);
+  ellipse(mouseX, mouseY, 50, 50);
 }
+</textarea>
 
-  </script>
+<br>
+<button onclick="runCode()">▶ Run</button>
+
+<iframe id="preview"></iframe>
+
+<script>
+function runCode() {
+  const userCode = document.getElementById('editor').value;
+
+  const fullHTML = `
+    <!DOCTYPE html>
+    <html>
+    <head>
+      <script src="https://cdnjs.cloudflare.com/ajax/libs/p5.js/1.4.0/p5.min.js"><\/script>
+    </head>
+    <body>
+      <script>
+        ${userCode.replace(/<\/script>/g, '<\\/script>')}
+      <\/script>
+    </body>
+    </html>
+  `;
+
+  const blob = new Blob([fullHTML], { type: 'text/html' });
+  const url = URL.createObjectURL(blob);
+  document.getElementById('preview').src = url;
+}
+</script>
+
 </body>
-</html>
+</html><!-- Stelle sicher, dass du ein iframe hast -->
+<iframe id="preview"></iframe><!-- Stelle sicher, dass du ein iframe hast -->
+<iframe id="preview"></iframe>
