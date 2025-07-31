@@ -1,0 +1,258 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <style>
+        body,
+        html {
+            margin: 0;
+            padding: 0;
+            width: 100%;
+            height: 100%;
+            overflow: hidden;
+        }
+
+        canvas {
+            display: block;
+            width: 100%;
+            height: 100%;
+        }
+    </style>
+
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Performance H5</title>
+</head>
+
+<body>
+
+    <script src='https://unpkg.com/hydra-synth'></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/p5.js/1.9.0/p5.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/gh/ffd8/hy5@main/hy5.js"></script>
+
+    <script>
+
+        // hydra » p5 » hydra
+        // pass hydra into p5 and post-process with 2nd hydra!
+        // cc teddavis.org 2024
+
+        s0.initP5() // send p5 to hydra
+        P5.toggle() // optionally hide p5
+
+        H.pixelDensity(1.5) // 2x retina
+
+        src(s0)
+            //noize(10)
+            //.scrollX(.0025)
+            //.scale(.9)
+            //.modulate(noize(10,10.01,.5)
+            //.kaleid(50)
+            //.scale(({time})=>Math.sin(time*10)*0.5+1)
+            //.modulate(noise(0.6,0.5))
+            //,0.001)
+            .out()
+
+        let posR = { x: 0, y: 0 };
+        let posL = { x: 0, y: 0 };
+
+        let gamepad;
+
+        let xR = 0, yR = 0;
+        let xL = 0, yL = 0;
+
+        let smoothXR = 0, smoothYR = 0;
+        let smoothXL = 0, smoothYL = 0;
+
+        let mode = 0;
+        let prevButtonState = false;
+
+        let ellipseSize = 200;
+
+        let shapeMode = 0;
+        let prevShapeButton = false;
+
+        let shapeColor;
+        let colorIndex = 0;
+        let prevColorButton = false;
+
+        // Example color palette
+        let colors = [
+            [255, 0, 0],     // red
+            [0, 255, 0],     // green
+            [0, 0, 255],     // blue
+            [255, 255, 0],   // yellow
+            [255, 0, 255],   // magenta
+            [0, 255, 255],   // cyan
+            [125],             // black
+            [255]            // white
+        ];
+
+        function setup() {
+            createCanvas(windowWidth, windowHeight)
+            angleMode(DEGREES)
+            posR.x = width / 2;
+            posR.y = height / 2;
+            posL.x = width / 2;
+            posL.y = height / 2;
+        }
+
+        function drawShape(x, y, size) {
+            fill(shapeColor);
+            stroke(shapeColor);
+            if (shapeMode === 0) {
+                ellipse(x, y, size);
+            } else if (shapeMode === 1) {
+                rectMode(CENTER);
+                rect(x, y, size, size);
+            } else if (shapeMode === 2) {
+                triangle(
+                    x, y - size / 2,
+                    x - size / 2, y + size / 2,
+                    x + size / 2, y + size / 2
+                );
+            } else if (shapeMode === 3) {
+                push()
+                // stroke(255)
+                strokeWeight(10)
+                line(x - size / 2, y - size / 2, x + size / 2, y + size / 2);
+                line(x + size / 2, y - size / 2, x - size / 2, y + size / 2);
+                pop()
+            }
+        }
+
+        
+
+        function draw() {
+            background(0)
+            H.get()
+
+            // image(h0, 0, 0)
+            //image(h0, 0, 0, h0.width*1.1, h0.height*1.01)
+            //fill(255,0,0)
+            //circle
+
+            let gamepads = navigator.getGamepads();
+            gamepad = gamepads[0];
+            if (!gamepad) return;
+
+
+            xR = gamepad.axes[1];
+            yR = gamepad.axes[0];
+            xL = gamepad.axes[3];
+            yL = gamepad.axes[2];
+
+            let speed = 15;
+
+            // Update positions like velocity input
+            posR.x += xR * speed;
+            posR.y -= yR * speed;
+            posL.x -= xL * speed;
+            posL.y += yL * speed;
+
+            // Optional: constrain to canvas
+            posR.x = constrain(posR.x, 0, width);
+            posR.y = constrain(posR.y, 0, height);
+            posL.x = constrain(posL.x, 0, width);
+            posL.y = constrain(posL.y, 0, height);
+
+            // Draw ellipses
+            fill(0, 255, 255);
+            // ellipse(posR.x, posR.y, 100);
+
+            // fill(255, 0, 0);
+            //ellipse(posL.x, posL.y, 100);
+
+
+            let easing = 0.1;
+
+            smoothXR += (xR - smoothXR) * easing;
+            smoothYR += (yR - smoothYR) * easing;
+            smoothXL += (xL - smoothXL) * easing;
+            smoothYL += (yL - smoothYL) * easing;
+
+            const colorPressed = gamepad.buttons[18]?.pressed;
+
+            if (colorPressed && !prevColorButton) {
+                colorIndex = (colorIndex + 1) % colors.length;
+            }
+            prevColorButton = colorPressed;
+            shapeColor = colors[colorIndex];
+
+
+            const isPressed = gamepad.buttons[12].pressed;
+            if (gamepad.buttons[15].pressed) ellipseSize += 2;
+            if (gamepad.buttons[14].pressed) ellipseSize -= 2;
+
+            const shapePressed = gamepad.buttons[13].pressed;
+
+            if (shapePressed && !prevShapeButton) {
+                shapeMode = (shapeMode + 1) % 4;
+            }
+            prevShapeButton = shapePressed;
+
+            // blendMode(DIFFERENCE);
+
+            ellipseSize = constrain(ellipseSize, 10, 400);
+
+            if (isPressed && !prevButtonState) {
+                mode = (mode + 1) % 4;
+            }
+            prevButtonState = isPressed;
+
+            if (mode === 0) {
+                drawShape(width / 2 + smoothXR * width / 2, height / 2 - smoothYR * height / 2, ellipseSize);
+            } else if (mode === 1) {
+                drawShape(posR.x, posR.y, ellipseSize);
+            } else if (mode === 2) {
+                drawShape(width / 2 + smoothXR * width / 2, height / 2 - smoothYR * height / 2, ellipseSize);
+                drawShape(width / 2 - smoothXR * width / 2, height / 2 + smoothYR * height / 2, ellipseSize);
+            } else if (mode === 3) {
+                drawShape(width / 2 + smoothXR * width / 2, height / 2 - smoothYR * height / 2, ellipseSize);
+                drawShape(width / 2 - smoothXR * width / 2, height / 2 + smoothYR * height / 2, ellipseSize);
+                drawShape(width / 2 - smoothXR * width / 2, height / 2 - smoothYR * height / 2, ellipseSize);
+                drawShape(width / 2 + smoothXR * width / 2, height / 2 + smoothYR * height / 2, ellipseSize);
+            }
+
+
+            //blendMode(DIFFERENCE);
+
+            // Draw right stick circle (blue)
+            // fill(0, 0, 255);
+            // strokeWeight(5)
+            // ellipse(width / 2 + smoothXR * width / 2, height / 2 - smoothYR * height / 2, 200);
+            // ellipse(width / 2 - smoothXR * width / 2, height / 2 + smoothYR * height / 2, 200);
+            // ellipse(width / 2 - smoothXR * width / 2, height / 2 - smoothYR * height / 2, 200);
+            // ellipse(width / 2 + smoothXR * width / 2, height / 2 + smoothYR * height / 2, 200);
+
+            // // Draw left stick circle (red)
+            // fill(255, 0, 0);
+            // strokeWeight(5)
+            // ellipse(width / 2 - smoothXL * width / 2, height / 2 + smoothYL * height / 2, 200);
+            // ellipse(width / 2 + smoothXL * width / 2, height / 2 - smoothYL * height / 2, 200);
+
+
+
+        }
+
+        function keyPressed() {
+            if (key == 'S') {
+                H2.save() // save 2nd hydra
+            }
+        }
+
+        // 2nd instance of hydra
+        var H2 = HY5.hydra('h2', 'synth')
+
+        H2.pixelDensity(1.25)
+        H2.zIndex(2)
+
+        synth.s0.initP5()
+
+        synth.src(synth.s0)
+            .modulateScale(synth.src(synth.o0).scroll(10.05), 1.)
+            //.modulate(noize(10,3.1),.01)
+            .out()
+    </script>
+</body>
+
+</html>

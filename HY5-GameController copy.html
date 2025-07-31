@@ -1,0 +1,73 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <style>
+        body,
+        html {
+            margin: 0;
+            padding: 0;
+            width: 100%;
+            height: 100%;
+            overflow: hidden;
+        }
+
+        canvas {
+            display: block;
+            width: 100%;
+            height: 100%;
+        }
+    </style>
+
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Performance H5</title>
+</head>
+
+<body>
+
+    <script src='https://unpkg.com/hydra-synth'></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/p5.js/1.9.0/p5.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/gh/ffd8/hy5@main/hy5.js"></script>
+
+    <script>
+
+        // hydra » p5 » hydra
+        // pass hydra into p5 and post-process with 2nd hydra!
+        // cc teddavis.org 2024
+
+        s0.initP5() // send p5 to hydra
+        // P5.toggle(0) // optionally hide p5
+
+        // H.pixelDensity(.25) // 2x retina
+
+        src(s0)
+            //noize(10)
+            // .scrollX(.0025)
+            .scale(1.01)
+            //.modulate(noize(10,10.01,.5)
+            //.kaleid(50)
+            //.scale(({time})=>Math.sin(time*10)*0.5+1)
+            //.modulate(noise(0.6,0.5))
+            //,0.001)
+            .out()
+
+function setup() {
+
+
+        // 2nd instance of hydra
+        var H2 = HY5.hydra('h2', 'synth')
+
+        H2.pixelDensity(.25)
+        H2.zIndex(2)
+
+        synth.s0.initP5()
+
+        synth.src(synth.s0)
+            .modulateScale(synth.src(synth.o0).scroll(10.05), 1.)
+            // .modulate(noize(100, 3.1), .01)
+            .out()
+    </script>
+</body>
+
+</html>

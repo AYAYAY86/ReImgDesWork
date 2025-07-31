@@ -51,19 +51,24 @@ function draw() {
     fill(0);
     text("Gamepad connected", width / 2, height / 2 - 40);
 
-    console.log(gamepad);
+    console.log(gamepad.buttons[21]);
 
     // Beispiel: Achsen (z. B. Joystick) anzeigen
-    let x = gamepad.axes[0]; // linker Stick X
-    let y = gamepad.axes[1]; // linker Stick Y
+    let xR = gamepad.axes[1]; // linker Stick X
+    let yR = gamepad.axes[0]; // linker Stick Y
+    let xL = gamepad.axes[3]; // linker Stick X
+    let yL = gamepad.axes[2]; // linker Stick Y
 
-    fill(100, 100, 255);
-    ellipse(width / 2 + x * 200, height / 2 + y * 200, 50);
+    fill(0, 0, 255);
+    // ellipse(width / 2 + xR * 200, height / 2 - yR * 200, 50);
+    fill(255, 0, 0);
+    // ellipse(width / 2 - xL * 200, height / 2 + yL * 200, 50);
 
     // Beispiel: Buttons anzeigen
     for (let i = 0; i < gamepad.buttons.length; i++) {
       if (gamepad.buttons[i].pressed) {
-        text("Button " + i + " pressed", width / 2, height / 2 + i * 20);
+        textSize(10)
+        text("Button " + i + " pressed", width/2, 10 + i * 15);
       }
     }
   } else {

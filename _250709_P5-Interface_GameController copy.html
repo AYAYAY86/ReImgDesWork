@@ -1,0 +1,114 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>GamePad</title>
+<!-- <script src='https://unpkg.com/hydra-synth'></script> -->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/p5.js/1.9.0/p5.min.js"></script>
+<!-- <script src="https://cdn.jsdelivr.net/gh/ffd8/hy5@main/hy5.js"></script> -->
+
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            text-align: center;
+            background-color: #f0f0f0;
+            margin: 0;
+            padding: 20px;
+            position: relative;
+        }
+
+        #canvas-container {
+            position: relative;
+            display: inline-block;
+        }
+
+        
+        #canvas-container {
+            position: relative;
+            display: inline-block;
+            margin: 60px auto;
+        }
+    </style>
+</head>
+<body>
+
+    
+    <script>
+let gamepad;
+
+let posR = { x: 0, y: 0 };
+let posL = { x: 0, y: 0 };
+
+function setup() {
+  createCanvas(windowWidth, windowHeight);
+  textAlign(CENTER, CENTER);
+  posR.x = width / 2;
+  posR.y = height / 2;
+  posL.x = width / 2;
+  posL.y = height / 2;  
+}
+
+
+function draw() {
+  background(0,10);
+
+  // Gamepad aktualisieren
+  let gamepads = navigator.getGamepads();
+  gamepad = gamepads[0];
+
+  if (gamepad) {
+    fill(0);
+    text("Gamepad connected", width / 2, height / 2 - 40);
+    if (!gamepad) return;
+
+    // console.log(gamepad.buttons[21]);
+
+    // Beispiel: Achsen (z. B. Joystick) anzeigen
+    let xR = gamepad.axes[1]; // linker Stick X
+    let yR = gamepad.axes[0]; // linker Stick Y
+    let xL = gamepad.axes[3]; // linker Stick X
+    let yL = gamepad.axes[2]; // linker Stick Y
+
+    let speed = 5;
+
+  // Update positions like velocity input
+  posR.x += xR * speed;
+  posR.y -= yR * speed;
+  posL.x -= xL * speed;
+  posL.y += yL * speed;
+
+  // Optional: constrain to canvas
+  posR.x = constrain(posR.x, 0, width);
+  posR.y = constrain(posR.y, 0, height);
+  posL.x = constrain(posL.x, 0, width);
+  posL.y = constrain(posL.y, 0, height);
+
+  // Draw ellipses
+  fill(0, 0, 255);
+  ellipse(posR.x, posR.y, 50);
+
+  fill(255, 0, 0);
+  ellipse(posL.x, posL.y, 50);
+
+    fill(0, 0, 255);
+    ellipse(width / 2 + xR * width/2, height / 2 - yR * height/2, 50);
+    fill(255, 0, 0);
+    ellipse(width / 2 - xL * 200, height / 2 + yL * 200, 50);
+
+    // Beispiel: Buttons anzeigen
+  //   for (let i = 0; i < gamepad.buttons.length; i++) {
+  //     if (gamepad.buttons[i].pressed) {
+  //       textSize(10)
+  //       text("Button " + i + " pressed", width/2, 10 + i * 15);
+  //     }
+  //   }
+  // } else {
+  //   fill(150);
+  //   text("Press any button on your controller…", width / 2, height / 2);
+  }
+  //noLoop()
+}
+    </script>
+</body>
+</html>
