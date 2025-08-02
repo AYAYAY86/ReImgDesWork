@@ -1,0 +1,276 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Reimagine Design Tools</title>
+  <style>
+    body {
+      margin: 0;
+      font-family: 'Consolas', 'Menlo', 'Monaco', 'Courier New', monospace;
+      background-color: #fff;
+      color: #000;
+    }
+
+    header {
+      position: sticky;
+      top: 0;
+      background: white;
+      padding: 1rem;
+      border-bottom: 1px solid #ddd;
+      z-index: 10;
+      display: flex;
+      justify-content: space-between;
+      align-items: baseline;
+    }
+
+    header h1 {
+      font-size: 1.5rem;
+      margin: 0;
+    }
+
+    .header-buttons {
+      display: flex;
+      gap: 0.5rem;
+    }
+
+    .header-btn {
+      font-size: 0.8rem;
+      padding: 0.3rem 0.6rem;
+      background: black;
+      color: white;
+      border: none;
+      border-radius: 4px;
+      text-decoration: none;
+      transition: background 0.3s ease;
+    }
+
+    .header-btn:hover {
+      background: palevioletred;
+    }
+
+    main {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+      gap: 1rem;
+      padding: 1rem;
+    }
+
+    .project {
+      position: relative;
+      overflow: hidden;
+      aspect-ratio: 4 / 3;
+      cursor: pointer;
+    }
+
+    .project video {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      transition: transform 0.6s ease;
+    }
+
+    .project:hover video {
+      transform: scale(1.05);
+    }
+
+    .project-title {
+      position: absolute;
+      bottom: 0;
+      background: rgba(255, 255, 255, 0.8);
+      width: 100%;
+      padding: 0.5rem;
+      font-size: 0.8rem;
+      box-sizing: border-box;
+    }
+
+    .description {
+      padding: 0.2rem;
+      margin-top: 0.3rem;
+    }
+
+    .lightbox {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: rgba(0,0,0,0.85);
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      z-index: 1000;
+    }
+
+    .lightbox video {
+      max-width: 90%;
+      max-height: 90%;
+      border: 4px solid white;
+      box-shadow: 0 0 20px rgba(0,0,0,0.5);
+    }
+
+    .lightbox.hidden {
+      display: none;
+    }
+
+    .lightbox-description {
+      position: absolute;
+      bottom: 1rem;
+      left: 1rem;
+      right: 1rem;
+      background: rgba(255, 255, 255, 0.9);
+      color: black;
+      padding: 0.6rem;
+      font-size: 0.85rem;
+      font-style: italic;
+      z-index: 10;
+      text-align: left;
+      border-radius: 4px;
+    }
+
+    #closeBtn {
+      position: absolute;
+      top: 1rem;
+      right: 1.5rem;
+      font-size: 2rem;
+      color: white;
+      cursor: pointer;
+      font-family: sans-serif;
+    }
+
+    .nav-btn {
+      position: absolute;
+      top: 50%;
+      transform: translateY(-50%);
+      font-size: 2.5rem;
+      background: none;
+      color: white;
+      border: none;
+      cursor: pointer;
+      padding: 1rem;
+      user-select: none;
+      z-index: 1001;
+    }
+
+    #prevBtn { left: 1rem; }
+    #nextBtn { right: 1rem; }
+
+    .nav-btn:hover {
+      color: palevioletred;
+    }
+  </style>
+</head>
+<body>
+  <header>
+    <h1>Reimagine Design Tools</h1>
+    <div class="header-buttons">
+      <a href="video-doku.html" class="header-btn">Video Documentation</a>
+      <a href="index.html" class="header-btn">Reimagine Design Tools</a>
+    </div>
+  </header>
+
+  <div id="lightbox" class="lightbox hidden">
+    <span id="closeBtn">&times;</span>
+    <div id="lightbox-description" class="lightbox-description"></div>
+    <video id="lightbox-video" controls autoplay muted loop playsinline></video>
+    <button id="prevBtn" class="nav-btn">&#10094;</button>
+    <button id="nextBtn" class="nav-btn">&#10095;</button>
+  </div>
+
+  <main id="project-container"></main>
+
+  <script>
+    const projectData = [
+      {
+        title: "Project Video 1",
+        video: "videos/project1.mp4",
+        description: "Description for Project Video 1"
+      },
+      {
+        title: "Project Video 2",
+        video: "videos/project2.mp4",
+        description: "Description for Project Video 2"
+      }
+      // Add more video projects here
+    ];
+
+    const container = document.getElementById("project-container");
+
+    projectData.forEach(project => {
+      const html = `
+        <div class="project">
+          <video src="${project.video}" autoplay muted loop playsinline></video>
+          <div class="project-title">
+            <div class="description">${project.description}</div>
+          </div>
+        </div>
+      `;
+      container.insertAdjacentHTML("beforeend", html);
+    });
+
+    const lightbox = document.getElementById("lightbox");
+    const lightboxVideo = document.getElementById("lightbox-video");
+    const closeBtn = document.getElementById("closeBtn");
+    const lightboxDesc = document.getElementById("lightbox-description");
+
+    const galleryVideos = Array.from(document.querySelectorAll(".project video"));
+    let currentIndex = 0;
+
+    galleryVideos.forEach((vid, index) => {
+      vid.addEventListener("click", () => {
+        currentIndex = index;
+        showVideo(currentIndex);
+      });
+    });
+
+    function showVideo(index) {
+      const item = projectData[index];
+      if (!item) return;
+      lightboxVideo.src = item.video;
+      lightboxDesc.textContent = item.description || "";
+      lightbox.classList.remove("hidden");
+    }
+
+    closeBtn.addEventListener("click", () => {
+      lightbox.classList.add("hidden");
+      lightboxVideo.pause();
+    });
+
+    lightbox.addEventListener("click", (e) => {
+      if (e.target === lightbox) {
+        lightbox.classList.add("hidden");
+        lightboxVideo.pause();
+      }
+    });
+
+    document.getElementById("prevBtn").addEventListener("click", e => {
+      e.stopPropagation();
+      currentIndex = (currentIndex - 1 + projectData.length) % projectData.length;
+      showVideo(currentIndex);
+    });
+
+    document.getElementById("nextBtn").addEventListener("click", e => {
+      e.stopPropagation();
+      currentIndex = (currentIndex + 1) % projectData.length;
+      showVideo(currentIndex);
+    });
+
+    document.addEventListener("keydown", e => {
+      if (!lightbox.classList.contains("hidden")) {
+        if (e.key === "ArrowLeft") {
+          currentIndex = (currentIndex - 1 + projectData.length) % projectData.length;
+          showVideo(currentIndex);
+        }
+        if (e.key === "ArrowRight") {
+          currentIndex = (currentIndex + 1) % projectData.length;
+          showVideo(currentIndex);
+        }
+        if (e.key === "Escape") {
+          lightbox.classList.add("hidden");
+          lightboxVideo.pause();
+        }
+      }
+    });
+  </script>
+</body>
+</html>

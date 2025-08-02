@@ -7,24 +7,55 @@
   <style>
     body {
       margin: 0;
-      font-family: Arial, sans-serif;
+      font-family: 'Consolas', 'Menlo', 'Monaco', 'Courier New', monospace;
       background-color: #fff;
       color: #000;
     }
 
-    header {
-      position: sticky;
-      top: 0;
-      background: white;
-      padding: 1rem;
-      border-bottom: 1px solid #ddd;
-      z-index: 10;
-    }
+header {
+  position: sticky;
+  top: 0;
+  background: white;
+  padding: 1rem 1rem 0.5rem 1rem;
+  border-bottom: 1px solid #ddd;
+  z-index: 10;
+}
 
-    header h1 {
-      font-size: 1rem;
-      margin: 0 0 1rem 0;
-    }
+.header-top {
+  display: flex;
+  justify-content: space-between;
+  align-items: baseline; /* Aligns buttons to the baseline of h1 text */
+}
+
+header h1 {
+  font-size: 1.5rem;
+  margin: 0;
+  line-height: 1;
+}
+
+.header-buttons {
+  display: flex;
+  gap: 0.5rem;
+  align-items: baseline;
+}
+
+.header-btn {
+  font-size: 0.8rem;
+  margin: 0.5rem;
+  padding: 0.3rem 0.6rem;
+  background: black;
+  color: white;
+  border: none;
+  border-radius: 4px;
+  text-decoration: none;
+  transition: background 0.3s ease;
+  line-height: 1;
+}
+
+.header-btn:hover {
+
+  background: palevioletred;
+}
 
     .filters {
       margin-bottom: 0.5rem;
@@ -41,9 +72,15 @@
       cursor: pointer;
     }
 
+    .filter-btn:hover {
+      font-style: italic;
+      color: palevioletred;
+    }
+
     .filter-btn.active {
       background: black;
       color: white;
+      font-style: italic;
     }
 
     main {
@@ -79,105 +116,138 @@
       background: rgba(255, 255, 255, 0.8);
       width: 100%;
       padding: 0.5rem;
-      font-size: 0.9rem;
+      font-size: 0.8rem;
       box-sizing: border-box;
     }
+    
+.description {
+  padding: 0.2rem;
+
+  margin-top: 0.3rem;
+}
+    .project-title a {
+      color: black;
+      text-decoration: none;
+      margin: 0 0.3em;
+      font-weight: normal;
+    }
+
+    .project-title a:hover {
+      font-style: italic;
+      color: palevioletred;
+    }
+
+
 
     .hidden {
       display: none !important;
     }
-
-.inline-info {
-  position: absolute;
-  left: 0;
-  bottom: 2.5rem; /* Abstand über den Links */
-  width: 100%;
-  background: #FFF9C4;
-  color: #222;
-  padding: 0.7em 1em;
-  border-radius: 6px;
-  font-size: 1em;
-  font-weight: bold;
-  text-align: center;
-  box-shadow: 0 2px 8px rgba(0,0,0,0.07);
-  border: 1px solid #ffe082;
-  z-index: 2;
-    opacity: 0;
-  pointer-events: none;
-  transition: opacity 0.2s;
-}
-
-.project:hover .inline-info {
-  opacity: 1;
-  pointer-events: auto;
-}
-
-.project-title a {
-  color: black;
-  text-decoration: none;
-  margin: 0 0.3em;
-  font-weight: normal;
-}
-.project-title a:hover {
-  font-weight: bold;
-}
   </style>
 </head>
 
 <body>
-  <header>
+<header>
+  <div class="header-top">
     <h1>Reimagine Design Tools</h1>
-    <div class="filters">
-      <span class="filter-btn" data-tag="cursor">#cursor</span>
-      <span class="filter-btn" data-tag="layout">#layout</span>
-      <span class="filter-btn" data-tag="interaction">#interaction</span>
-       <span class="filter-btn" data-tag="experiments">#experiments</span>
+    <div class="header-buttons">
+      <a href="video-doku.html" class="header-btn">Video Documentation</a>
+      <a href="index_Process Documentation.html" class="header-btn">Process Documentation</a>
     </div>
-  </header>
-
-  <main>
-<div class="project" data-tags="cursor">
-  <img src="img/cursor1.png" alt="Project 3">
-  <div class="inline-info">Dies ist der Inlinetext für Project 3</div>
-  <div class="project-title">
-    <a href="project3.html" target="_blank">Projekt</a> |
-    <a href="documentation/Project3.html" target="_blank">Dokumentation</a> |
-    <a href="code/Project3.js" target="_blank">Code</a>
   </div>
-</div>
-
-<div class="project" data-tags="interaction">
-  <img src="img/image-garden.png" alt="Project 4">
-  <div class="inline-info">Dies ist der Inlinetext für Project 4</div>
-  <div class="project-title">
-    <a href="project4.html" target="_blank">Projekt</a> |
-    <a href="documentation/Project4.html" target="_blank">Dokumentation</a> |
-    <a href="code/Project4.js" target="_blank">Code</a>
+  <div class="filters">
+    <span class="filter-btn" data-tag="cursor">#cursor</span>
+    <span class="filter-btn" data-tag="layout">#layout</span>
+    <span class="filter-btn" data-tag="interaction">#interaction</span>
+    <span class="filter-btn" data-tag="experiments">#experiments</span>
   </div>
-</div>
+</header>
 
-<div class="project" data-tags="interaction layout">
-  <video src="img/donald_small_5.mp4" autoplay muted loop playsinline></video>
-  <div class="inline-info">Dies ist der Inlinetext für Project 5</div>
-  <div class="project-title">
-    <a href="project5.html" target="_blank">Projekt</a> |
-    <a href="documentation/Project5.html" target="_blank">Dokumentation</a> |
-    <a href="code/Project5.js" target="_blank">Code</a>
-  </div>
-</div>
-
-<div class="project" data-tags="cursor interaction">
-  <img src="img/cursor1.png" alt="Project 6">
-  <div class="inline-info">Dies ist der Inlinetext für Project 6</div>
-  <div class="project-title">
-    <a href="project6.html" target="_blank">Projekt</a> |
-    <a href="documentation/Project6.html" target="_blank">Dokumentation</a> |
-    <a href="code/Project6.js" target="_blank">Code</a>
-  </div>
-</div>
-  </main>
+  <main id="project-container"></main>
 
   <script>
+    const projectData = [
+      {
+        title: "Project 3",
+        tags: ["cursor"],
+        image: "img/cursor1.png",
+        href: "project3.html",
+        documentation: "documentation/Project3.html",
+        code: "code/Project3.js",
+        description: "Beschreibung oder Zusatzinfos zu Project 3."
+      },
+      {
+        title: "Project 4",
+        tags: ["interaction"],
+        image: "img/image-garden.png",
+        href: "project4.html",
+        documentation: "documentation/Project4.html",
+        code: "code/Project4.js",
+        description: "Dies ist der Inlinetext für Project 4"
+      },
+      {
+        title: "Project 5",
+        tags: ["interaction", "layout"],
+        video: "img/donald_small_5.mp4",
+        href: "project5.html",
+        documentation: "documentation/Project5.html",
+        code: "code/Project5.js",
+        description: "Dies ist der Inlinetext für Project 5"
+      },
+      {
+        title: "Project 6",
+        tags: ["cursor", "interaction"],
+        image: "img/cursor1.png",
+        href: "project6.html",
+        documentation: "documentation/Project6.html",
+        code: "code/Project6.js",
+        description: "Dies ist der Inlinetext für Project 6"
+      }
+    ];
+
+    const container = document.getElementById("project-container");
+
+    projectData.forEach(project => {
+      const tags = project.tags.join(" ");
+      const media = project.image
+        ? `<img src="${project.image}" alt="${project.title}">`
+        : `<video src="${project.video}" autoplay muted loop playsinline></video>`;
+
+      const html = `
+        <div class="project" data-tags="${tags}" data-href="${project.href}">
+          ${media}
+          <div class="project-title">
+            <a href="${project.href}" target="_blank">Projekt</a> |
+            <a href="${project.documentation}" target="_blank">Video</a> |
+            <a href="${project.code}" target="_blank">Code</a>
+            <div class="description">${project.description}</div>
+          </div>
+        </div>
+      `;
+      container.insertAdjacentHTML("beforeend", html);
+    });
+
+    // Make project box clickable
+    document.querySelectorAll('.project').forEach(project => {
+      project.addEventListener('click', e => {
+        if (e.target.tagName.toLowerCase() !== 'a') {
+          const url = project.getAttribute('data-href');
+          if (url) window.open(url, '_blank');
+        }
+      });
+
+      // Optional: pause/play video on hover
+      const video = project.querySelector('video');
+      if (video) {
+        video.pause();
+        project.addEventListener('mouseenter', () => video.play());
+        project.addEventListener('mouseleave', () => {
+          video.pause();
+          video.currentTime = 0;
+        });
+      }
+    });
+
+    // Tag filtering
     const buttons = document.querySelectorAll('.filter-btn');
     const projects = document.querySelectorAll('.project');
     const activeTags = new Set();
@@ -207,23 +277,6 @@
         }
       });
     }
-document.querySelectorAll('.project').forEach(project => {
-  const video = project.querySelector('video');
-  if (video) {
-    // Video initial pausieren
-    video.pause();
-
-    project.addEventListener('mouseenter', () => {
-      video.play();
-    });
-
-    project.addEventListener('mouseleave', () => {
-      video.pause();
-      video.currentTime = 0; // Optional: Video zurücksetzen
-    });
-  }
-});
-
   </script>
 </body>
 </html>
