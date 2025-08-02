@@ -1,8 +1,9 @@
+<!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8">
+  <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>My Work – Inspired by Nahuel Gerth</title>
+  <title>Reimagine Design Tools</title>
   <style>
     body {
       margin: 0;
@@ -22,12 +23,32 @@
 
     header h1 {
       font-size: 1rem;
-      margin: 0;
+      margin: 0 0 1rem 0;
+    }
+
+    .filters {
+      margin-bottom: 0.5rem;
+    }
+
+    .filter-btn {
+      display: inline-block;
+      margin: 0rem;
+      padding: 0.2rem .5rem;
+      font-size: 0.8rem;
+      background: #eee;
+      border: 0px solid white;
+      border-radius: 5px;
+      cursor: pointer;
+    }
+
+    .filter-btn.active {
+      background: black;
+      color: white;
     }
 
     main {
       display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+      grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
       gap: 1rem;
       padding: 1rem;
     }
@@ -44,7 +65,7 @@
       width: 100%;
       height: 100%;
       object-fit: cover;
-      transition: transform 0.3s ease;
+      transition: transform 0.6s ease;
     }
 
     .project:hover img,
@@ -61,47 +82,148 @@
       font-size: 0.9rem;
       box-sizing: border-box;
     }
+
+    .hidden {
+      display: none !important;
+    }
+
+.inline-info {
+  position: absolute;
+  left: 0;
+  bottom: 2.5rem; /* Abstand über den Links */
+  width: 100%;
+  background: #FFF9C4;
+  color: #222;
+  padding: 0.7em 1em;
+  border-radius: 6px;
+  font-size: 1em;
+  font-weight: bold;
+  text-align: center;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.07);
+  border: 1px solid #ffe082;
+  z-index: 2;
+    opacity: 0;
+  pointer-events: none;
+  transition: opacity 0.2s;
+}
+
+.project:hover .inline-info {
+  opacity: 1;
+  pointer-events: auto;
+}
+
+.project-title a {
+  color: black;
+  text-decoration: none;
+  margin: 0 0.3em;
+  font-weight: normal;
+}
+.project-title a:hover {
+  font-weight: bold;
+}
   </style>
 </head>
 
 <body>
   <header>
     <h1>Reimagine Design Tools</h1>
+    <div class="filters">
+      <span class="filter-btn" data-tag="cursor">#cursor</span>
+      <span class="filter-btn" data-tag="layout">#layout</span>
+      <span class="filter-btn" data-tag="interaction">#interaction</span>
+       <span class="filter-btn" data-tag="experiments">#experiments</span>
+    </div>
   </header>
+
   <main>
-    <div class="project">
-      <video src="img/donald_small_5.mp4" autoplay muted loop playsinline></video>
-      <div class="project-title">Project Title 1</div>
-    </div>
-    <div class="project">
-      <img src="img/image-garden_2.png" alt="Project 2">
-      <div class="project-title">Project Title 2</div>
-    </div>
-    <div class="project">
-      <img src="img/cursor1.png" alt="Project 3">
-      <div class="project-title">Project Title 3</div>
-    </div>
-    <a href="_250503_P5-RandomWalkerHydra.html" class="project" target="_blank">
-      <img src="img/image-garden.png" alt="Project 2">
-      <div class="project-title">Project Title 2</div>
-    </a>
-        <div class="project">
-      <video src="img/donald_small_5.mp4" autoplay muted loop playsinline></video>
-      <div class="project-title">Project Title 1</div>
-    </div>
-    <div class="project">
-      <img src="img/image-garden_2.png" alt="Project 2">
-      <div class="project-title">Project Title 2</div>
-    </div>
-    <div class="project">
-      <img src="img/cursor1.png" alt="Project 3">
-      <div class="project-title">Project Title 3</div>
-    </div>
-    <a href="_250503_P5-RandomWalkerHydra.html" class="project" target="_blank">
-      <img src="img/image-garden.png" alt="Project 2">
-      <div class="project-title">Project Title 2</div>
-    </a>
-    <!-- More projects can be added in the same format -->
+<div class="project" data-tags="cursor">
+  <img src="img/cursor1.png" alt="Project 3">
+  <div class="inline-info">Dies ist der Inlinetext für Project 3</div>
+  <div class="project-title">
+    <a href="project3.html" target="_blank">Projekt</a> |
+    <a href="documentation/Project3.html" target="_blank">Dokumentation</a> |
+    <a href="code/Project3.js" target="_blank">Code</a>
+  </div>
+</div>
+
+<div class="project" data-tags="interaction">
+  <img src="img/image-garden.png" alt="Project 4">
+  <div class="inline-info">Dies ist der Inlinetext für Project 4</div>
+  <div class="project-title">
+    <a href="project4.html" target="_blank">Projekt</a> |
+    <a href="documentation/Project4.html" target="_blank">Dokumentation</a> |
+    <a href="code/Project4.js" target="_blank">Code</a>
+  </div>
+</div>
+
+<div class="project" data-tags="interaction layout">
+  <video src="img/donald_small_5.mp4" autoplay muted loop playsinline></video>
+  <div class="inline-info">Dies ist der Inlinetext für Project 5</div>
+  <div class="project-title">
+    <a href="project5.html" target="_blank">Projekt</a> |
+    <a href="documentation/Project5.html" target="_blank">Dokumentation</a> |
+    <a href="code/Project5.js" target="_blank">Code</a>
+  </div>
+</div>
+
+<div class="project" data-tags="cursor interaction">
+  <img src="img/cursor1.png" alt="Project 6">
+  <div class="inline-info">Dies ist der Inlinetext für Project 6</div>
+  <div class="project-title">
+    <a href="project6.html" target="_blank">Projekt</a> |
+    <a href="documentation/Project6.html" target="_blank">Dokumentation</a> |
+    <a href="code/Project6.js" target="_blank">Code</a>
+  </div>
+</div>
   </main>
+
+  <script>
+    const buttons = document.querySelectorAll('.filter-btn');
+    const projects = document.querySelectorAll('.project');
+    const activeTags = new Set();
+
+    buttons.forEach(button => {
+      button.addEventListener('click', () => {
+        const tag = button.dataset.tag;
+        if (activeTags.has(tag)) {
+          activeTags.delete(tag);
+          button.classList.remove('active');
+        } else {
+          activeTags.add(tag);
+          button.classList.add('active');
+        }
+        updateVisibility();
+      });
+    });
+
+    function updateVisibility() {
+      projects.forEach(project => {
+        const tags = project.dataset.tags.split(" ");
+        const matches = [...activeTags].every(tag => tags.includes(tag));
+        if (activeTags.size === 0 || matches) {
+          project.classList.remove('hidden');
+        } else {
+          project.classList.add('hidden');
+        }
+      });
+    }
+document.querySelectorAll('.project').forEach(project => {
+  const video = project.querySelector('video');
+  if (video) {
+    // Video initial pausieren
+    video.pause();
+
+    project.addEventListener('mouseenter', () => {
+      video.play();
+    });
+
+    project.addEventListener('mouseleave', () => {
+      video.pause();
+      video.currentTime = 0; // Optional: Video zurücksetzen
+    });
+  }
+});
+
+  </script>
 </body>
 </html>

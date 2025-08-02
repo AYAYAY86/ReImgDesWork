@@ -1,10 +1,9 @@
 <!DOCTYPE html>
 <html lang="en">
-
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=300, initial-scale=1.0">
-  <title>ReImaging Design Tools – Documentation</title>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Reimagine Design Tools</title>
   <style>
     body {
       margin: 0;
@@ -49,48 +48,39 @@
 
     main {
       display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(400px, 1fr));
+      grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
       gap: 1rem;
       padding: 1rem;
     }
 
     .project {
-      background: #333;
-      border-radius: 16px;
-      box-shadow: 0 2px 8px rgba(0, 0, 0, 0.2);
       position: relative;
-      width: 100%;
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      transition: transform 0.2s;
-      overflow: visible;
+      overflow: hidden;
+      aspect-ratio: 4 / 3;
+      cursor: pointer;
     }
 
     .project img,
-    .doc-image {
+    .project video {
       width: 100%;
-      height: 200px;
+      height: 100%;
       object-fit: cover;
-      border-radius: 16px 16px 0 0;
-      background: #222;
-      display: block;
+      transition: transform 0.3s ease;
+    }
+
+    .project:hover img,
+    .project:hover video {
+      transform: scale(1.05);
     }
 
     .project-title {
+      position: absolute;
+      bottom: 0;
+      background: rgba(255, 255, 255, 0.8);
       width: 100%;
-      background: rgba(255, 255, 255, 0.08);
-      color: #fff;
-      font-size: 1.1rem;
       padding: 0.5rem;
-      text-align: center;
-      border-radius: 0 0 16px 16px;
-      font-weight: bold;
+      font-size: 0.9rem;
       box-sizing: border-box;
-      position: static;
-      bottom: unset;
-      background: rgba(255, 255, 255, 0.08);
-      color: #fff;
     }
 
     .hidden {
@@ -98,40 +88,36 @@
     }
 
     .tooltip {
-      visibility: hidden;
-      opacity: 0;
-      position: absolute;
-      left: 50%;
-      top: 10px;
-      transform: translateX(-50%);
-      background: #222;
-      color: #fff;
-      padding: 0.4em 0.8em;
-      border-radius: 4px;
-      font-size: 0.85em;
-      white-space: nowrap;
-      pointer-events: none;
-      transition: opacity 0.2s;
-      z-index: 20;
-    }
+  visibility: hidden;
+  opacity: 0;
+  position: absolute;
+  left: 50%;
+  top: 10px;
+  transform: translateX(-50%);
+  background: #222;
+  color: #fff;
+  padding: 0.4em 0.8em;
+  border-radius: 4px;
+  font-size: 0.85em;
+  white-space: nowrap;
+  pointer-events: none;
+  transition: opacity 0.2s;
+  z-index: 20;
+}
 
-    .project:hover .tooltip {
-      visibility: visible;
-      opacity: 1;
-    }
-
-    .gallery {
-      display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
-      gap: 32px;
-      padding: 32px;
-    }
+.project:hover .tooltip {
+  visibility: visible;
+  opacity: 1;
+}
   </style>
 </head>
 
 <body>
-  <h1>ReImaging Design Tools – Documentation</h1>
-  <div class="gallery">
+  <header>
+    <h1>Reimagine Design Tools</h1>
+  </header>
+
+  <main>
     <div class="project cursor-Sketch-Hydra-Feedback">
       <img src="documentation/ML5-painter(1).png"  class="doc-image">
       <div class="project-title">4# cursor Sketch Hydra Feedback</div>
@@ -212,7 +198,55 @@
       <div class="project-title">GUI-Quote</div>
       <span class="tooltip">GUI-Quote</span>
     </div>
-  </div>
-</body>
+  </main>
 
+  <script>
+    const buttons = document.querySelectorAll('.filter-btn');
+    const projects = document.querySelectorAll('.project');
+    const activeTags = new Set();
+
+    buttons.forEach(button => {
+      button.addEventListener('click', () => {
+        const tag = button.dataset.tag;
+        if (activeTags.has(tag)) {
+          activeTags.delete(tag);
+          button.classList.remove('active');
+        } else {
+          activeTags.add(tag);
+          button.classList.add('active');
+        }
+        updateVisibility();
+      });
+    });
+
+    function updateVisibility() {
+      projects.forEach(project => {
+        const tags = project.dataset.tags.split(" ");
+        const matches = [...activeTags].every(tag => tags.includes(tag));
+        if (activeTags.size === 0 || matches) {
+          project.classList.remove('hidden');
+        } else {
+          project.classList.add('hidden');
+        }
+      });
+    }
+document.querySelectorAll('.project').forEach(project => {
+  const video = project.querySelector('video');
+  if (video) {
+    // Video initial pausieren
+    video.pause();
+
+    project.addEventListener('mouseenter', () => {
+      video.play();
+    });
+
+    project.addEventListener('mouseleave', () => {
+      video.pause();
+      video.currentTime = 0; // Optional: Video zurücksetzen
+    });
+  }
+});
+
+  </script>
+</body>
 </html>

@@ -1,0 +1,97 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Blend Mode Showcase</title>
+  <script src="https://cdn.jsdelivr.net/npm/p5@1.11.8/lib/p5.js"></script>
+  <style>
+    body { margin: 0; overflow: hidden; }
+  </style>
+</head>
+<body>
+
+<script>
+let modes;
+let modeNames;
+let currentMode = 0;
+
+let transparency = 150; // Initial transparency value
+
+let weight = 20; // Initial stroke weight
+
+function setup() {
+  createCanvas(windowWidth, windowHeight);
+  textAlign(CENTER, CENTER);
+  textSize(20);
+  stroke(200);
+  
+
+  // Initialize after setup() starts
+  modes = [BLEND, MULTIPLY, SCREEN, OVERLAY, DIFFERENCE, EXCLUSION, HARD_LIGHT];
+  modeNames = ['BLEND', 'MULTIPLY', 'SCREEN', 'OVERLAY', 'DIFFERENCE', 'EXCLUSION', 'HARD_LIGHT'];
+}
+
+function draw() {
+  strokeWeight(weight);
+  background(200);
+
+  blendMode(modes[currentMode]);
+
+  // Animated ellipses following mouse
+  fill(255, 50, 100, transparency);
+  rect(0,0, mouseX, mouseY);
+
+  erase()
+
+  fill(50, 255, 150, transparency);
+  rect(width - mouseX, height - mouseY, mouseX, mouseY);
+
+  fill(50, 150, 255, transparency);
+  rect(width - mouseX, 0, mouseX, mouseY);
+
+  fill(255, 255, 50, transparency);
+  rect(0, height - mouseY, mouseX, mouseY);
+
+  // UI Text
+  push()
+  noStroke()
+  blendMode(BLEND);
+  fill(255);
+  rect(0, height - 40, width, 40);
+  fill(0);
+  text('Blend Mode: ' + modeNames[currentMode] + ' | Click to change', width / 2, height - 20);
+  pop()
+}
+
+function mouseWheel(event) {
+  if (keyIsDown(49)) { // if '1' is held: adjust weight
+    if (event.delta > 0) {
+      weight += 5;
+    } else {
+      weight -= 5;
+    }
+  } else { // otherwise adjust transparency
+    if (event.delta > 0) {
+      transparency += 2;
+    } else {
+      transparency -= 2;
+    }
+  }
+
+  transparency = constrain(transparency, 0, 255);
+  weight = constrain(weight, -100, height);
+  console.log(transparency)
+} 
+
+
+function mousePressed() {
+  currentMode = (currentMode + 1) % modes.length;
+}
+
+function windowResized() {
+  resizeCanvas(windowWidth, windowHeight);
+}
+</script>
+
+</body>
+</html>

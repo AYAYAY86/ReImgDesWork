@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>Gradationskurve mit Sliders + Reset (Fixed)</title>
+  <script src="https://cdn.jsdelivr.net/npm/p5@1.11.8/lib/p5.js"></script>
+</head>
+<body>
+<script>
+let img, originalImg;
+let curve = [];
+
+function preload() {
+  originalImg = loadImage("img/image-garden.png");
+}
+
+function setup() {
+  createCanvas(800, 500);
+  img = createImage(originalImg.width, originalImg.height);
+  imageMode(CORNER);
+  pixelDensity(1);
+}
+
+function draw() {
+  background(0);
+
+  let x = map(mouseX, 0, width, 0, 255); // shift amount with mouseX
+  let y = map(mouseY, 0, height, 0, 255); // shift amount with mouseX
+
+  // Create the curve
+  for (let i = 0; i < 256; i++) {
+    //curve[i] = i - x; // shift pixel brightness by a
+    curve[i] = min(i + x, y);
+    //curve[i] = sin(i / x * PI/2) * y;
+    //curve[i] = i
+
+    //curve[i] = sin(i / a * PI) * 255;
+    //curve[i] = 255 / (1 + exp(-2 * ((i / 100) - 2.0)));
+
+  }
+
+  // Apply the curve to a fresh copy
+  img.copy(originalImg, 0, 0, originalImg.width, originalImg.height, 0, 0, originalImg.width, originalImg.height);
+  img.loadPixels();
+  for (let i = 0; i < img.pixels.length; i += 4) {
+    img.pixels[i]   = curve[img.pixels[i]];     // R
+    img.pixels[i] = curve[img.pixels[i+1]];   // G
+    img.pixels[i] = curve[img.pixels[i+2]];   // B
+  }
+  img.updatePixels();
+
+  image(img, 0, 0);
+
+  // Optional info
+  fill(255);
+  text("x = " + x, 20, 20);
+  text("y = " + y, 20, 40);
+}
+</script>
+</body>
+</html>
