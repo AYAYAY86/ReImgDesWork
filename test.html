@@ -1,71 +1,69 @@
 <!DOCTYPE html>
 <html>
-  <head>
-    <meta charset="UTF-8" />
-    <title>Convolution Filter</title>
-    <script src="https://cdn.jsdelivr.net/npm/p5@1.11.8/lib/p5.js"></script>
-  </head>
-  <body>
-    <script>
-let img, outputImg;
-let kernel = [
-  [0, 0, 0],
-  [0, 1, 0],
-  [0, 0, 0]
-]; // Sharpen filter
-
-function preload() {
-  img = loadImage("img/image-garden.png");
-}
-
-function setup() {
-  createCanvas(800, 500);
-  pixelDensity(1);
-  imageMode(CORNER);
-
-  outputImg = createImage(img.width, img.height);
-  applyConvolution(img, outputImg, kernel);
-}
-
-function draw() {
-  background(0);
-  image(outputImg, 0, 0);
-}
-
-function applyConvolution(srcImg, destImg, kernel) {
-  let w = srcImg.width;
-  let h = srcImg.height;
-
-  srcImg.loadPixels();
-  destImg.loadPixels();
-
-  for (let y = 1; y < h - 1; y++) {
-    for (let x = 1; x < w - 1; x++) {
-      let sumR = 0, sumG = 0, sumB = 0;
-
-      for (let ky = -1; ky <= 1; ky++) {
-        for (let kx = -1; kx <= 1; kx++) {
-          let px = x + kx;
-          let py = y + ky;
-          let kernelVal = kernel[ky + 1][kx + 1];
-          let idx = (py * w + px) * 4;
-
-          sumR += srcImg.pixels[idx]     * kernelVal;
-          sumG += srcImg.pixels[idx + 1] * kernelVal;
-          sumB += srcImg.pixels[idx + 2] * kernelVal;
-        }
-      }
-
-      let idx = (y * w + x) * 4;
-      destImg.pixels[idx]     = constrain(sumR, 0, 255);
-      destImg.pixels[idx + 1] = constrain(sumG, 0, 255);
-      destImg.pixels[idx + 2] = constrain(sumB, 0, 255);
-      destImg.pixels[idx + 3] = 255; // full alpha
+<head>
+  <style>
+    #capture {
+      width: 400px;
+      height: 300px;
+      background: linear-gradient(to right, #f06, #4a90e2);
+      color: white;
+      font-size: 24px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
     }
-  }
+  </style>
+</head>
+<body>
 
-  destImg.updatePixels();
-}
-    </script>
-  </body>
+<div id="capture">Hello, I'm being recorded!</div>
+<button id="start">Start Recording</button>
+<button id="stop">Stop & Download</button>
+
+<script src="https://cdn.jsdelivr.net/npm/html2canvas@1.4.1/dist/html2canvas.min.js"></script>
+<script>
+  const captureDiv = document.getElementById("capture");
+  const startBtn = document.getElementById("start");
+  const stopBtn = document.getElementById("stop");
+
+  let canvasStream;
+  let recorder;
+  let recordedChunks = [];
+  let interval;
+
+  startBtn.onclick = async () => {
+    const canvas = document.createElement("canvas");
+    canvas.width = captureDiv.offsetWidth;
+    canvas.height = captureDiv.offsetHeight;
+    const ctx = canvas.getContext("2d");
+
+    // Start drawing frames
+    interval = setInterval(async () => {
+      const htmlCanvas = await html2canvas(captureDiv);
+      ctx.drawImage(htmlCanvas, 0, 0);
+    }, 100); // every 100ms
+
+    // Record canvas
+    canvasStream = canvas.captureStream(10); // 10 fps
+    recorder = new MediaRecorder(canvasStream, { mimeType: "video/webm" });
+
+    recorder.ondataavailable = (e) => recordedChunks.push(e.data);
+    recorder.start();
+  };
+
+  stopBtn.onclick = () => {
+    recorder.stop();
+    clearInterval(interval);
+    recorder.onstop = () => {
+      const blob = new Blob(recordedChunks, { type: "video/webm" });
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement("a");
+      a.href = url;
+      a.download = "capture.webm";
+      a.click();
+    };
+  };
+</script>
+
+</body>
 </html>
