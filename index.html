@@ -85,12 +85,12 @@
       font-style: italic;
     }
 
-main {
-  display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
-  gap: 1rem;
-  padding: 1rem;
-}
+    main {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(380px, 1fr));
+      gap: 1rem;
+      padding: 1rem;
+    }
 
     .project {
       position: relative;
@@ -114,17 +114,31 @@ main {
 
     .project-title {
       position: absolute;
-      bottom: 0;
+      bottom: 0.5rem;
+      left: 0.5rem;
+      right: 0.5rem;
       background: rgba(255, 255, 255, 0.8);
-      width: 100%;
-      padding: 0.5rem;
+      padding: 0.3rem 0.5rem;
       font-size: 0.8rem;
       box-sizing: border-box;
     }
 
+    .project-overlay-title {
+      position: absolute;
+      top: 0.5rem;
+      left: 0.5rem;
+      right: 0.5rem;
+      background: rgba(255, 255, 255, 0.8);
+      color: black;
+      padding: 0.3rem 0.5rem;
+      font-size: 0.8rem;
+      font-weight: normal;
+      border-radius: 0px;
+      z-index: 2;
+    }
+
     .description {
       padding: 0.2rem;
-
       margin-top: 0.3rem;
     }
 
@@ -149,9 +163,9 @@ main {
 <body>
   <header>
     <div class="header-top">
-       <a href="index.html" style="text-decoration:none; color:inherit;">
-      <h1>Reimagine Design Tools</h1>
-    </a>
+      <a href="index.html" style="text-decoration:none; color:inherit;">
+        <h1>Reimagine Design Tools</h1>
+      </a>
       <div class="header-buttons">
         <a href="index_Video Documentation.html" class="header-btn">Video Documentation</a>
         <a href="index_Process Documentation.html" class="header-btn">Process Documentation</a>
@@ -161,7 +175,12 @@ main {
       <span class="filter-btn" data-tag="cursor">#cursor</span>
       <span class="filter-btn" data-tag="layout">#layout</span>
       <span class="filter-btn" data-tag="interaction">#interaction</span>
+      <span class="filter-btn" data-tag="body-interaction">#body-interaction</span>
+      <span class="filter-btn" data-tag="paint-editor">#paint-editor</span>
+      <span class="filter-btn" data-tag="text-editor">#text-editor</span>
+      <span class="filter-btn" data-tag="image-manipulation">#image-manipulation</span>
       <span class="filter-btn" data-tag="experiments">#experiments</span>
+      <span class="filter-btn" data-tag="game-controller">#game-controller</span>
     </div>
   </header>
 
@@ -170,22 +189,152 @@ main {
   <script>
     const projectData = [
       {
-        title: "Project 3",
-        tags: ["cursor"],
-        image: "img/cursor1.png",
-        href: "project3.html",
-        documentation: "documentation/Project3.html",
-        code: "code/Project3.js",
-        description: "Beschreibung oder Zusatzinfos zu Project 3."
+        title: "Blending Color Modes with Mouse Cursor",
+        tags: ["interaction", "paint-editor", "text-editor", "body-interaction"],
+        image: "Project-Img/BlendingColors.png",
+        href: "Project_Blending-Methods_250801_MouseControl_Effects.html",
+        documentation: "documentation/Project6.html",
+        // code: "code/Project6.js",
+        description: "Blending color modes with mouse cursor for interactive design."
       },
       {
-        title: "Project 4",
-        tags: ["interaction"],
-        image: "img/image-garden.png",
-        href: "project4.html",
-        documentation: "documentation/Project4.html",
-        code: "code/Project4.js",
-        description: "Dies ist der Inlinetext für Project 4"
+        title: "P5.js Convolution Filter",
+        tags: ["image-manipulation", "experiments"],
+        image: "Project-Img/ConvolutionFilter.png",
+        href: "Project_imageManipulation_ConvolutionFilter.html",
+        // documentation: "documentation/Project1.html",
+        // code: "code/Project1.js",
+        description: "Experiment with convolution filters in P5.js for image manipulation."
+      },
+      {
+        title: "P5 Color Picker",
+        tags: ["experiments"],
+        image: "Project-Img/Bildschirmfoto 2025-07-23 um 16.40.41.png",
+        href: "Project_Colorpicker_P5.html",
+        // documentation: "documentation/Project3.html",
+        // code: "code/Project3.js",
+        description: "Test P5.js color picker with interactive ellipses."
+      },
+      {
+        title: "P5 Mouse CSS Interaction",
+        tags: ["cursor", "interaction"],
+        // image: "Project-Img/Mouse-CSS.png",
+        video: "videos/Typo_Mouse_Interaction_x-Axis_ Kopie.mp4",
+        href: "Project_P5-Mouse-Interface_CSS.html",
+        // documentation: "documentation/Project6.html",
+        // code: "code/Project6.js",
+        description: "P5.js mouse interaction with CSS for dynamic styling."
+      },
+      {
+        title: "Interactive Poster Creator",
+        tags: ["interaction", "text-editor"],
+        image: "Project-Img/PosterCreator.png",
+        href: "Project_Poster_250804_Unsorted.html",
+        documentation: "documentation/Project6.html",
+        // code: "code/Project6.js",
+        description: "Text editor with ML5.js for interactive typography adjustment."
+      },
+      {
+        title: "Camera Color Tracking",
+        tags: ["interaction", "text-editor"],
+        image: "Project-Img/Bildschirmfoto 2025-07-23 um 19.40.13.png",
+        href: "Project_P5-Camera-Colors.html",
+        documentation: "documentation/Project6.html",
+        // code: "code/Project6.js",
+        description: "Camera color tracking with P5.js for interactive design."
+      },
+      {
+        title: "Text Editor with ML5.js",
+        tags: ["interaction", "paint-editor", "text-editor", "body-interaction"],
+        image: "Project-Img/Bildschirmfoto 2025-07-24 um 18.25.40.png",
+        href: "Project_Texteditor_250523_P5-ML5-Interface_CSS.html",
+        documentation: "documentation/Project6.html",
+        // code: "code/Project6.js",
+        description: "Text editor with ML5.js for interactive typography adjustment."
+      },
+      {
+        title: "Game-Controller",
+        tags: ["game-controller", "interaction"],
+        image: "Project-Img/JoyStick.png",
+        href: "Project_Gamecontroller_250611_P5-Interface_CSS_GameController.html",
+        tags: ["cursor", "interaction"],
+        image: "Project-Img/Bildschirmfoto 2025-08-06 um 11.12.50.png",
+        href: "ML5-FormManipulation_250523_P5-ML5-Interface.html",
+        // documentation: "documentation/Project6.html",
+        // code: "code/Project6.js",
+        description: "ML5.js form manipulation for interactive input handling."
+      },
+        {
+        title: "P5.js Gradation Filter",
+        tags: ["image-manipulation", "experiments"],
+        image: "Project-Img/GradationsFilter.png",
+        href: "Project_imageManipulation_GradationsCurve.html",
+        // documentation: "documentation/Project1.html",
+        // code: "code/Project1.js",
+        description: "Experiment with gradation filters in P5.js for image manipulation."
+      },
+      {
+        title: "ML5 Experiment Hand Curor",
+        tags: ["cursor", "interaction"],
+        image: "documentation/ML5-painter(1).png",
+        href: "Project_Cursor_250523_P5-ML5.html",
+        // documentation: "documentation/Project6.html",
+        // code: "code/Project6.js",
+        description: "Experiment Mouse cursor interaction using ML5.js"
+      },
+      {
+        title: "CodeEditor",
+        tags: ["cursor", "interaction"],
+        image: "Project-Img/CodeEditor.png",
+        href: "index-codepen-style.html",
+        // documentation: "documentation/Project6.html",
+        // code: "code/Project6.js",
+        description: "CodeEditor."
+      },
+       {
+        title: "P5->Hydra Random Walker",
+        tags: ["experiments"],
+        image: "Project-Img/P5-Hydra-Random-Walker.png",
+        href: "Experiments_250503_P5-Hydra-RandomWalker.html",
+        // documentation: "documentation/Project3.html",
+        // code: "code/Project3.js",
+        description: "Experiment with P5.js and Hydra to create a random walker visualizer."
+      },
+      {
+        title: "Pen Editor with Multiple Canvases",
+        tags: ["interaction", "paint-editor"],
+        image: "Project-Img/Pen-Multiple.png",
+        href: "PaintEditor_250504_P5-PenMultipleCanvas.html",
+        // documentation: "documentation/Project4.html",
+        // code: "code/Project4.js",
+        description: "Pen editor with multiple canvases for drawing and interaction."
+      },
+      {
+        title: "Hydra Image Manipulation",
+        tags: ["interaction", "body-interaction", "image-manipulation"],
+        image: "Project-Img/ImageManipulation-3.png",
+        href: "ImageManipulation_250523_P5-ML5-Interface_Hydra.html",
+        documentation: "documentation/Project6.html",
+        // code: "code/Project6.js",
+        description: "Image manipulation in Hydra with ML5.js hand detection for creative visual effects."
+      },
+      {
+        title: "Pen Editor with Hydra",
+        tags: ["cursor", "interaction", "paint-editor"],
+        image: "Project-Img/P5-hydra-Cursor-PaintEditor.png",
+        href: "PaintEditor_250507_P5-MSPaint-Cursor copy.html",
+        // documentation: "documentation/Project6.html",
+        // code: "code/Project6.js",
+        description: "Pen editor with Hydra integration for dynamic visual effects."
+      },
+      {
+        title: "Pen Editor with Mouse Wheel",
+        tags: ["interaction", "paint-editor"],
+        image: "Project-Img/P5-MouseWheel-MS-Paint.png",
+        href: "PaintEditor_250522_P5-MouseWheel-MS-Paint.html",
+        // documentation: "documentation/Project6.html",
+        // code: "code/Project6.js",
+        description: "Pen editor that allows drawing shapes with mouse wheel interaction."
       },
       {
         title: "Project 5",
@@ -196,15 +345,6 @@ main {
         code: "code/Project5.js",
         description: "Dies ist der Inlinetext für Project 5"
       },
-      {
-        title: "Project 6",
-        tags: ["cursor", "interaction"],
-        image: "img/cursor1.png",
-        href: "project6.html",
-        documentation: "documentation/Project6.html",
-        code: "code/Project6.js",
-        description: "Dies ist der Inlinetext für Project 6"
-      }
     ];
 
     const container = document.getElementById("project-container");
@@ -215,13 +355,22 @@ main {
         ? `<img src="${project.image}" alt="${project.title}">`
         : `<video src="${project.video}" autoplay muted loop playsinline></video>`;
 
+      let links = `<a href="${project.href}" target="_blank">Projekt</a>`;
+
+      if (project.documentation) {
+        links += ` | <a href="${project.documentation}" target="_blank">Video</a>`;
+      }
+
+      if (project.code) {
+        links += ` | <a href="${project.code}" target="_blank">Code</a>`;
+      }
+
       const html = `
         <div class="project" data-tags="${tags}" data-href="${project.href}">
           ${media}
+          <div class="project-overlay-title">${project.title}</div>
           <div class="project-title">
-            <a href="${project.href}" target="_blank">Projekt</a> |
-            <a href="${project.documentation}" target="_blank">Video</a> |
-            <a href="${project.code}" target="_blank">Code</a>
+            ${links}
             <div class="description">${project.description}</div>
           </div>
         </div>

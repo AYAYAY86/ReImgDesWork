@@ -78,6 +78,31 @@
     .preview {
       flex: 1;
     }
+
+    #canvas-container {
+      position: relative;
+      width: 100%;
+      height: 100%;
+    }
+
+    #hydra-canvas {
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      z-index: 0;
+    }
+
+    canvas:not(#hydra-canvas) {
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      z-index: 1;
+      background: transparent !important;
+    }
   </style>
 </head>
 <body>
@@ -88,9 +113,7 @@
     <div class="panel">
       <label>HTML</label>
       <textarea id="html" placeholder="Type HTML here...">
-<div class="card">
-<div id="canvas-container"></div>
-</div>
+<div id="container"></div>
       </textarea>
     </div>
     <div class="panel">
@@ -114,11 +137,26 @@ canvas {
 }
 
 #canvas-container {
-  display: flex;
-  justify-content: center;
-  align-items: center;
+  position: relative;
   width: 100%;
   height: 100%;
+}
+#hydra-canvas {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  z-index: 0;
+}
+canvas:not(#hydra-canvas) {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  z-index: 1;
+  background: transparent !important;
 }
       </textarea>
     </div>
@@ -138,68 +176,40 @@ canvas {
       <label>JavaScript</label>
       <textarea id="js" placeholder="Type JavaScript here...">
 function setup() {
-  createCanvas(windowWidth, windowHeight);
-  background(30);
+    let canvas = createCanvas(400, 400);
+    canvas.parent('container');
 }
-//create a simple pen editor
-function draw() {
-  
-  let pen1 = map(sin(frameCount*0.1),-1,1,3,20)
-  if (mouseIsPressed) {
-    stroke(255);
-    strokeWeight(pen1);
-    line(prevX, prevY, mouseX, mouseY);
-  }
-  prevX = mouseX;
-  prevY = mouseY;
-} 
 
-function keyPressed(){
-  if(key == 'S'){
-    save('pen.png') // save canvas as image
-  }
+function draw() {
+    background(220);
+    fill(100, 150, 255);
+    ellipse(width/2, height/2, 100, 100);
 }
-      </textarea>
-    </div>
-    
-    <!-- Neues Hydra Panel -->
-    <div class="panel">
-      <label>Hydra</label>
-      <textarea id="hydra" placeholder="Type Hydra code here...">
-// Hydra functions
-osc(10, 0.1, 1.2)
-  .color(1, 0.5, 0.8)
-  .out()
       </textarea>
     </div>
   </div>
 </div>
 
-<!-- filepath: /Users/ayagciog/Documents/GitHub/ReImgDesWork/index-codepen-style.html -->
+<script src="https://cdn.jsdelivr.net/npm/p5@1.11.8/lib/p5.js"></script>
+<script src="https://unpkg.com/hydra-synth@1.4.11/dist/hydra-synth.js"></script>
 <script>
-const htmlInput = document.getElementById("html");
-const cssInput = document.getElementById("css");
-const jsInput = document.getElementById("js");
-const hydraInput = document.getElementById("hydra");
-const previewFrame = document.getElementById("preview");
+  // ...keine hydra canvas Initialisierung...
+  function setup() {
+    const css = `<style>${cssInput.value}</style>`;
+    const p5Script = '<script src="https://cdn.jsdelivr.net/npm/p5@1.11.8/lib/p5.js"><\/script>';
+    const hydraScript = '<script src="https://unpkg.com/hydra-synth@1.4.11/dist/hydra-synth.js"><\/script>';
+    const userJsScript = `<script>${jsInput.value}<\/script>`;
+    const all = html + css + p5Script + hydraScript + userJsScript;
+    const blob = new Blob([all], { type: "text/html" });
+    const url = URL.createObjectURL(blob);
+    previewFrame.src = url;
+  }
 
-function updatePreview() {
-  const html = htmlInput.value;
-  const css = `<style>${cssInput.value}</style>`;
-  const p5Script = '<script src="https://cdn.jsdelivr.net/npm/p5@1.11.8/lib/p5.js"><\/script>';
-  const hydraScript = '<script src="https://unpkg.com/hydra-synth@1.4.11/dist/hydra-synth.js"><\/script>';
-  const js = `${p5Script}${hydraScript}<script>${jsInput.value}<\/script><script>${hydraInput.value}<\/script>`;
-  const blob = new Blob([html + css + js], { type: "text/html" });
-  const url = URL.createObjectURL(blob);
-  previewFrame.src = url;
-}
+  htmlInput.addEventListener("input", updatePreview);
+  cssInput.addEventListener("input", updatePreview);
+  jsInput.addEventListener("input", updatePreview);
 
-htmlInput.addEventListener("input", updatePreview);
-cssInput.addEventListener("input", updatePreview);
-jsInput.addEventListener("input", updatePreview);
-hydraInput.addEventListener("input", updatePreview);
-
-updatePreview();
+  updatePreview();
 </script>
 
 </body>

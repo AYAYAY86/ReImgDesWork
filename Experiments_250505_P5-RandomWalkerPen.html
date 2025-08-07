@@ -65,6 +65,13 @@ function mouseDragged() {
   strokeWeight(sw);
   line(pmouseX, pmouseY, mouseX, mouseY);
 }
+
+  function keyPressed() {
+    if (key == 'S') {
+      pg.save('P5-Hydra-Random-Walker.png') // save hydra texture
+    }
+  }
+
 </script>
 
 </body>

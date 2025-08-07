@@ -1,68 +1,184 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
+  <meta charset="UTF-8" />
+  <title>Mini CodePen</title>
   <style>
-    #capture {
-      width: 400px;
-      height: 300px;
-      background: linear-gradient(to right, #f06, #4a90e2);
-      color: white;
-      font-size: 24px;
+    * {
+      box-sizing: border-box;
+    }
+
+    body {
+      margin: 0;
+      padding: 0;
+      overflow: hidden;
       display: flex;
-      align-items: center;
       justify-content: center;
+      align-items: center;
+      height: 100vh;
+      background: #000;
+    }
+
+    .editor-container {
+      display: flex;
+      width: 100%;
+      height: 100%;
+    }
+
+    .left-panels {
+      width: 25%;
+      display: flex;
+      flex-direction: column;
+    }
+
+    .center-panel {
+      width: 50%;
+      display: flex;
+      flex-direction: column;
+    }
+
+    .right-panel {
+      width: 25%;
+      display: flex;
+      flex-direction: column;
+    }
+
+    .panel {
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      border: 1px solid #ccc;
+    }
+
+    .panel label {
+      padding: 0.5rem;
+      font-weight: bold;
+      background: #f0f0f0;
+      border-bottom: 1px solid #ccc;
+      margin: 0;
+    }
+
+    textarea {
+      flex: 1;
+      padding: .25rem;
+      font-family: monospace;
+      font-size: .75rem;
+      border: none;
+      resize: none;
+      outline: none;
+    }
+
+    iframe {
+      flex: 1;
+      border: none;
+      width: 100%;
+      height: 100%;
+    }
+
+    .preview {
+      flex: 1;
     }
   </style>
 </head>
 <body>
 
-<div id="capture">Hello, I'm being recorded!</div>
-<button id="start">Start Recording</button>
-<button id="stop">Stop & Download</button>
+<div class="editor-container">
+  <!-- Linke Panels: HTML und CSS übereinander -->
+  <div class="left-panels">
+    <div class="panel">
+      <label>HTML</label>
+      <textarea id="html" placeholder="Type HTML here...">
+<div class="card">
+<div id="canvas-container"></div>
+</div>
+      </textarea>
+    </div>
+    <div class="panel">
+      <label>CSS</label>
+      <textarea id="css" placeholder="Type CSS here...">
+body {
+  margin: 0;
+  padding: 0;
+  overflow: hidden;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 100vh;
+  background: white;
+}
 
-<script src="https://cdn.jsdelivr.net/npm/html2canvas@1.4.1/dist/html2canvas.min.js"></script>
+canvas {
+  display: block;
+  max-width: 420px;
+  max-height: 595px;
+}
+
+#canvas-container {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  width: 100%;
+  height: 100%;
+}
+      </textarea>
+    </div>
+  </div>
+
+  <!-- Mittleres Panel: Resultat -->
+  <div class="center-panel">
+    <div class="panel">
+      <label>Preview</label>
+      <iframe id="preview" class="preview"></iframe>
+    </div>
+  </div>
+
+  <!-- Rechtes Panel: Nur JavaScript -->
+  <div class="right-panel">
+    <div class="panel">
+      <label>JavaScript (p5.js)</label>
+      <textarea id="js" placeholder="Type p5.js code here...">
+function setup() {
+  createCanvas(windowWidth, windowHeight);
+  background(30);
+}
+//create a simple pen editor
+function draw() {
+  
+ellipse(width / 2, height / 2, 500);
+
+} 
+
+function keyPressed(){
+  if(key == 'S'){
+    save('pen.png') // save canvas as image
+  }
+}
+      </textarea>
+    </div>
+  </div>
+</div>
+
 <script>
-  const captureDiv = document.getElementById("capture");
-  const startBtn = document.getElementById("start");
-  const stopBtn = document.getElementById("stop");
+const htmlInput = document.getElementById("html");
+const cssInput = document.getElementById("css");
+const jsInput = document.getElementById("js");
+const previewFrame = document.getElementById("preview");
 
-  let canvasStream;
-  let recorder;
-  let recordedChunks = [];
-  let interval;
+function updatePreview() {
+  const html = htmlInput.value;
+  const css = `<style>${cssInput.value}</style>`;
+  const p5Script = '<script src="https://cdn.jsdelivr.net/npm/p5@1.11.8/lib/p5.js"><\/script>';
+  const js = `${p5Script}<script>${jsInput.value}<\/script>`;
+  const blob = new Blob([html + css + js], { type: "text/html" });
+  const url = URL.createObjectURL(blob);
+  previewFrame.src = url;
+}
 
-  startBtn.onclick = async () => {
-    const canvas = document.createElement("canvas");
-    canvas.width = captureDiv.offsetWidth;
-    canvas.height = captureDiv.offsetHeight;
-    const ctx = canvas.getContext("2d");
+htmlInput.addEventListener("input", updatePreview);
+cssInput.addEventListener("input", updatePreview);
+jsInput.addEventListener("input", updatePreview);
 
-    // Start drawing frames
-    interval = setInterval(async () => {
-      const htmlCanvas = await html2canvas(captureDiv);
-      ctx.drawImage(htmlCanvas, 0, 0);
-    }, 100); // every 100ms
-
-    // Record canvas
-    canvasStream = canvas.captureStream(10); // 10 fps
-    recorder = new MediaRecorder(canvasStream, { mimeType: "video/webm" });
-
-    recorder.ondataavailable = (e) => recordedChunks.push(e.data);
-    recorder.start();
-  };
-
-  stopBtn.onclick = () => {
-    recorder.stop();
-    clearInterval(interval);
-    recorder.onstop = () => {
-      const blob = new Blob(recordedChunks, { type: "video/webm" });
-      const url = URL.createObjectURL(blob);
-      const a = document.createElement("a");
-      a.href = url;
-      a.download = "capture.webm";
-      a.click();
-    };
-  };
+updatePreview();
 </script>
 
 </body>

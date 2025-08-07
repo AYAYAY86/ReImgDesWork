@@ -1,0 +1,65 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <style>
+        body { margin: 0; padding: 0; background: red; overflow: hidden; }
+        .canvas-container { position: absolute; top: 0; left: 0; }
+        canvas { position: absolute; top: 0; left: 0; width: 100%; height: 100%; }
+        #hydra-canvas { z-index: 2; }
+        #p5-canvas { z-index: 1; }
+    </style>
+</head>
+<body>
+    <div class="canvas-container" id="canvas-container"></div>
+</body>
+
+<script src="libaries/hydra-synth.js"></script>
+<script src="libaries/p5.js"></script>
+<script>
+    // ===== GRÖSSEN-STEUERUNG =====
+    const CANVAS_WIDTH_PX = 400;
+    const CANVAS_HEIGHT_PX = 600;
+
+    // ===== SETUP =====
+    const container = document.getElementById('canvas-container');
+    container.style.width = CANVAS_WIDTH_PX + 'px';
+    container.style.height = CANVAS_HEIGHT_PX + 'px';
+
+    // ===== HYDRA =====
+    const hc = document.createElement('canvas');
+    hc.id = 'hydra-canvas';
+    hc.width = CANVAS_WIDTH_PX;
+    hc.height = CANVAS_HEIGHT_PX;
+    container.appendChild(hc);
+    
+    const hydra = new Hydra({ detectAudio: false, canvas: hc });
+    const noize = noise;
+
+    src(o0).layer(s0).scale(1.008).out();
+
+    // ===== P5.JS =====
+    let xoff = 0, yoff = 1000, px = 0, py = 0;
+
+    function setup() {
+        const p5Canvas = createCanvas(CANVAS_WIDTH_PX, CANVAS_HEIGHT_PX);
+        p5Canvas.id('p5-canvas');
+        background(255)
+        container.appendChild(p5Canvas.canvas);
+        s0.init({ src: drawingContext.canvas });
+    }
+
+    function draw() {
+        clear();
+        fill(255);
+        stroke(0);
+        strokeWeight(1);
+        
+        px = noise(xoff) * width;
+        py = noise(yoff) * height;
+        ellipse(px, py, 50);
+        
+        xoff += 0.01;
+        yoff += 0.01;
+    }
+</script>
+</html>
