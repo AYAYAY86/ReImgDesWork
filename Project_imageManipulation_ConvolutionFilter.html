@@ -2,34 +2,114 @@
 <html>
   <head>
     <meta charset="UTF-8" />
-    <title>Convolution Filter</title>
+    <title>Convolution Filter - Interactive</title>
     <script src="https://cdn.jsdelivr.net/npm/p5@1.11.8/lib/p5.js"></script>
+    <style>
+      html, body { height: 100%; margin: 0; background: gray; }
+      #canvasContainer {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        height: 85vh;
+        position: relative;
+      }
+      #canvasContainer canvas {
+        max-width: 100%;
+        height: auto;
+      }
+      #coords {
+        text-align: center;
+        color: white;
+        padding: 10px;
+        margin-top: 8px;
+        font-family: monospace;
+        font-size: 1.1em;
+        font-weight: bold;
+      }
+      #kernelDisplay {
+        position: fixed;
+        top: 10px;
+        right: 10px;
+        color: white;
+        padding: 15px;
+        border-radius: 8px;
+        font-family: monospace;
+        font-size: 0.9em;
+        z-index: 1000;
+      }
+      .kernel-title {
+        color: #ffcc00;
+        font-weight: bold;
+        margin-bottom: 10px;
+      }
+    </style>
   </head>
   <body>
+    <div id="canvasContainer"></div>
+    <div id="coords" aria-live="polite"></div>
+    
+    <!-- Kernel-Anzeige -->
+    <div id="kernelDisplay">
+      <div class="kernel-title">Convolution Kernel</div>
+      <div id="kernelMatrix"></div>
+      <br>
+      <div class="kernel-title">Controls:</div>
+      <pre>1-9: Select Kernel Position
+↑/↓: Adjust Value (+/-0.25)
+S: Save Image
+R: Random Kernel
+SHIFT+R: Reset Kernel
+G: Gaussian Blur
+B: Box Blur
+Range: -5.0 to +5.0</pre>
+    </div>
     <script>
-let img, outputImg;
+let img, outputImg, cnv, coordsDiv, kernelDiv;
 let kernel = [
   [0, 0, 0],
-  [1, 1, 0],
-  [0, -1.5, 0]
+  [0, 1, 0],
+  [0, 0, 0]
 ]; // Sharpen filter
+let activeKernelPos = -1; // -1 = none, 0-8 = kernel positions
+let kernelControl = false;
+let needsUpdate = true; // Flag für Convolution-Update
 
 function preload() {
   img = loadImage("img/image-garden.png");
 }
 
 function setup() {
-  createCanvas(img.width, img.height);
+  cnv = createCanvas(img.width*0.75, img.height*0.75); // Größer: 75% statt 50%
+  cnv.parent('canvasContainer');
   pixelDensity(1);
   imageMode(CORNER);
 
+  coordsDiv = document.getElementById('coords');
+  kernelDiv = document.getElementById('kernelMatrix');
+
   outputImg = createImage(img.width, img.height);
   applyConvolution(img, outputImg, kernel);
+  needsUpdate = false; // Initial convolution done
+  updateKernelDisplay();
 }
 
 function draw() {
   background(0);
-  image(outputImg, 0, 0);
+  
+  // Convolution nur aktualisieren wenn nötig
+  if (needsUpdate) {
+    applyConvolution(img, outputImg, kernel);
+    needsUpdate = false;
+  }
+  
+  // Update Koordinatenanzeige
+  if (coordsDiv) {
+    let activePos = activeKernelPos >= 0 ? `Position ${activeKernelPos + 1}` : 'None';
+    let activeValue = activeKernelPos >= 0 ? kernel[Math.floor(activeKernelPos / 3)][activeKernelPos % 3].toFixed(2) : '0.00';
+    coordsDiv.innerHTML = `Kernel Control: ${kernelControl ? 'ON' : 'OFF'} | Active: ${activePos} | Value: ${activeValue} | Use ↑/↓ arrows to adjust`;
+  }
+  
+  image(outputImg, 0, 0, width, height);
 }
 
 function applyConvolution(srcImg, destImg, kernel) {
@@ -65,6 +145,96 @@ function applyConvolution(srcImg, destImg, kernel) {
   }
 
   destImg.updatePixels();
+}
+
+function updateKernelDisplay() {
+  if (kernelDiv) {
+    let display = '<table style="border-collapse: collapse; color: white;">';
+    for (let row = 0; row < 3; row++) {
+      display += '<tr>';
+      for (let col = 0; col < 3; col++) {
+        let pos = row * 3 + col;
+        let value = kernel[row][col].toFixed(2); // Zeige 2 Dezimalstellen für 0.25er Schritte
+        let bgColor = pos === activeKernelPos ? '#ffcc00' : '#333';
+        let textColor = pos === activeKernelPos ? '#000' : '#fff';
+        display += `<td style="border: 1px solid #666; padding: 8px; text-align: center; background: ${bgColor}; color: ${textColor}; font-weight: bold;">${pos + 1}<br>${value}</td>`;
+      }
+      display += '</tr>';
+    }
+    display += '</table>';
+    kernelDiv.innerHTML = display;
+  }
+}
+
+function keyPressed() {
+  // Tasten 1-9 für Kernel-Positionen
+  if (key >= '1' && key <= '9') {
+    let pos = parseInt(key) - 1;
+    activeKernelPos = pos;
+    kernelControl = true;
+    updateKernelDisplay();
+  }
+  
+  // Pfeiltasten für Kernel-Werte
+  if (kernelControl && activeKernelPos >= 0) {
+    let row = Math.floor(activeKernelPos / 3);
+    let col = activeKernelPos % 3;
+    
+    if (keyCode === UP_ARROW) {
+      kernel[row][col] += 0.25;
+      kernel[row][col] = Math.round(kernel[row][col] * 4) / 4; // Auf 0.25er Schritte runden
+      kernel[row][col] = Math.max(-5.0, Math.min(5.0, kernel[row][col])); // Begrenzen auf -5 bis +5
+      needsUpdate = true; // Markiere für Update
+      updateKernelDisplay();
+    }
+    
+    if (keyCode === DOWN_ARROW) {
+      kernel[row][col] -= 0.25;
+      kernel[row][col] = Math.round(kernel[row][col] * 4) / 4; // Auf 0.25er Schritte runden
+      kernel[row][col] = Math.max(-5.0, Math.min(5.0, kernel[row][col])); // Begrenzen auf -5 bis +5
+      needsUpdate = true; // Markiere für Update
+      updateKernelDisplay();
+    }
+  }
+  
+  // Random/Reset Kernel
+  if (key === 'R' || key === 'r') {
+    if (keyIsDown(SHIFT)) {
+      // SHIFT+R: Reset zu Standard-Kernel
+      kernel = [
+        [0, 0, 0],
+        [0, 1, 0],
+        [0, 0, 0]
+      ];
+    } else {
+      // R: Generiere zufälligen Kernel
+      for (let row = 0; row < 3; row++) {
+        for (let col = 0; col < 3; col++) {
+          // Zufällige Werte zwischen -2 und +2, gerundet auf 0.25er Schritte
+          let randomVal = random(-2, 2);
+          kernel[row][col] = Math.round(randomVal * 4) / 4;
+        }
+      }
+    }
+    needsUpdate = true; // Markiere für Update
+    updateKernelDisplay();
+  }
+  
+  // Save Image
+  if (key === 'S' || key === 's') {
+    if (outputImg) {
+      let filename = `convolution_filter.jpg`;
+      outputImg.save(filename);
+      console.log(`Image saved as: ${filename}`);
+    }
+  }
+}
+
+function keyReleased() {
+  // Deaktiviere Kernel-Kontrolle wenn Taste losgelassen
+  if (key >= '1' && key <= '9') {
+    kernelControl = false;
+  }
 }
     </script>
   </body>
