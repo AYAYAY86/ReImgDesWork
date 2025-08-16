@@ -18,19 +18,11 @@
         #canvas-container {
             position: relative;
             display: inline-block;
-        }
-
-        
-        #canvas-container {
-            position: relative;
-            display: inline-block;
             margin: 60px auto;
         }
     </style>
 </head>
 <body>
-
-    
     <script>
 let gamepad;
 let ellipseRx = 0, ellipseRy = 0; // Position für rechte (blaue) Ellipse
@@ -40,7 +32,6 @@ let deadzone = 0.1; // Deadzone für minimale Stick-Bewegung
 function setup() {
   createCanvas(400, 400);
   textAlign(CENTER, CENTER);
-  
 }
 
 function draw() {
@@ -52,25 +43,43 @@ function draw() {
 
   if (gamepad) {
     fill(0);
-    text("Gamepad connected", width / 2, height / 2 - 40);
+    // text("Gamepad connected", width / 2, height / 2 - 40);
 
-    console.log(gamepad.buttons[21]);
-
-    // Beispiel: Achsen (z. B. Joystick) anzeigen
-    let xR = gamepad.axes[1]; // linker Stick X
-    let yR = gamepad.axes[0]; // linker Stick Y
+    // Joystick-Werte lesen
+    let xR = gamepad.axes[1]; // rechter Stick X
+    let yR = gamepad.axes[0]; // rechter Stick Y
     let xL = gamepad.axes[3]; // linker Stick X
     let yL = gamepad.axes[2]; // linker Stick Y
 
+    // Nur Position aktualisieren wenn Stick außerhalb der Deadzone bewegt wird
+    if (abs(xR) > deadzone || abs(yR) > deadzone) {
+      ellipseRx += xR * 5; // Bewegung hinzufügen, nicht Position setzen
+      ellipseRy += -yR * 5; // Y invertiert für natürliche Bewegung
+      
+      // Grenzen der Canvas einhalten
+      ellipseRx = constrain(ellipseRx, -width/2 + 25, width/2 - 25);
+      ellipseRy = constrain(ellipseRy, -height/2 + 25, height/2 - 25);
+    }
+    
+    if (abs(xL) > deadzone || abs(yL) > deadzone) {
+      ellipseLx += -xL * 5; // Bewegung hinzufügen, nicht Position setzen
+      ellipseLy += yL * 5;
+      
+      // Grenzen der Canvas einhalten
+      ellipseLx = constrain(ellipseLx, -width/2 + 25, width/2 - 25);
+      ellipseLy = constrain(ellipseLy, -height/2 + 25, height/2 - 25);
+    }
+
+    // Ellipsen an gespeicherten Positionen zeichnen
     fill(0, 0, 255);
-    ellipse(width / 2 + xR * 200, height / 2 - yR * 200, 50);
-    fill(255, 0, 0);
-    ellipse(width / 2 - xL * 200, height / 2 + yL * 200, 50);
+    ellipse(width / 2 + ellipseRx, height / 2 + ellipseRy, 50);
+    fill(255, 0, 0);  
+    ellipse(width / 2 + ellipseLx, height / 2 + ellipseLy, 50);
 
     // Beispiel: Buttons anzeigen
     for (let i = 0; i < gamepad.buttons.length; i++) {
       if (gamepad.buttons[i].pressed) {
-        textSize(10)
+        textSize(10);
         text("Button " + i + " pressed", width/2, 10 + i * 15);
       }
     }
@@ -78,7 +87,6 @@ function draw() {
     fill(150);
     text("Press any button on your controller…", width / 2, height / 2);
   }
-  //noLoop()
 }
     </script>
 </body>

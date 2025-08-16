@@ -24,6 +24,7 @@
       width: 540px;
       height: 675px;
       margin: 0 auto;
+      background: lightgrey;
     }
 
     @font-face {
@@ -53,17 +54,22 @@
 
     .canvas-title {
       width: 540px;
+      height: 675px;
       max-width: 100vw;
-      margin: 0px 25px;
+      margin: 0px;
       position: fixed;
-      text-align: left;
+      text-align: center;
       transform: translate(-50%, -50%);
       font-family: Arial, sans-serif;
       font-size: 2rem;
       color: white;
-      padding: 0.55em 0em;
+      padding: 0;
       z-index: 100;
       pointer-events: none;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
     }
 
     .canvas-info {
@@ -87,13 +93,13 @@
   </style>
   <link rel="stylesheet" type="text/css" href="style.css">
   <meta charset="utf-8" />
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+
 </head>
 
 <body>
-  <div class="canvas-title">unsorted.love</div>
-  <div class="canvas-label">Session #3<br>30. August 2025<br>19h00 – 01h00<br>Josefstrasse 206</div>
-  <div class="canvas-info">Pedro Neves X m-onz<br>Ted Davis X Felix Roos<br>Valentina Vuksic X Valentina Shipovskaya<br>Yoshi Kosaka X ALY-X</div>
+  <div class="canvas-title">Reimagine Design Tools</div>
+  <div class="canvas-label">Master Thesis<br>19th AUG 2025<br>08h30 – 17h00<br>MA IDCE HGK</div>
+  <div class="canvas-info"> relationships, partnerships, community ships, friendships, fellowships, censor-ships, tool ships, companionships <br> and fewer authorships</div>
 
 </body>
 <script src="https://unpkg.com/hydra-synth"></script>
@@ -102,11 +108,14 @@
 <script src="libaries/p5.js"></script> -->
 <script>
 
+  
+
   let hc = document.createElement('canvas');
   hc.width = 540;
   hc.height = 675;
   hc.className = "hydra-canvas";
   document.body.appendChild(hc);
+
 
   function positionElements() {
     const canvas = document.querySelector('.hydra-canvas');
@@ -117,11 +126,12 @@
     if (canvas) {
       const rect = canvas.getBoundingClientRect();
 
-      // Title oben auf Canvas
+      // Title zentriert im Canvas (Höhe und Breite)
       if (title) {
-        title.style.top = rect.top + 'px';
+        title.style.top = (rect.top + rect.height / 2) + 'px';
         title.style.left = (rect.left + rect.width / 2) + 'px';
-        title.style.transform = 'translate(-50%, 0)';
+        // Title ist immer zentriert im Canvas
+        title.style.transform = 'translate(-50%, -50%)';
       }
 
       // Label unter Title
@@ -144,48 +154,140 @@
   setTimeout(positionElements, 100);
   window.addEventListener('resize', positionElements);
 
+  // Alle Variablen zuerst deklarieren
+  let pg; // store hydra texture
+  let xoff = 0;
+  let yoff = 1000;
+  let px = 0;
+  let py = 1000;
+  let gamepad;
+  let ellipseRx = 0, ellipseRy = 0; // Position für rechte Ellipse (horizontal)
+  let ellipseLx = 0, ellipseLy = 0; // Position für linke Ellipse (vertikal)
+  let deadzone = 0.1; // Deadzone für minimale Stick-Bewegung
+  let scaleSize = 1.0; // Startwert 1.0 (Mitte zwischen 0.8 und 1.5)
+  let scaleSize2 = -1.0; // Startwert 1.0 (Mitte zwischen 0.8 und 1.5)
+  let pix = 400; // Startwert für Pixelation
+  let pix2 = 400; // Startwert für Pixelation
+  let repe = 0;
+  let repe2 = 0;
+  let randomColor1, randomColor2; // Werden in setup() initialisiert
+  let gamepadChecked = false; // Um nur einmal zu loggen
+  
+  // Title-Effekt Variablen (exakt wie im Gamecontroller)
+  let titleText = "REIMAGINE\nDESIGN TOOLS";
+  let titleWords = titleText.split("\n");
+  let rows = 3;
+  let cols = 1;
+  let patternOffset = 0;
+  let patternArrangement = 1;
+  let currentFontIndex = 0;
+  let summe = 0;
+  let fontSizeValue = 32;
+  let myWordSpacing = 32;
+  let myLetterSpacing = 0;
+  let myWordMargin = 0;
+  
+  // Verfügbare Schriftarten (keine zufällige Auswahl)
+  const fonts = [
+    'Arial, sans-serif',
+    'Courier New, monospace',
+    'Times New Roman, serif',
+    'Verdana, sans-serif',
+    'Georgia, serif',
+    'Impact, fantasy',
+    'Tahoma, Geneva, sans-serif'
+  ];
+  
+  let lastButton1State = false;
+
   let hydra = new Hydra({ detectAudio: false, canvas: hc })
   // hydra.setResolution(window.innerWidth*2, window.innerHeight*2) // retina res
   noize = noise // use noize() since noise() is taken by p5js
 
-  let pg // store hydra texture
-
   // sandbox - start
-
   src(o0)
     .layer(s0)
-    //.scrollY(() => scaleSize)
-    .scale(1.1)
-    .scroll(0.1, 0.1, .5, .5)
-    .kaleid(2)
-    .kaleid(4)
-    .pixelate(32, 32)
-
-    //  .thresh(1.75,.25)
-
-    //  .kaleid(20)
-    //  .modulateRotate(osc(10,0,0).kaleid(4).scale(2.5),10,10)
-    // .scrollX(1.5)
-    // .kaleid(2)
-    // .scale(() => scaleSize)
+    .scale(() => scaleSize, () => scaleSize2)
+    .scroll(() => repe, () => repe2, 0, 0)
+    .pixelate(() => pix, () => pix2)
     .out()
   // sandbox  - stop
-
-  let xoff = 0;
-  let yoff = 1000;
-
-  let px = 0;
-  let py = 1000;
-
-  let scaleSize
-
 
   function setup() {
     let cnv = createCanvas(windowWidth, windowHeight);
     cnv.hide(); // p5-Canvas ausblenden
     pg = createGraphics(hc.width, hc.height);
     s0.init({ src: drawingContext.canvas });
+    // background(255,0,100)
     stroke(0);
+    
+    // Farben initialisieren
+    randomColor1 = color(255, 0, 0); // Startwert für zufällige Farbe 1
+    randomColor2 = color(0); // Startwert für zufällige Farbe 2
+    
+    // Title-Grid initialisieren
+    buildTitleGrid();
+  }
+
+  function buildTitleGrid() {
+    console.log("buildTitleGrid aufgerufen - titleWords:", titleWords);
+    console.log("rows:", rows, "cols:", cols, "patternOffset:", patternOffset);
+    
+    const title = document.querySelector('.canvas-title');
+    if (title) {
+      title.innerHTML = '';
+      title.dataset.gridActive = 'true';
+      
+      // Container für zentrierte Positionierung erstellen
+      const container = document.createElement('div');
+      container.style.display = 'flex';
+      container.style.flexDirection = 'column';
+      container.style.alignItems = 'center';
+      container.style.justifyContent = 'center';
+      container.style.height = '100%';
+      container.style.width = '100%';
+      
+      // Exakt wie im Gamecontroller - verwende Ganzzahlen!
+      let intRows = Math.round(rows);
+      let intCols = Math.round(cols);
+      let intPatternOffset = Math.round(patternOffset);
+      let intPatternArrangement = Math.round(patternArrangement);
+      
+      // Für vertikales Layout: jede Zeile zeigt das entsprechende Wort
+      for (let i = 0; i < intRows; i++) {
+        const rowDiv = document.createElement('div');
+        rowDiv.style.display = 'flex';
+        rowDiv.style.justifyContent = 'center';
+        rowDiv.style.marginBottom = myWordSpacing + 'px';
+        
+        // Offset für das Muster (exakt wie im Gamecontroller)
+        let dynamicCols = intCols + ((i + intPatternOffset) % intPatternArrangement);
+        for (let j = 0; j < dynamicCols; j++) {
+          const span = document.createElement('span');
+          // Für vertikales Layout: verwende die Zeile (i) als Wort-Index
+          let wordIndex = i % titleWords.length;
+          span.textContent = titleWords[wordIndex];
+          span.style.margin = '1px'; // Wie im Gamecontroller
+          span.style.fontWeight = 'bold';
+          span.style.fontSize = fontSizeValue + 'px';
+          span.style.color = 'white';
+          span.style.transition = 'all 0.1s';
+          span.style.fontFamily = fonts[currentFontIndex];
+          span.style.letterSpacing = myLetterSpacing + 'px';
+          rowDiv.appendChild(span);
+        }
+        container.appendChild(rowDiv);
+      }
+      title.appendChild(container);
+      
+      // Nach dem Grid-Aufbau alle Styles anwenden (wie im Gamecontroller)
+      document.querySelectorAll('.canvas-title span').forEach(span => {
+        span.style.fontSize = fontSizeValue + 'px';
+        span.style.fontFamily = fonts[currentFontIndex];
+        span.style.letterSpacing = myLetterSpacing + 'px';
+        span.style.margin = myWordMargin + 'px';
+      });
+    }
   }
 
   function gradientEllipse(cx, cy, r, c1, c2) {
@@ -194,7 +296,7 @@
     for (let i = r; i > 0; i -= 2) {
       let inter = map(i, 0, r, 1, 0);
       let c = lerpColor(c1, c2, inter);
-      fill(c);
+      fill(c);  
 
       ellipse(cx, cy, i, i);
     }
@@ -204,192 +306,256 @@
 
   function draw() {
     clear()
-    // pixelDensity(.1)
     pg.drawingContext.drawImage(hc, 0, 0, pg.width, pg.height)
 
-    let newMouseX = map(mouseX, 0, width, -width / 2, width / 2);
-    let newMouseY = map(mouseY, 0, -height, height, 0)
-    let newPmouseY = map(pmouseY, 0, -height, height, 0)
-
-    let scaleSize = map(sin(frameCount * .01), -1, 1, 1.001, 1.005)
-
-
-
-    fill(255, 100, 100)
-    stroke(0)
-
-    //ellipse(mouseX, newMouseY, 200)
-
-    px = noise(xoff) * width / 2;
-    py = noise(yoff) * height;
-
-    px1 = map(sin(frameCount * 0.01), -1, 1, 0, width);
-    py1 = map(sin(frameCount * 0.01), -1, 1, 0, 10);
-
-    let x = noise(xoff) * width;
-    let y = noise(yoff) * height;
-
-    //point(mouseX, newMouseY)
-    // line(pmouseX, newPmouseY, mouseX, newMouseY);
-    // ellipse(px, py, 300);
-
-    //blendMode(MULTIPLY);
-    stroke(0)
-    strokeWeight(py1)
-    noFill()
-    ellipse(width / 2, py, 300);
-    ellipse(px, height / 2, 300);
-
-    let c1 = color(255, 0, 0); // Mitte
-    let c2 = color(0); // Rand
-    gradientEllipse(width / 2, py, 300, c1, c2);
-    gradientEllipse(px, height / 2, 300, c2, c1);
-
-
-
-
-    xoff += 0.01;
-    yoff += 0.01;
-
-  }
-
-  function mouseDragged() {
-    let sw = map(sin(frameCount * 0.05), -1, 1, 3, 20); // remap to [3, 10]
-    strokeWeight(sw);
-    line(pmouseX, pmouseY, mouseX, mouseY);
-  }
-
-  let mediaRecorder;
-  let recordedChunks = [];
-
-  function startRecording() {
-    const canvas = document.querySelector('.hydra-canvas');
-    const stream = canvas.captureStream(30); // 30 FPS
-
-    mediaRecorder = new MediaRecorder(stream, {
-      mimeType: 'video/webm;codecs=vp9'
-    });
-
-    mediaRecorder.ondataavailable = event => {
-      if (event.data.size > 0) {
-        recordedChunks.push(event.data);
+    // Gamepad aktualisieren
+    let gamepads = navigator.getGamepads();
+    gamepad = gamepads[0];
+    
+    // Gamepad Status checken (nur einmal)
+    if (!gamepadChecked) {
+      if (!gamepad) {
+        console.log("Kein Gamepad erkannt - verbinden Sie ein Gamepad und drücken Sie einen Button");
+      } else {
+        console.log("Gamepad erkannt:", gamepad.id);
       }
-    };
-
-    mediaRecorder.onstop = () => {
-      const blob = new Blob(recordedChunks, { type: 'video/webm' });
-      const url = URL.createObjectURL(blob);
-      const a = document.createElement('a');
-      a.href = url;
-      a.download = 'canvas-recording.webm';
-      a.click();
-      recordedChunks = [];
-    };
-
-    mediaRecorder.start();
-    console.log('Recording started...');
-  }
-
-  function stopRecording() {
-    if (mediaRecorder && mediaRecorder.state === 'recording') {
-      mediaRecorder.stop();
-      console.log('Recording stopped');
+      gamepadChecked = true;
     }
-  }
 
-  async function startScreenRecording() {
-    try {
-      const stream = await navigator.mediaDevices.getDisplayMedia({
-        video: { mediaSource: 'screen' },
-        audio: false
-      });
+    if (gamepad) {
+      // Joystick-Werte lesen
+      let xR = gamepad.axes[1]; // rechter Stick X
+      let yR = gamepad.axes[0]; // rechter Stick Y  
+      let xL = gamepad.axes[3]; // linker Stick X
+      let yL = gamepad.axes[2]; // linker Stick Y
+
+      // // Console Logs für Debugging
+      // if (abs(xR) > deadzone || abs(yR) > deadzone) {
+      //   console.log("Rechter Stick:", "X:", xR.toFixed(2), "Y:", yR.toFixed(2));
+      // }
+      // if (abs(xL) > deadzone || abs(yL) > deadzone) {
+      //   console.log("Linker Stick:", "X:", xL.toFixed(2), "Y:", yL.toFixed(2));
+      // }
       
-      mediaRecorder = new MediaRecorder(stream, {
-        mimeType: 'video/webm;codecs=vp9'
-      });
+      // // Button Status checken
+      // for (let i = 0; i < gamepad.buttons.length; i++) {
+      //   if (gamepad.buttons[i].pressed) {
+      //     console.log("Button gedrückt:", i);
+      //   }
+      // }
+
+      // Prüfen ob Button 0-3 gedrückt ist
+      let buttonPressed = gamepad.buttons[0].pressed || gamepad.buttons[1].pressed || 
+                         gamepad.buttons[2].pressed || gamepad.buttons[3].pressed;
       
-      mediaRecorder.ondataavailable = event => {
-        if (event.data.size > 0) {
-          recordedChunks.push(event.data);
+      // Ellipsen bewegen nur wenn KEIN Button 0-3 gedrückt ist
+      if (!buttonPressed) {
+        // Erste Ellipse - normale Bewegung mit linkem Stick
+        if (abs(xL) > deadzone || abs(yL) > deadzone) {
+          ellipseRx += -xL * 12; // Normale Bewegung
+          ellipseRy += yL * 12; 
+          
+          // Grenzen der Canvas einhalten
+          ellipseRx = constrain(ellipseRx, -width/2 + 150, width/2 - 150);
+          ellipseRy = constrain(ellipseRy, -height/2 + 150, height/2 - 150);
         }
-      };
-      
-      mediaRecorder.onstop = () => {
-        const blob = new Blob(recordedChunks, { type: 'video/webm' });
-        const url = URL.createObjectURL(blob);
-        const a = document.createElement('a');
-        a.href = url;
-        a.download = 'screen-recording.webm';
-        a.click();
-        recordedChunks = [];
-      };
-      
-      mediaRecorder.start();
-      console.log('Screen recording started...');
-    } catch (err) {
-      console.error('Error starting screen recording:', err);
-    }
-  }
-
-  async function startCompositeRecording() {
-    const canvas = document.querySelector('.hydra-canvas');
-    const compositeCanvas = document.createElement('canvas');
-    compositeCanvas.width = canvas.width;
-    compositeCanvas.height = canvas.height;
-    const ctx = compositeCanvas.getContext('2d');
-    
-    // Animation Loop für Composite Canvas
-    function captureFrame() {
-      if (!mediaRecorder || mediaRecorder.state !== 'recording') return;
-      
-      // 1. Hydra Canvas zeichnen
-      ctx.drawImage(canvas, 0, 0);
-      
-      // 2. HTML Elements als Bild darüber zeichnen
-      html2canvas(document.body, {
-        canvas: compositeCanvas,
-        backgroundColor: null,
-        allowTaint: true,
-        useCORS: true,
-        scale: 1
-      }).then(() => {
-        requestAnimationFrame(captureFrame);
-      });
-    }
-    
-    // Stream vom Composite Canvas starten
-    const stream = compositeCanvas.captureStream(30);
-    
-    mediaRecorder = new MediaRecorder(stream, {
-      mimeType: 'video/webm;codecs=vp9'
-    });
-    
-    mediaRecorder.ondataavailable = event => {
-      if (event.data.size > 0) {
-        recordedChunks.push(event.data);
+        
+        // Zweite Ellipse - gespiegelte Bewegung mit linkem Stick
+        if (abs(xL) > deadzone || abs(yL) > deadzone) {
+          ellipseLx += xL * 12; // Gespiegelt: positives xL statt negatives
+          ellipseLy += -yL * 12; // Gespiegelt: negatives yL statt positives
+          
+          // Grenzen der Canvas einhalten  
+          ellipseLx = constrain(ellipseLx, -width/2 + 150, width/2 - 150);
+          ellipseLy = constrain(ellipseLy, -height/2 + 150, height/2 - 150);
+        }
       }
-    };
+    }
+
+    // Animierte Stroke-Weight
+    let py1 = map(sin(frameCount * 0.01), -1, 1, 0, 10);
+
+    // Ellipsen zeichnen (nur Gamepad-gesteuert)
+
+    noFill()
     
-    mediaRecorder.onstop = () => {
-      const blob = new Blob(recordedChunks, { type: 'video/webm' });
-      const url = URL.createObjectURL(blob);
-      const a = document.createElement('a');
-      a.href = url;
-      a.download = 'composite-recording.webv';
-      a.click();
-      recordedChunks = [];
-    };
+    let horizontalEllipseX = width / 2 + ellipseLx;
+    let horizontalEllipseY = height / 2 + ellipseLy;
+    let verticalEllipseX = width / 2  + ellipseRx;
+    let verticalEllipseY = height / 2  + ellipseRy;
     
-    mediaRecorder.start();
-    captureFrame(); // Animation starten
-    console.log('Composite recording started...');
+    stroke(0)
+    strokeWeight(4);
+    ellipse(verticalEllipseX, verticalEllipseY, 300);
+    ellipse(horizontalEllipseX, horizontalEllipseY, 300);
+
+    let c1 = randomColor1; // Dynamische Farbe 1
+    let c2 = randomColor2; // Dynamische Farbe 2
+    
+    gradientEllipse(horizontalEllipseX, horizontalEllipseY, 300, c2, c1);
+    gradientEllipse(verticalEllipseX, verticalEllipseY, 300, c1, c2);
+
+    // scaleSize mit Button 0 + rechter Stick X-Achse
+    if (gamepad) {
+      if (gamepad.buttons[0].pressed) {
+
+        
+        // Verwende rechten Stick X-Achse (laut Ihrer Definition oben: axes[1])
+        let rightStickX = gamepad.axes[3]; // Rechter Stick X (horizontal) - wie oben definiert
+        let rightStickY = gamepad.axes[2]; // Rechter Stick Y (vertikal) - wie oben definiert
+        scaleSize += rightStickX * 0.005; // Schritte von 0.005
+        scaleSize2 += rightStickY * 0.005; // Schritte von 0.005
+
+        // Begrenzen auf Bereich 0.8 bis 1.5
+        scaleSize = Math.max(0.8, Math.min(1.5, scaleSize));
+        scaleSize2 = Math.max(1, Math.min(1.8, scaleSize2)); // Korrigiert: -1.5 bis -0.8
+
+        console.log(scaleSize2);
+      }
+      
+      // Button 1 für Schriftart wechseln UND Pixelate-Steuerung (nur mit rechtem Stick)
+      let button1Pressed = gamepad.buttons[1].pressed;
+      if (button1Pressed && !lastButton1State) {
+        // Schriftart wechseln (nur beim ersten Drücken)
+        currentFontIndex = (currentFontIndex + 1) % fonts.length;
+        buildTitleGrid();
+        console.log("Font gewechselt zu:", fonts[currentFontIndex]);
+      }
+      lastButton1State = button1Pressed;
+      
+      if (gamepad.buttons[1].pressed) {
+        // Pixelate mit rechtem Stick
+        let rightStickX = gamepad.axes[3]; // Rechter Stick X (horizontal)
+        let rightStickY = gamepad.axes[2]; // Rechter Stick Y (vertikal)
+        if (Math.abs(rightStickX) > deadzone || Math.abs(rightStickY) > deadzone) {
+          pix += rightStickX * -5; // Negative Werte für Reduktion nach links
+          pix2 += rightStickY * -5; // Negative Werte für Reduktion nach oben
+
+          // Begrenzen: pix von 35 bis 400
+          pix = Math.max(35, Math.min(400, pix));
+          pix2 = Math.max(35, Math.min(400, pix2));
+          console.log("pix:", pix.toFixed(2), "pix2:", pix2.toFixed(2));
+        }
+      }
+
+      // Button 2 für Scroll-Steuerung  
+      if (gamepad.buttons[2].pressed) {
+        let rightStickX = gamepad.axes[3]; // Rechter Stick X (horizontal)
+        let rightStickY = gamepad.axes[2]; // Rechter Stick Y (vertikal)
+        repe += rightStickX * 0.05;
+        repe2 += rightStickY * 0.05;
+
+        // Begrenzen auf Bereich 0 bis 1.5
+        repe = Math.max(0, Math.min(1.5, repe));
+        repe2 = Math.max(0, Math.min(1.5, repe2));
+        console.log("scroll:", repe.toFixed(2), repe2.toFixed(2));
+      }
+
+      // Button 3 für zufällige leuchtende Farben
+      if (gamepad.buttons[3].pressed) {
+        // Zufällige leuchtende Farben generieren
+        let hue1 = random(0, 360);
+        let hue2 = random(0, 360);
+        
+        colorMode(HSB, 360, 100, 100);
+        randomColor1 = color(hue1, random(70, 100), random(80, 100));
+        randomColor2 = color(hue2, random(70, 100), random(80, 100));
+        colorMode(RGB, 255);
+        
+        console.log("Neue leuchtende Farben generiert!");
+      }
+
+      // Button 20 für komplette Hydra-Randomisierung
+      if (gamepad.buttons[20] && gamepad.buttons[20].pressed) {
+        // Nur die bestehenden Variablen randomisieren
+        scaleSize = random(0.8, 1.5);
+        scaleSize2 = random(1, 1.8);
+        repe = random(-1.0, 1.0);
+        repe2 = random(-1.0, 1.0);
+        pix = random(35, 400);
+        pix2 = random(35, 400);
+        
+        // Auch zufällige leuchtende Farben generieren
+        let hue1 = random(0, 360);
+        let hue2 = random(0, 360);
+        colorMode(HSB, 360, 100, 100);
+        randomColor1 = color(hue1, random(70, 100), random(80, 100));
+        randomColor2 = color(hue2, random(70, 100), random(80, 100));
+        colorMode(RGB, 255);
+        
+        console.log("ALLES randomisiert! Scale:", scaleSize.toFixed(2), scaleSize2.toFixed(2), 
+                   "Scroll:", repe.toFixed(2), repe2.toFixed(2),
+                   "Pix:", pix.toFixed(0), pix2.toFixed(0), "Neue Farben!");
+      }
+
+      // Button 12 für Schriftgröße (X) und Zeilenabstand (Y) (exakt wie im Gamecontroller - Button 2)
+      if (gamepad.buttons[12].pressed) {
+        fontSizeValue += gamepad.axes[0] * 2;
+        myWordSpacing += gamepad.axes[1] * 2;
+        
+        // Direkt alle Spans aktualisieren (wie im Gamecontroller)
+        document.querySelectorAll('.canvas-title span').forEach(span => {
+          span.style.fontSize = fontSizeValue + 'px';
+        });
+        
+        buildTitleGrid();
+        console.log("FontSize:", fontSizeValue.toFixed(1), "LineHeight:", myWordSpacing.toFixed(1));
+      }
+
+      // Button 13 für Letter-Spacing (X) und Word-Margin (Y) (wie im Gamecontroller)
+      if (gamepad.buttons[13].pressed) {
+        myLetterSpacing += gamepad.axes[0];
+        myWordMargin += gamepad.axes[1];
+        buildTitleGrid();
+        console.log("LetterSpacing:", myLetterSpacing.toFixed(1), "WordMargin:", myWordMargin.toFixed(1));
+      }
+
+      // Button 14 für Grid-Größe (exakt wie im Gamecontroller - Button 4)
+      if (gamepad.buttons[14].pressed) {
+        cols += gamepad.axes[0] / 5;
+        rows += gamepad.axes[1] / 5;
+        
+        cols = Math.max(1, Math.min(30, cols));
+        rows = Math.max(1, Math.min(30, rows));
+        
+        buildTitleGrid();
+        console.log("Grid:", Math.round(rows), "x", Math.round(cols));
+      }
+
+      // Button 15 für Pattern-Offset und Pattern-Arrangement (exakt wie im Gamecontroller - Button 5)
+      if (gamepad.buttons[15].pressed) {
+        patternOffset += gamepad.axes[0] * 0.1;
+        patternOffset = Math.max(0, Math.min(10, patternOffset));
+        
+        patternArrangement += gamepad.axes[1] * 0.1;
+        patternArrangement = Math.max(1, Math.min(3, patternArrangement));
+        
+        buildTitleGrid();
+        console.log("PatternOffset:", patternOffset.toFixed(1), "PatternArrangement:", patternArrangement.toFixed(1));
+      }
+
+      // Button 19 für Reset zum Anfang
+      if (gamepad.buttons[19] && gamepad.buttons[19].pressed) {
+        // Alle Title-Werte zurücksetzen
+        rows = 3; // 3 Zeilen für REIMAGINE, DESIGN, TOOLS
+        cols = 1;
+        patternOffset = 0;
+        patternArrangement = 1;
+        currentFontIndex = 0;
+        fontSizeValue = 32;
+        myWordSpacing = 32;
+        myLetterSpacing = 0;
+        myWordMargin = 0;
+        
+        buildTitleGrid();
+        console.log("Title zurückgesetzt zum Anfang!");
+      }
+
+      // Button 1 Schriftart-Wechsel wird oben behandelt
+    }
   }
 
-  // Tastenkürzel erweitern
   function keyPressed() {
-    if (key == 'R') startScreenRecording();
-    if (key == 'C') startCompositeRecording(); // <-- Composite Mode
-    if (key == 'S') stopRecording();
     if (key == 'P') pg.save('P5LIVE_hydra.png');
   }
 
