@@ -70,6 +70,8 @@
       flex-direction: column;
       align-items: center;
       justify-content: center;
+      mix-blend-mode: normal;
+      
     }
 
     .canvas-info {
@@ -98,8 +100,8 @@
 
 <body>
   <div class="canvas-title">Reimagine Design Tools</div>
-  <div class="canvas-label">Master Thesis<br>19th AUG 2025<br>08h30 – 17h00<br>MA IDCE HGK</div>
-  <div class="canvas-info"> relationships, partnerships, community ships, friendships, fellowships, censor-ships, tool ships, companionships <br> and fewer authorships</div>
+  <!-- <div class="canvas-label">Master Thesis<br>19th AUG 2025<br>08h30 – 17h00<br>MA IDCE HGK</div> -->
+  <div class="canvas-info"> relationships, partnerships, community-ships, friendships, fellowships, censor-ships, tool-ships, companionships <br> and fewer authorships</div>
 
 </body>
 <script src="https://unpkg.com/hydra-synth"></script>
@@ -198,8 +200,6 @@
     'Tahoma, Geneva, sans-serif'
   ];
   
-  let lastButton1State = false;
-
   let hydra = new Hydra({ detectAudio: false, canvas: hc })
   // hydra.setResolution(window.innerWidth*2, window.innerHeight*2) // retina res
   noize = noise // use noize() since noise() is taken by p5js
@@ -413,16 +413,7 @@
         console.log(scaleSize2);
       }
       
-      // Button 1 für Schriftart wechseln UND Pixelate-Steuerung (nur mit rechtem Stick)
-      let button1Pressed = gamepad.buttons[1].pressed;
-      if (button1Pressed && !lastButton1State) {
-        // Schriftart wechseln (nur beim ersten Drücken)
-        currentFontIndex = (currentFontIndex + 1) % fonts.length;
-        buildTitleGrid();
-        console.log("Font gewechselt zu:", fonts[currentFontIndex]);
-      }
-      lastButton1State = button1Pressed;
-      
+      // Button 1 für Pixelate-Steuerung (nur mit rechtem Stick)
       if (gamepad.buttons[1].pressed) {
         // Pixelate mit rechtem Stick
         let rightStickX = gamepad.axes[3]; // Rechter Stick X (horizontal)
