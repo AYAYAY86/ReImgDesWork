@@ -86,6 +86,7 @@
       padding: 0.4em 0em;
       z-index: 100;
       pointer-events: none;
+      text-align: center;
     }
 
     .hydra-canvas {
@@ -101,7 +102,7 @@
 <body>
   <div class="canvas-title">Reimagine Design Tools</div>
   <!-- <div class="canvas-label">Master Thesis<br>19th AUG 2025<br>08h30 – 17h00<br>MA IDCE HGK</div> -->
-  <div class="canvas-info"> relationships, partnerships, community-ships, friendships, fellowships, censor-ships, tool-ships, companionships <br> and fewer authorships</div>
+  <!-- <div class="canvas-info"> relationships, partnerships, community-ships, friendships, fellowships, censor-ships, tool-ships, companionships <br> and fewer authorships</div> -->
 
 </body>
 <script src="https://unpkg.com/hydra-synth"></script>
@@ -188,6 +189,14 @@
   let myWordSpacing = 32;
   let myLetterSpacing = 0;
   let myWordMargin = 0;
+  let textRotation = 0; // Rotation der Schrift
+  let currentBlendModeIndex = 0; // Index für Blend-Mode
+  let lastButton15State = false; // Für Doppelklick-Erkennung
+  let button15ClickTime = 0; // Zeitstempel des letzten Klicks
+  let doubleClickWindow = 500; // 500ms Fenster für Doppelklick
+  
+  // CSS Blend-Modes Array
+  const blendModes = ['normal', 'color', 'difference', 'hue', 'color-dodge'];
   
   // Verfügbare Schriftarten (keine zufällige Auswahl)
   const fonts = [
@@ -246,6 +255,7 @@
       container.style.justifyContent = 'center';
       container.style.height = '100%';
       container.style.width = '100%';
+      container.style.transform = `rotate(${textRotation}deg)`;
       
       // Exakt wie im Gamecontroller - verwende Ganzzahlen!
       let intRows = Math.round(rows);
@@ -456,6 +466,33 @@
         console.log("Neue leuchtende Farben generiert!");
       }
 
+      // Button 9 für Reset aller Button 0-3 Einstellungen und Ellipsen
+      if (gamepad.buttons[9] && gamepad.buttons[9].pressed) {
+        // Button 0 Einstellungen zurücksetzen
+        scaleSize = 1.0;
+        scaleSize2 = -1.0;
+        
+        // Button 1 Einstellungen zurücksetzen
+        pix = 400;
+        pix2 = 400;
+        
+        // Button 2 Einstellungen zurücksetzen
+        repe = 0;
+        repe2 = 0;
+        
+        // Button 3 Farben zurücksetzen
+        randomColor1 = color(255, 0, 0);
+        randomColor2 = color(0);
+        
+        // Ellipsen-Positionen zurücksetzen (beide)
+        ellipseRx = 0;
+        ellipseRy = 0;
+        ellipseLx = 0;
+        ellipseLy = 0;
+        
+        console.log("Alle Button 0-3 Einstellungen und Ellipsen zurückgesetzt!");
+      }
+
       // Button 20 für komplette Hydra-Randomisierung
       if (gamepad.buttons[20] && gamepad.buttons[20].pressed) {
         // Nur die bestehenden Variablen randomisieren
@@ -493,18 +530,23 @@
         console.log("FontSize:", fontSizeValue.toFixed(1), "LineHeight:", myWordSpacing.toFixed(1));
       }
 
-      // Button 13 für Letter-Spacing (X) und Word-Margin (Y) (wie im Gamecontroller)
+      // Button 13 für Letter-Spacing (Y) und Word-Margin (X) mit Min/Max-Werten
       if (gamepad.buttons[13].pressed) {
-        myLetterSpacing += gamepad.axes[0];
-        myWordMargin += gamepad.axes[1];
+        myLetterSpacing += gamepad.axes[1];
+        myWordMargin += gamepad.axes[0];
+        
+        // Min/Max-Werte begrenzen
+        myLetterSpacing = Math.max(-10, Math.min(50, myLetterSpacing));
+        myWordMargin = Math.max(-100, Math.min(100, myWordMargin));
+        
         buildTitleGrid();
         console.log("LetterSpacing:", myLetterSpacing.toFixed(1), "WordMargin:", myWordMargin.toFixed(1));
       }
 
       // Button 14 für Grid-Größe (exakt wie im Gamecontroller - Button 4)
       if (gamepad.buttons[14].pressed) {
-        cols += gamepad.axes[0] / 5;
-        rows += gamepad.axes[1] / 5;
+        cols += gamepad.axes[1] / 5;
+        rows += gamepad.axes[0] / 5;
         
         cols = Math.max(1, Math.min(30, cols));
         rows = Math.max(1, Math.min(30, rows));
@@ -513,16 +555,42 @@
         console.log("Grid:", Math.round(rows), "x", Math.round(cols));
       }
 
-      // Button 15 für Pattern-Offset und Pattern-Arrangement (exakt wie im Gamecontroller - Button 5)
-      if (gamepad.buttons[15].pressed) {
-        patternOffset += gamepad.axes[0] * 0.1;
-        patternOffset = Math.max(0, Math.min(10, patternOffset));
+      // Button 15 für Text-Rotation (X) und Blend-Mode Auswahl (Y)
+      let button15Pressed = gamepad.buttons[15].pressed;
+      
+      // Doppelklick-Erkennung für Button 15
+      if (button15Pressed && !lastButton15State) {
+        let currentTime = millis();
+        if (currentTime - button15ClickTime < doubleClickWindow) {
+          // Doppelklick erkannt - Rotation zurücksetzen
+          textRotation = 0;
+          buildTitleGrid();
+          console.log("Doppelklick! Rotation zurückgesetzt zu 0°");
+        }
+        button15ClickTime = currentTime;
+      }
+      lastButton15State = button15Pressed;
+      
+      if (button15Pressed) {
+        // X-Achse: Text-Rotation
+        textRotation += gamepad.axes[0] * 2; // 2 Grad pro Frame
+        textRotation = Math.max(-180, Math.min(180, textRotation));
         
-        patternArrangement += gamepad.axes[1] * 0.1;
-        patternArrangement = Math.max(1, Math.min(3, patternArrangement));
+        // Y-Achse: Blend-Mode Auswahl
+        if (Math.abs(gamepad.axes[1]) > deadzone) {
+          let blendModeChange = gamepad.axes[1] * 0.1;
+          currentBlendModeIndex += blendModeChange;
+          currentBlendModeIndex = Math.max(0, Math.min(blendModes.length - 1, currentBlendModeIndex));
+          
+          // Blend-Mode auf Title anwenden
+          const title = document.querySelector('.canvas-title');
+          if (title) {
+            title.style.mixBlendMode = blendModes[Math.round(currentBlendModeIndex)];
+          }
+        }
         
         buildTitleGrid();
-        console.log("PatternOffset:", patternOffset.toFixed(1), "PatternArrangement:", patternArrangement.toFixed(1));
+        console.log("Rotation:", textRotation.toFixed(1) + "°", "BlendMode:", blendModes[Math.round(currentBlendModeIndex)]);
       }
 
       // Button 19 für Reset zum Anfang
@@ -537,6 +605,7 @@
         myWordSpacing = 32;
         myLetterSpacing = 0;
         myWordMargin = 0;
+        textRotation = 0;
         
         buildTitleGrid();
         console.log("Title zurückgesetzt zum Anfang!");
