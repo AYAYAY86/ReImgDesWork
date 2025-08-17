@@ -52,7 +52,7 @@
   */
 
   // How much wiggle-room is allowed when matching the color?
-  let tolerance = 5;
+  let tolerance = 20;
 
   // Color to look for (set with mouse click)
   let colorToMatch;
@@ -92,7 +92,7 @@
     image(video, x, y);
 
     // Grafik-Buffer NICHT leeren, damit die Kreise eine Spur hinterlassen
-    pg.clear();
+    // pg.clear(); // Commented out so drawing persists
 
     let savedColors = getItem('selectedColors') || [];
     // Initialisiere smoothedPositions mit der aktuellen Position, falls noch nicht vorhanden
@@ -115,18 +115,14 @@
         smoothedPositions[i].x = lerp(smoothedPositions[i].x, firstPx.x, 0.2);
         smoothedPositions[i].y = lerp(smoothedPositions[i].y, firstPx.y, 0.2);
 
+        // Draw with the tracked color
         pg.fill(c);
-        pg.noStroke()
-        pg.circle(smoothedPositions[i].x, smoothedPositions[i].y, 30);
-
-            pg.fill(255);
-    pg.textSize(16);
-    pg.textAlign(LEFT, TOP);
-    pg.text(
-      `x: ${smoothedPositions[i].x.toFixed(0)}\ny: ${smoothedPositions[i].y.toFixed(0)}`,
-      smoothedPositions[i].x + 20,
-      smoothedPositions[i].y - 15
-    );
+        pg.noStroke();
+        pg.circle(smoothedPositions[i].x, smoothedPositions[i].y, 15);
+        
+        // Optional: Add a smaller inner circle for better visibility
+        pg.fill(red(c), green(c), blue(c), 150);
+        pg.circle(smoothedPositions[i].x, smoothedPositions[i].y, 8);
       }
     }
 
@@ -140,6 +136,20 @@
     let allColors = getItem('selectedColors') || [];
     allColors.push([red(pickedColor), green(pickedColor), blue(pickedColor)]);
     storeItem('selectedColors', allColors);
+  }
+
+  // Save the pg graphics when S key is pressed
+  function keyPressed() {
+    if (key === 'S' || key === 's') { // S key (upper or lowercase)
+      // Save the pg graphics as an image
+      let timestamp = year() + "" + nf(month(), 2) + "" + nf(day(), 2) + "_" + nf(hour(), 2) + "" + nf(minute(), 2) + "" + nf(second(), 2);
+      let filename = "color_drawing_" + timestamp + ".png";
+      
+      // Save the pg graphics buffer
+      save(pg, filename);
+      
+      console.log("Drawing saved as: " + filename);
+    }
   }
 
   // Find the first instance of a color in an image and return the location

@@ -165,7 +165,9 @@ y   |   /          \
 4: BLUE
 5: Change Effect
 6: Randomize All
-S: Save Image
+7: Reset Settings
+8: Save Image
+<!-- S: Save Image -->
 
 </pre>
     </div>
@@ -416,6 +418,32 @@ function keyPressed() {
     savedOffsetBY = Math.round(random(-12, 12));
     currentEffect = Math.floor(random(0, effectNames.length)); // Zufälligen Effekt auswählen
     console.log(`Random values generated: x=${savedX.toFixed(2)}, y=${savedY.toFixed(2)}, Effect=${effectNames[currentEffect]}`);
+  }
+  if (key === '7') {
+    // Reset all settings to default values
+    savedX = 0;
+    savedY = 255;
+    savedOffsetX = 0;
+    savedOffsetY = 0;
+    savedOffsetGX = 0;
+    savedOffsetGY = 0;
+    savedOffsetBX = 0;
+    savedOffsetBY = 0;
+    currentEffect = 0; // Reset to Linear Shift
+    mouseControl = false;
+    offsetControl = false;
+    offsetControlG = false;
+    offsetControlB = false;
+    effectControl = false;
+    console.log('All settings reset to default values');
+  }
+  if (key === '8') {
+    // Save image
+    if (img) {
+      let filename = `x=${currentX.toFixed(2)}_y=${currentY.toFixed(2)}_R[${savedOffsetX},${savedOffsetY}]_G[${savedOffsetGX},${savedOffsetGY}]_B[${savedOffsetBX},${savedOffsetBY}]_Effect=${effectNames[currentEffect]}.jpg`;
+      img.save(filename);
+      console.log(`Image saved as: ${filename}`);
+    }
   }
   if (key === 'S' || key === 's') {
     if (img) {

@@ -55,12 +55,11 @@
       <br>
       <div class="kernel-title">Controls:</div>
       <pre>1-9: Select Kernel Position
-↑/↓: Adjust Value (+/-0.25)
+↑/↓: Adjust Value (+/-1.0)
 S: Save Image
 R: Random Kernel
 SHIFT+R: Reset Kernel
-G: Gaussian Blur
-B: Box Blur
+Drag & Drop: Load new image
 Range: -5.0 to +5.0</pre>
     </div>
     <script>
@@ -81,6 +80,7 @@ function preload() {
 function setup() {
   cnv = createCanvas(img.width*0.75, img.height*0.75); // Größer: 75% statt 50%
   cnv.parent('canvasContainer');
+  cnv.drop(handleFile); // Drag-and-Drop-Funktionalität hinzufügen
   pixelDensity(1);
   imageMode(CORNER);
 
@@ -91,6 +91,22 @@ function setup() {
   applyConvolution(img, outputImg, kernel);
   needsUpdate = false; // Initial convolution done
   updateKernelDisplay();
+}
+
+function handleFile(file) {
+  if (file.type === 'image') {
+    loadImage(file.data, loaded => {
+      img = loaded;
+      // Canvas und Output-Image an neue Bildgröße anpassen
+      resizeCanvas(img.width*0.75, img.height*0.75);
+      outputImg = createImage(img.width, img.height);
+      // Convolution mit neuem Bild anwenden
+      needsUpdate = true;
+      console.log('Neues Bild geladen:', file.name);
+    });
+  } else {
+    console.log('Keine Bilddatei');
+  }
 }
 
 function draw() {
@@ -181,16 +197,16 @@ function keyPressed() {
     let col = activeKernelPos % 3;
     
     if (keyCode === UP_ARROW) {
-      kernel[row][col] += 0.25;
-      kernel[row][col] = Math.round(kernel[row][col] * 4) / 4; // Auf 0.25er Schritte runden
+      kernel[row][col] += 1.0;
+      kernel[row][col] = Math.round(kernel[row][col]); // Auf ganze Zahlen runden
       kernel[row][col] = Math.max(-5.0, Math.min(5.0, kernel[row][col])); // Begrenzen auf -5 bis +5
       needsUpdate = true; // Markiere für Update
       updateKernelDisplay();
     }
     
     if (keyCode === DOWN_ARROW) {
-      kernel[row][col] -= 0.25;
-      kernel[row][col] = Math.round(kernel[row][col] * 4) / 4; // Auf 0.25er Schritte runden
+      kernel[row][col] -= 1.0;
+      kernel[row][col] = Math.round(kernel[row][col]); // Auf ganze Zahlen runden
       kernel[row][col] = Math.max(-5.0, Math.min(5.0, kernel[row][col])); // Begrenzen auf -5 bis +5
       needsUpdate = true; // Markiere für Update
       updateKernelDisplay();
@@ -210,9 +226,9 @@ function keyPressed() {
       // R: Generiere zufälligen Kernel
       for (let row = 0; row < 3; row++) {
         for (let col = 0; col < 3; col++) {
-          // Zufällige Werte zwischen -2 und +2, gerundet auf 0.25er Schritte
+          // Zufällige Werte zwischen -2 und +2, gerundet auf ganze Zahlen
           let randomVal = random(-2, 2);
-          kernel[row][col] = Math.round(randomVal * 4) / 4;
+          kernel[row][col] = Math.round(randomVal);
         }
       }
     }

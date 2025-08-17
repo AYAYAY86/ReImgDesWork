@@ -216,10 +216,10 @@ main {
     </div>
   </div>
   <div class="filters">
-    <span class="filter-btn" data-tag="cursor">#cursor</span>
+    <!-- <span class="filter-btn" data-tag="cursor">#cursor</span>
     <span class="filter-btn" data-tag="layout">#layout</span>
     <span class="filter-btn" data-tag="interaction">#interaction</span>
-    <span class="filter-btn" data-tag="experiments">#experiments</span>
+    <span class="filter-btn" data-tag="experiments">#experiments</span> -->
   </div>
 </header>
 
@@ -236,23 +236,35 @@ main {
   <script>
     const projectData = [
       {
-        title: "Video 1",
-        video: "videos/Typo_Mouse_Interaction_x-Axis_ Kopie.mp4",
-        description: "Description for Video 1",
+        title: "Joystick",
+        video: "videos/HochFormat_Controller_1080x1350_1.mp4",
+        description: "Typography layout with a joystick",
         tags: ["cursor", "interaction"]
       },
       {
-        title: "Video 2",
-        video: "videos/Typo_Mouse_Interaction_x-Axis_ Kopie.mp4",
-        description: "Description for Video 2",
+        title: "Colortracking",
+        video: "videos/HochFormat_Golortracking_1080x1350_1.mp4",
+        description: "Color tracking with a camera",
         tags: ["layout"]
       },
       {
-        title: "Video 3",
-        video: "videos/Typo_Mouse_Interaction_x-Axis_ Kopie.mp4",
-        description: "Description for Video 3",
+        title: "Gradationsfilter",
+        video: "videos/HochFormat_Gradations_1080x1350_1.mp4",
+        description: "Gradationsfilter with a numpad keyboard and mouse interaction",
         tags: ["interaction"]
-      }
+      },
+      {
+        title: "ml5.js Typography",
+        video: "videos/HochFormat_ML5_Typo_1080x1350_1.mp4",
+        description: "Embodiment of typography with ml5.js",
+        tags: ["interaction"]
+      },
+      {
+        title: "Mouse Typography",
+        video: "videos/HochFormat_Mouse_Typo_1080x1350_1.mp4",
+        description: "Experiment with mouse-driven typography",
+        tags: ["interaction"]
+      },
     ];
 
     const container = document.getElementById("project-container");
