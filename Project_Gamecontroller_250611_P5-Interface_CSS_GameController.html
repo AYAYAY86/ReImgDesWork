@@ -166,7 +166,7 @@
 
             if (gamepad) {
 
-                if (gamepad.buttons[8] && gamepad.buttons[8].pressed && !lastButton8State) {
+                if (gamepad.buttons[5] && gamepad.buttons[5].pressed && !lastButton8State) {
                     // Zufällige Schriftart
                     currentFontIndex = Math.floor(Math.random() * fonts.length);
 
@@ -191,9 +191,9 @@
                         // span.style.color = `rgb(${red},${green},255)`;
                     });
                 }
-                lastButton8State = gamepad.buttons[8] && gamepad.buttons[8].pressed;
+                lastButton8State = gamepad.buttons[5] && gamepad.buttons[5].pressed;
 
-                let button9Pressed = gamepad.buttons[9] && gamepad.buttons[9].pressed;
+                let button9Pressed = gamepad.buttons[7] && gamepad.buttons[7].pressed;
                 if (button9Pressed && !lastButton9State) {
                     isPosterMode = !isPosterMode;
                     setGridSize();
@@ -202,10 +202,10 @@
 
                 if (gamepad.buttons[5].pressed) {
 
-                    patternOffset += gamepad.axes[0] * .1;
+                    patternOffset += gamepad.axes[2] * .1;
                     patternOffset = Math.max(0, Math.min(10, patternOffset));
 
-                    patternArrangement += gamepad.axes[1] * .1;
+                    patternArrangement += gamepad.axes[3] * .1;
                     patternArrangement = Math.max(1, Math.min(3, patternArrangement));
 
                     buildGrid();
@@ -225,7 +225,7 @@
 
                 if (gamepad.buttons[2].pressed) {
                     // Zum Beispiel: Achse 0 (links/rechts) steuert die Summe
-                    summe += gamepad.axes[0]; // oder z.B. summe += gamepad.axes[0] * 0.1;
+                    summe += gamepad.axes[2]; // oder z.B. summe += gamepad.axes[0] * 0.1;
                     // Optional: Begrenzen
                     summe = Math.max(0, Math.min(100, summe));
                     // Ausgabe zur Kontrolle
@@ -235,8 +235,8 @@
                 if (gamepad) {
                     if (gamepad.buttons[2].pressed) {
 
-                        fontSizeValue += gamepad.axes[0] * 2;
-                        myWordSpacing += gamepad.axes[1] * 2;
+                        fontSizeValue += gamepad.axes[2] * 2;
+                        myWordSpacing += gamepad.axes[3] * 2;
 
                     }
 
@@ -247,9 +247,9 @@
                 }
 
                 if (gamepad) {
-                    if (gamepad.buttons[4].pressed) {
-                        cols += gamepad.axes[0] / 5;
-                        rows += gamepad.axes[1] / 5;
+                    if (gamepad.buttons[3].pressed) {
+                        cols += gamepad.axes[2] / 5;
+                        rows += gamepad.axes[3] / 5;
 
                         cols = Math.max(1, Math.min(30, cols));
                         rows = Math.max(1, Math.min(30, rows));
@@ -259,10 +259,10 @@
                 }
 
                 if (gamepad) {
-                    if (gamepad.buttons[3].pressed) {
+                    if (gamepad.buttons[0].pressed) {
 
-                        myLetterSpacing += gamepad.axes[0];
-                        myWordMargin += gamepad.axes[1];
+                        myLetterSpacing += gamepad.axes[2];
+                        myWordMargin += gamepad.axes[3];
 
                         document.querySelectorAll('#joystick-list span').forEach(span => {
                             span.style.letterSpacing = myLetterSpacing + 'px';
