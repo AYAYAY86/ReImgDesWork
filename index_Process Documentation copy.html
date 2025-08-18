@@ -1,0 +1,543 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Reimagine Design Tools</title>
+  <style>
+    body {
+      margin: 0;
+      font-family: 'Consolas', 'Menlo', 'Monaco', 'Courier New', monospace;
+      background-color: #fff;
+      color: #000;
+    }
+
+    header {
+      position: sticky;
+      top: 0;
+      background: white;
+      padding: 1rem 1rem 0.5rem 1rem;
+      border-bottom: 1px solid #ddd;
+      z-index: 10;
+    }
+
+    .header-top {
+      display: flex;
+      justify-content: space-between;
+      align-items: baseline;
+    }
+
+    header h1 {
+      font-size: 1.25rem;
+      margin: 0;
+    }
+
+    .header-buttons {
+      display: flex;
+      gap: 0.5rem;
+    }
+
+    .header-btn {
+      font-size: 0.8rem;
+      margin: 0.15rem;
+      padding: 0.3rem 0.6rem;
+      background: black;
+      color: white;
+      border: none;
+      border-radius: 4px;
+      text-decoration: none;
+      transition: background 0.3s ease;
+      line-height: 1;
+    }
+
+    .header-btn:hover {
+      background: palevioletred;
+    }
+
+    .filters {
+      margin-top: 0.25rem;
+      margin-bottom: 0.25rem;
+    }
+
+    .filter-btn {
+      display: inline-block;
+      margin: 0rem;
+      padding: 0.2rem .5rem;
+      font-size: 0.8rem;
+      background: #eee;
+      border: 0px solid white;
+      border-radius: 10px;
+      cursor: pointer;
+    }
+
+    .filter-btn:hover {
+      font-style: italic;
+      color: palevioletred;
+    }
+
+    .filter-btn.active {
+      background: black;
+      color: white;
+      font-style: italic;
+    }
+
+    main {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+      gap: 1rem;
+      padding: 1rem;
+    }
+
+    .project {
+      position: relative;
+      overflow: hidden;
+      aspect-ratio: 4 / 3;
+      cursor: pointer;
+    }
+
+    .project img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      transition: transform 0.6s ease;
+    }
+
+    .project:hover img {
+      transform: scale(1.05);
+    }
+
+    .project-title {
+      position: absolute;
+      bottom: 0;
+      background: rgba(255, 255, 255, 0.8);
+      width: 100%;
+      padding: 0.5rem;
+      font-size: 0.8rem;
+      box-sizing: border-box;
+    }
+
+    .description {
+      padding: 0.2rem;
+      margin-top: 0.3rem;
+    }
+
+    .project-tags {
+      margin: 0.3rem 0;
+    }
+
+    .project-tag {
+      display: inline-block;
+      margin: 0.1rem 0.2rem 0.1rem 0;
+      padding: 0.15rem 0.4rem;
+      font-size: 0.7rem;
+      background: #eee;
+      border-radius: 8px;
+      color: #666;
+    }
+
+    .lightbox {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: rgba(0,0,0,0.85);
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      z-index: 1000;
+    }
+
+    .lightbox img {
+      max-width: 90%;
+      max-height: 90%;
+      border: 4px solid white;
+      box-shadow: 0 0 20px rgba(0,0,0,0.5);
+    }
+
+    .lightbox.hidden {
+      display: none;
+    }
+
+.lightbox-description {
+  position: absolute;
+  bottom: 1rem;
+  left: 1rem;
+  right: 1rem;
+  background: rgba(255, 255, 255, 0.9);
+  color: black;
+  padding: 0.6rem;
+  font-size: 0.85rem;
+  font-style: italic;
+  z-index: 10;
+  text-align: left;
+  border-radius: 4px;
+}
+
+    #closeBtn {
+      position: absolute;
+      top: 1rem;
+      right: 1.5rem;
+      font-size: 2rem;
+      color: white;
+      cursor: pointer;
+      font-family: sans-serif;
+    }
+
+    .nav-btn {
+      position: absolute;
+      top: 50%;
+      transform: translateY(-50%);
+      font-size: 2.5rem;
+      background: none;
+      color: white;
+      border: none;
+      cursor: pointer;
+      padding: 1rem;
+      user-select: none;
+      z-index: 1001;
+    }
+
+    #prevBtn { left: 1rem; }
+    #nextBtn { right: 1rem; }
+
+    .nav-btn:hover {
+      color: palevioletred;
+    }
+
+    /* New styles for process documentation section */
+    section {
+      padding: 2rem;
+      margin: 1rem 0;
+      border: 1px solid #ddd;
+      border-radius: 8px;
+      background: #f9f9f9;
+    }
+
+    section h2 {
+      font-size: 1.5rem;
+      margin-bottom: 1rem;
+    }
+
+    section p {
+      margin: 0.5rem 0;
+      line-height: 1.6;
+    }
+
+    .gallery {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 1.5rem;
+    }
+
+    .gallery figure {
+      width: calc(33.333% - 1rem);
+      margin: 0;
+    }
+
+    .gallery img {
+      width: 100%;
+      height: auto;
+      border-radius: 4px;
+    }
+
+    .gallery figcaption {
+      text-align: center;
+      font-size: 0.8rem;
+      color: #666;
+      margin-top: 0.5rem;
+    }
+
+    @media (max-width: 768px) {
+      .gallery figure {
+        width: calc(50% - 1rem);
+      }
+    }
+
+    @media (max-width: 480px) {
+      .gallery figure {
+        width: 100%;
+      }
+    }
+  </style>
+  <!--
+  Für Lightbox-Funktion bitte z.B. <script src="https://cdnjs.cloudflare.com/ajax/libs/lightbox2/2.11.3/js/lightbox.min.js"></script>
+  und <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/lightbox2/2.11.3/css/lightbox.min.css" /> im <head> ergänzen, falls noch nicht vorhanden.
+-->
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/lightbox2/2.11.3/css/lightbox.min.css" />
+<script src="https://cdnjs.cloudflare.com/ajax/libs/lightbox2/2.11.3/js/lightbox.min.js"></script>
+</head>
+
+<body>
+  <header>
+    <div class="header-top">
+      <a href="index.html" style="text-decoration:none; color:inherit;">
+        <h1>Reimagine Design Tools</h1>
+      </a>
+      <div class="header-buttons">
+        <a href="index_Video Documentation.html" class="header-btn" >Video Documentation</a>
+        <a href="index.html" class="header-btn" >Reimagine Design Tools</a>
+      </div>
+    </div>
+    <div class="filters">
+      <span class="filter-btn" data-tag="practical">#practical</span>
+      <span class="filter-btn" data-tag="research">#research</span>
+      <span class="filter-btn" data-tag="theory">#theory</span>
+    </div>
+  </header>
+
+  <!--
+  Neue Process Documentation: _1_MouseCursor (projectData-Logik, keine Links, gleiche Schrift)
+-->
+<script>
+const mouseCursorData = [
+  {
+    title: "Mouse Tracking",
+    image: "neueBilder/_1_MouseCursor/580_handmouse456x512_b828775e90bf71debae47e791cad0fad.png",
+    description: "Mouse Tracking - Main Project Documentation"
+  },
+  {
+    title: "Mouse Tracking Screenshot",
+    image: "neueBilder/_1_MouseCursor/Bildschirmfoto 2025-07-23 um 16.05.14.png",
+    description: "Mouse Tracking Screenshot - Cursor Movement"
+  },
+  {
+    title: "Mouse Tracking Screenshot",
+    image: "neueBilder/_1_MouseCursor/Bildschirmfoto 2025-07-24 um 15.24.10.png",
+    description: "Mouse Tracking Screenshot - Cursor Movement"
+  },
+  {
+    title: "Mouse Tracking Screenshot",
+    image: "neueBilder/_1_MouseCursor/Bildschirmfoto 2025-07-24 um 16.07.49.png",
+    description: "Mouse Tracking Screenshot - Cursor Movement"
+  },
+  {
+    title: "Relationship between direction of mouse movement",
+    image: "neueBilder/_1_MouseCursor/Relationship-between-direction-of-mouse-movement-black-arrows-and-cursor-movement.png",
+    description: "Relationship between direction of mouse movement and cursor movement"
+  },
+  {
+    title: "Mouse Tracking Guide",
+    image: "neueBilder/_1_MouseCursor/https-__phonexa.com_blog_mouse-tracking-guide__C00185-mouse-tracking-guide.png",
+    description: "Mouse Tracking Guide - Visual Explanation"
+  },
+  {
+    title: "Mouse Tracking Example",
+    image: "neueBilder/_1_MouseCursor/image-1213.webp",
+    description: "Mouse Tracking Example - Data Visualization"
+  },
+  {
+    title: "Mouse Gestures",
+    image: "neueBilder/_1_MouseCursor/mouse-gestures-2_med_hr.png",
+    description: "Mouse Gestures - Gesture Recognition"
+  },
+  {
+    title: "The Graphical User Interface (GUI)",
+    image: "neueBilder/_1.1_GUI/Bildschirmfoto 2025-04-16 um 14.36.38.png",
+    description: "The Graphical User Interface (GUI) revolutionized Human Computer Interaction, enabling visual interaction with computers.\n• Visual Representation\n• Interactivity\n• Simplified Controls\n• Feedback & Responses"
+  },
+  {
+    title: "GUI 2",
+    image: "neueBilder/_1.1_GUI/Bildschirmfoto 2025-04-20 um 11.57.24.png",
+    description: "GUI 2"
+  },
+  {
+    title: "GUI 3",
+    image: "neueBilder/_1.1_GUI/Fig12Bildschirmfoto 2025-07-21 um 17.19.23.png",
+    description: "GUI 3"
+  }
+];
+</script>
+
+  <section id="process-_1-mousecursor" style="margin-bottom: 3em; display: flex; flex-direction: row; align-items: flex-start; gap: 3em;">
+    <div style="flex:1; min-width:260px; max-width:420px; font-family:'Georgia', 'Times New Roman', serif; font-size:1.08em; line-height:1.6; color:#222;">
+      <h2 style="font-family:'Georgia', 'Times New Roman', serif; font-size:1.3em; margin-top:0;">1. Mouse Cursor – Process & Reflection</h2>
+      <p>
+        The cursor is more than just a pointer; it shapes how users and graphic designers interact with digital tools. It acts as a kind of prosthesis, the mouse translates physical movement into digital action through x and y coordinates, enabling orientation and navigation in virtual space. It becomes a visible extension of the hand, linking gesture, thought, and screen. This creates a tactile dialogue between user and interface, where movement and representation are closely intertwined.
+      </p>
+      <p>
+        On trackpads and touchscreens, gestures like swiping and zooming mimic physical actions, making the interface feel more immediate and responsive. The cursor is less visible in these contexts but still plays a key role, particularly in graphic design workflows where pointing, selecting, and manipulating elements remain central tasks.
+      </p>
+    </div>
+    <div id="mouse-cursor-gallery" style="display:flex; flex-direction:column; gap:2em; flex:2;"></div>
+  </section>
+
+  <section id="process-_1.1-gui" style="margin-bottom: 3em; display: flex; flex-direction: row; align-items: flex-start; gap: 3em;">
+    <div style="flex:1; min-width:260px; max-width:420px; font-family:'Georgia', 'Times New Roman', serif; font-size:1.08em; line-height:1.6; color:#222;">
+      <h2 style="font-family:'Georgia', 'Times New Roman', serif; font-size:1.3em; margin-top:0;">2. GUI – Process & Reflection</h2>
+      <p>
+        The Graphical User Interface (GUI) revolutionized Human Computer Interaction, enabling visual interaction with computers. GUIs provide visual representations, interactivity, simplified controls, and immediate feedback, making computers accessible to a broader audience.
+      </p>
+      <p>
+        Through windows, icons, menus, and pointers, GUIs allow users to interact with digital content intuitively. This chapter explores the evolution and impact of GUIs on design workflows and user experience.
+      </p>
+    </div>
+    <div id="gui-gallery" style="display:flex; flex-direction:column; gap:2em; flex:2;"></div>
+  </section>
+<script>
+// Mouse Cursor Galerie und Lightbox
+(function() {
+  const gallery = document.getElementById("mouse-cursor-gallery");
+  gallery.innerHTML = "";
+  const galleryWrapper = document.createElement('div');
+  galleryWrapper.style.display = 'flex';
+  galleryWrapper.style.flexDirection = 'column';
+  galleryWrapper.style.gap = '2em';
+  // Nur MouseCursor-Bilder (ohne _1.1_GUI)
+  const mouseImages = mouseCursorData.filter(item => !item.image.includes('_1.1_GUI'));
+  for (let i = 0; i < mouseImages.length; i += 3) {
+    const row = document.createElement('div');
+    row.style.display = 'flex';
+    row.style.gap = '2em';
+    for (let j = i; j < i + 3 && j < mouseImages.length; j++) {
+      const project = mouseImages[j];
+      const html = `
+        <div class="project" style="width:320px; font-family:Arial, Helvetica, sans-serif;">
+          <img src="${project.image}" alt="${project.title}" style="width:100%;height:auto; border-radius:8px; box-shadow:0 2px 12px #0002; cursor:pointer;">
+          <div class="project-title" style="margin-top:0.7em;">
+            <strong style="font-size:1.1em;">${project.title}</strong>
+            <div class="description" style="font-size:1.05em; color:#444; margin-top:0.3em; font-family:Arial, Helvetica, sans-serif;">${project.description}</div>
+          </div>
+        </div>
+      `;
+      row.insertAdjacentHTML("beforeend", html);
+    }
+    galleryWrapper.appendChild(row);
+  }
+  gallery.appendChild(galleryWrapper);
+
+  // Vorheriges Lightbox-Overlay entfernen, falls vorhanden
+  const oldLightbox = document.getElementById('mouse-lightbox');
+  if (oldLightbox) oldLightbox.remove();
+
+  // MouseCursor Lightbox
+  const lightbox = document.createElement('div');
+  lightbox.id = 'mouse-lightbox';
+  lightbox.className = "lightbox hidden";
+  lightbox.innerHTML = `
+    <span class="closeBtn">&times;</span>
+    <div class="lightbox-description"></div>
+    <img class="lightbox-image" />
+    <button class="nav-btn prevBtn">&#10094;</button>
+    <button class="nav-btn nextBtn">&#10095;</button>
+  `;
+  document.body.appendChild(lightbox);
+  const lightboxImg = lightbox.querySelector(".lightbox-image");
+  const closeBtn = lightbox.querySelector(".closeBtn");
+  const lightboxDesc = lightbox.querySelector(".lightbox-description");
+  const prevBtn = lightbox.querySelector(".prevBtn");
+  const nextBtn = lightbox.querySelector(".nextBtn");
+  let currentIndex = 0;
+  const galleryImages = Array.from(gallery.querySelectorAll(".project img"));
+// GUI Galerie und Lightbox
+(function() {
+  const guiImages = mouseCursorData.filter(item => item.image && item.image.includes('_1.1_GUI'));
+  const gallery = document.getElementById("gui-gallery");
+  gallery.innerHTML = "";
+  const galleryWrapper = document.createElement('div');
+  galleryWrapper.style.display = 'flex';
+  galleryWrapper.style.flexDirection = 'column';
+  galleryWrapper.style.gap = '2em';
+  for (let i = 0; i < guiImages.length; i += 3) {
+    const row = document.createElement('div');
+    row.style.display = 'flex';
+    row.style.gap = '2em';
+    for (let j = i; j < i + 3 && j < guiImages.length; j++) {
+      const project = guiImages[j];
+      const html = `
+        <div class="project" style="width:320px; font-family:Arial, Helvetica, sans-serif;">
+          <img src="${project.image}" alt="${project.title}" style="width:100%;height:auto; border-radius:8px; box-shadow:0 2px 12px #0002; cursor:pointer;">
+          <div class="project-title" style="margin-top:0.7em;">
+            <strong style="font-size:1.1em;">${project.title}</strong>
+            <div class="description" style="font-size:1.05em; color:#444; margin-top:0.3em; font-family:Arial, Helvetica, sans-serif;">${project.description}</div>
+          </div>
+        </div>
+      `;
+      row.insertAdjacentHTML("beforeend", html);
+    }
+    galleryWrapper.appendChild(row);
+  }
+  gallery.appendChild(galleryWrapper);
+
+  // Vorheriges Lightbox-Overlay entfernen, falls vorhanden
+  const oldLightbox = document.getElementById('gui-lightbox');
+  if (oldLightbox) oldLightbox.remove();
+
+  // GUI Lightbox
+  const lightbox = document.createElement('div');
+  lightbox.id = 'gui-lightbox';
+  lightbox.className = "lightbox hidden";
+  lightbox.style.zIndex = 2000; // Sicherstellen, dass GUI-Lightbox immer ganz oben liegt
+  lightbox.innerHTML = `
+    <span class="closeBtn">&times;</span>
+    <div class="lightbox-description"></div>
+    <img class="lightbox-image" />
+    <button class="nav-btn prevBtn">&#10094;</button>
+    <button class="nav-btn nextBtn">&#10095;</button>
+  `;
+  document.body.appendChild(lightbox);
+  const lightboxImg = lightbox.querySelector(".lightbox-image");
+  const closeBtn = lightbox.querySelector(".closeBtn");
+  const lightboxDesc = lightbox.querySelector(".lightbox-description");
+  const prevBtn = lightbox.querySelector(".prevBtn");
+  const nextBtn = lightbox.querySelector(".nextBtn");
+  let currentIndex = 0;
+  const galleryImages = Array.from(gallery.querySelectorAll(".project img"));
+  galleryImages.forEach((img, index) => {
+    img.addEventListener("click", (e) => {
+      e.stopPropagation();
+      currentIndex = index;
+      showImage(currentIndex);
+    });
+  });
+  function showImage(index) {
+    const item = guiImages[index];
+    if (!item) return;
+    lightboxImg.src = item.image;
+    lightboxDesc.textContent = item.description || "";
+    lightbox.classList.remove("hidden");
+  }
+  closeBtn.addEventListener("click", () => {
+    lightbox.classList.add("hidden");
+  });
+  lightbox.addEventListener("click", (e) => {
+    if (e.target === lightbox) {
+      lightbox.classList.add("hidden");
+    }
+  });
+  prevBtn.addEventListener("click", e => {
+    e.stopPropagation();
+    currentIndex = (currentIndex - 1 + guiImages.length) % guiImages.length;
+    showImage(currentIndex);
+  });
+  nextBtn.addEventListener("click", e => {
+    e.stopPropagation();
+    currentIndex = (currentIndex + 1) % guiImages.length;
+    showImage(currentIndex);
+  });
+  // Nur Tastatursteuerung aktivieren, wenn GUI-Lightbox sichtbar ist
+  document.addEventListener("keydown", function guiKeyHandler(e) {
+    if (!lightbox.classList.contains("hidden")) {
+      if (e.key === "ArrowLeft") {
+        currentIndex = (currentIndex - 1 + guiImages.length) % guiImages.length;
+        showImage(currentIndex);
+      }
+      if (e.key === "ArrowRight") {
+        currentIndex = (currentIndex + 1) % guiImages.length;
+        showImage(currentIndex);
+      }
+      if (e.key === "Escape") {
+        lightbox.classList.add("hidden");
+      }
+    }
+  });
+})();
+
+</script>
+
+
+  <main id="project-container"></main>
+
+  <!-- Alles ab dem alten projectData-Skript entfernt -->
+</body>
+</html>

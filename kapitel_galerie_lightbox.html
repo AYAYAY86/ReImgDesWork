@@ -1,0 +1,184 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Kapitel-Galerie mit Lightbox</title>
+  <style>
+    body { margin:0; font-family: 'Georgia', 'Arial', sans-serif; background:#fff; color:#222; }
+    .chapter { display: flex; flex-direction: row; align-items: flex-start; gap: 2.5em; margin: 2.5em 0; padding: 2em 2em 2em 2em; border-bottom: 1px solid #eee; }
+    .chapter-text { flex: 1 1 320px; min-width: 220px; max-width: 420px; font-size: 1.08em; line-height: 1.6; }
+    .chapter-gallery { flex: 2 1 400px; display: flex; flex-wrap: wrap; gap: 1.5em; justify-content: flex-start; }
+    .chapter-gallery img {
+      max-width: 220px;
+      max-height: 180px;
+      width: auto;
+      height: auto;
+      border-radius: 6px;
+      box-shadow: 0 2px 12px #0002;
+      cursor: pointer;
+      transition: transform 0.3s;
+      object-fit: contain;
+      background: #f4f4f4;
+    }
+    .chapter-gallery img:hover { transform: scale(1.04); }
+    .lightbox { position: fixed; top: 0; left: 0; width: 100vw; height: 100vh; background: rgba(0,0,0,0.88); display: flex; flex-direction: column; align-items: center; justify-content: center; z-index: 9999; }
+    .lightbox.hidden { display: none; }
+    .lightbox img { max-width: 90vw; max-height: 80vh; border: 4px solid #fff; border-radius: 8px; box-shadow: 0 0 20px #0008; }
+    .lightbox-description { margin-top: 1.2em; background: #fff; color: #222; padding: 0.7em 1.2em; border-radius: 4px; font-size: 1em; max-width: 80vw; text-align: left; }
+    .lightbox-close { position: absolute; top: 2em; right: 3em; font-size: 2.5em; color: #fff; cursor: pointer; font-family: sans-serif; z-index: 10001; }
+    .lightbox-nav { position: absolute; top: 50%; font-size: 2.5em; color: #fff; background: none; border: none; cursor: pointer; z-index: 10001; user-select: none; padding: 0.5em 1em; transition: color 0.2s; }
+    .lightbox-nav:hover { color: palevioletred; }
+    .lightbox-prev { left: 2vw; }
+    .lightbox-next { right: 2vw; }
+    @media (max-width: 900px) { .chapter { flex-direction: column; } .chapter-gallery { justify-content: flex-start; } }
+  </style>
+</head>
+<body>
+  <h1 style="padding:2em 2em 0 2em; font-size:2em;">Process Documentation – Kapitel-Galerie</h1>
+  <div id="chapters"></div>
+  <div id="lightbox" class="lightbox hidden">
+    <span class="lightbox-close">&times;</span>
+    <button class="lightbox-nav lightbox-prev">&#10094;</button>
+    <img src="" alt="" />
+    <button class="lightbox-nav lightbox-next">&#10095;</button>
+    <div class="lightbox-description"></div>
+  </div>
+  <script>
+    // Kapitel mit echten Bildern aus den jeweiligen Ordnern
+    const chapters = [
+      {
+        title: "1. Mouse Cursor",
+        text: "Der Cursor ist mehr als nur ein Zeiger. Er verbindet Hand, Geste und Bildschirm und ermöglicht Orientierung und Navigation im digitalen Raum.",
+        folder: "_1_MouseCursor",
+        images: [
+          "580_handmouse456x512_b828775e90bf71debae47e791cad0fad.png",
+          "Bildschirmfoto 2025-07-23 um 16.05.14.png",
+          "Bildschirmfoto 2025-07-24 um 15.24.10.png",
+          "Bildschirmfoto 2025-07-24 um 16.07.49.png",
+          "Relationship-between-direction-of-mouse-movement-black-arrows-and-cursor-movement.png",
+          "https-__phonexa.com_blog_mouse-tracking-guide__C00185-mouse-tracking-guide.png",
+          "image-1213.webp",
+          "mouse-gestures-2_med_hr.png"
+        ]
+      },
+      {
+        title: "2. GUI",
+        text: "Die grafische Benutzeroberfläche (GUI) revolutionierte die Mensch-Computer-Interaktion. Sie ermöglicht visuelle Interaktion, direkte Rückmeldung und intuitive Bedienung.",
+        folder: "_1.1_GUI",
+        images: [
+          "Bildschirmfoto 2025-04-16 um 14.36.38.png",
+          "Bildschirmfoto 2025-04-20 um 11.57.24.png",
+          "Fig12Bildschirmfoto 2025-07-21 um 17.19.23.png"
+        ]
+      },
+      {
+        title: "3. Paint Editor",
+        text: "Kapitel zu Paint Editor ...",
+        folder: "_1.2_PaintEditor",
+        images: [
+          "2_Pen-Multiple.png",
+          "3_Bildschirmfoto 2025-07-24 um 15.02.02.png",
+          "1.3_Bildschirmfoto 2025-07-24 um 15.01.55.png",
+          "2_Bildschirmfoto 2025-07-23 um 15.26.15.png",
+          "3_Bildschirmfoto 2025-07-24 um 15.12.17.png",
+          "1.2.1_P5-MouseWheel-MS-Paint.png"
+        ]
+      },
+      {
+        title: "4. Color Picker",
+        text: "Kapitel zu Color Picker ...",
+        folder: "_2_ColorPicker",
+        images: [
+          "pie.png",
+          "Bildschirmfoto 2025-07-24 um 16.16.27.png",
+          "PantoneCatalog.webp",
+          "Bildschirmfoto 2025-07-24 um 16.43.31.png",
+          "Square-1_190312b3cc.png",
+          "Bildschirmfoto 2025-07-24 um 16.35.44.png",
+          "Bildschirmfoto 2025-07-23 um 19.40.13.png",
+          "Bildschirmfoto 2025-07-23 um 16.37.27.png",
+          "Bildschirmfoto 2025-07-23 um 16.40.41.png"
+        ]
+      },
+      {
+        title: "5. Mouse Cursor Font",
+        text: "Kapitel zu Mouse Cursor Font ...",
+        folder: "_3_Mouse_Cursor_Font",
+        images: [
+          "Mouse-CSS.png",
+          "Bildschirmfoto 2025-08-06 um 11.22.12.png",
+          "Bildschirmfoto 2025-07-24 um 16.43.51.png",
+          "Bildschirmfoto 2025-07-24 um 16.43.41.png"
+        ]
+      }
+    ];
+    // Rendering
+    const chaptersDiv = document.getElementById('chapters');
+    chapters.forEach((chapter, chapIdx) => {
+      const section = document.createElement('section');
+      section.className = 'chapter';
+      section.innerHTML = `
+        <div class="chapter-text">
+          <h2>${chapter.title}</h2>
+          <p>${chapter.text}</p>
+        </div>
+        <div class="chapter-gallery"></div>
+      `;
+      const gallery = section.querySelector('.chapter-gallery');
+      chapter.images.forEach((img, imgIdx) => {
+        const image = document.createElement('img');
+        image.src = `neueBilder/${chapter.folder}/${img.file}`;
+        image.alt = img.desc || '';
+        image.dataset.chapter = chapIdx;
+        image.dataset.index = imgIdx;
+        image.title = img.desc || '';
+        image.addEventListener('click', function() {
+          openLightbox(chapIdx, imgIdx);
+        });
+        gallery.appendChild(image);
+      });
+      chaptersDiv.appendChild(section);
+    });
+    // Lightbox-Logik
+    const lightbox = document.getElementById('lightbox');
+    const lightboxImg = lightbox.querySelector('img');
+    const lightboxDesc = lightbox.querySelector('.lightbox-description');
+    let currentChapter = 0, currentImg = 0;
+    function openLightbox(chapIdx, imgIdx) {
+      currentChapter = chapIdx;
+      currentImg = imgIdx;
+      showLightboxImage();
+      lightbox.classList.remove('hidden');
+    }
+    function showLightboxImage() {
+      const imgObj = chapters[currentChapter].images[currentImg];
+      lightboxImg.src = `neueBilder/${chapters[currentChapter].folder}/${imgObj.file}`;
+      lightboxImg.alt = imgObj.desc || '';
+      lightboxDesc.textContent = imgObj.desc || '';
+    }
+    lightbox.querySelector('.lightbox-close').onclick = () => lightbox.classList.add('hidden');
+    lightbox.querySelector('.lightbox-prev').onclick = (e) => {
+      e.stopPropagation();
+      const imgs = chapters[currentChapter].images;
+      currentImg = (currentImg - 1 + imgs.length) % imgs.length;
+      showLightboxImage();
+    };
+    lightbox.querySelector('.lightbox-next').onclick = (e) => {
+      e.stopPropagation();
+      const imgs = chapters[currentChapter].images;
+      currentImg = (currentImg + 1) % imgs.length;
+      showLightboxImage();
+    };
+    lightbox.onclick = (e) => {
+      if (e.target === lightbox) lightbox.classList.add('hidden');
+    };
+    document.addEventListener('keydown', e => {
+      if (lightbox.classList.contains('hidden')) return;
+      if (e.key === 'ArrowLeft') lightbox.querySelector('.lightbox-prev').onclick(e);
+      if (e.key === 'ArrowRight') lightbox.querySelector('.lightbox-next').onclick(e);
+      if (e.key === 'Escape') lightbox.classList.add('hidden');
+    });
+  </script>
+</body>
+</html>

@@ -1,0 +1,1487 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Reimagine Design Tools</title>
+  <style>
+    body {
+      margin: 0;
+      font-family: 'Consolas', 'Menlo', 'Monaco', 'Courier New', monospace;
+      background-color: #fff;
+      color: #000;
+    }
+
+    header {
+      position: sticky;
+      top: 0;
+      background: white;
+      padding: 1rem 1rem 0.5rem 1rem;
+      border-bottom: 1px solid #ddd;
+      z-index: 10;
+    }
+
+    .header-top {
+      display: flex;
+      justify-content: space-between;
+      align-items: baseline;
+    }
+
+    header h1 {
+      font-size: 1.25rem;
+      margin: 0;
+    }
+
+    .header-buttons {
+      display: flex;
+      gap: 0.5rem;
+    }
+
+    .header-btn {
+      font-size: 0.8rem;
+      margin: 0.15rem;
+      padding: 0.3rem 0.6rem;
+      background: black;
+      color: white;
+      border: none;
+      border-radius: 4px;
+      text-decoration: none;
+      transition: background 0.3s ease;
+      line-height: 1;
+    }
+
+    .header-btn:hover {
+      background: palevioletred;
+    }
+
+    .filters {
+      margin-top: 0.25rem;
+      margin-bottom: 0.25rem;
+    }
+
+    .filter-btn {
+      display: inline-block;
+      margin: 0rem;
+      padding: 0.2rem .5rem;
+      font-size: 0.8rem;
+      background: #eee;
+      border: 0px solid white;
+      border-radius: 10px;
+      cursor: pointer;
+    }
+
+    .filter-btn:hover {
+      font-style: italic;
+      color: palevioletred;
+    }
+
+    .filter-btn.active {
+      background: black;
+      color: white;
+      font-style: italic;
+    }
+
+    main {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+      gap: 1rem;
+      padding: 1rem;
+    }
+
+    .project {
+      position: relative;
+      overflow: hidden;
+      aspect-ratio: 4 / 3;
+      cursor: pointer;
+    }
+
+    .project img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      transition: transform 0.6s ease;
+    }
+
+    .project:hover img {
+      transform: scale(1.05);
+    }
+
+    .project-title {
+      position: absolute;
+      bottom: 0;
+      background: rgba(255, 255, 255, 0.8);
+      width: 100%;
+      padding: 0.5rem;
+      font-size: 0.8rem;
+      box-sizing: border-box;
+    }
+
+    .description {
+      padding: 0.2rem;
+      margin-top: 0.3rem;
+    }
+
+    .project-tags {
+      margin: 0.3rem 0;
+    }
+
+    .project-tag {
+      display: inline-block;
+      margin: 0.1rem 0.2rem 0.1rem 0;
+      padding: 0.15rem 0.4rem;
+      font-size: 0.7rem;
+      background: #eee;
+      border-radius: 8px;
+      color: #666;
+    }
+
+    .lightbox {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: rgba(0,0,0,0.85);
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      z-index: 1000;
+    }
+
+    .lightbox img {
+      max-width: 90%;
+      max-height: 90%;
+      border: 4px solid white;
+      box-shadow: 0 0 20px rgba(0,0,0,0.5);
+    }
+
+    .lightbox.hidden {
+      display: none;
+    }
+
+.lightbox-description {
+  position: absolute;
+  bottom: 1rem;
+  left: 1rem;
+  right: 1rem;
+  background: rgba(255, 255, 255, 0.9);
+  color: black;
+  padding: 0.6rem;
+  font-size: 0.85rem;
+  font-style: italic;
+  z-index: 10;
+  text-align: left;
+  border-radius: 4px;
+}
+
+    #closeBtn {
+      position: absolute;
+      top: 1rem;
+      right: 1.5rem;
+      font-size: 2rem;
+      color: white;
+      cursor: pointer;
+      font-family: sans-serif;
+    }
+
+    .nav-btn {
+      position: absolute;
+      top: 50%;
+      transform: translateY(-50%);
+      font-size: 2.5rem;
+      background: none;
+      color: white;
+      border: none;
+      cursor: pointer;
+      padding: 1rem;
+      user-select: none;
+      z-index: 1001;
+    }
+
+    #prevBtn { left: 1rem; }
+    #nextBtn { right: 1rem; }
+
+    .nav-btn:hover {
+      color: palevioletred;
+    }
+  </style>
+</head>
+
+<body>
+  <header>
+    <div class="header-top">
+      <a href="index.html" style="text-decoration:none; color:inherit;">
+        <h1>Reimagine Design Tools</h1>
+      </a>
+      <div class="header-buttons">
+        <a href="index_Video Documentation.html" class="header-btn" >Video Documentation</a>
+        <a href="index.html" class="header-btn" >Reimagine Design Tools</a>
+      </div>
+    </div>
+    <div class="filters">
+      <span class="filter-btn" data-tag="practical">#practical</span>
+      <span class="filter-btn" data-tag="research">#research</span>
+      <span class="filter-btn" data-tag="theory">#theory</span>
+    </div>
+  </header>
+
+  <div id="lightbox" class="lightbox hidden">
+    <span id="closeBtn">&times;</span>
+    <div id="lightbox-description" class="lightbox-description"></div>
+    <img id="lightbox-image" />
+    <button id="prevBtn" class="nav-btn">&#10094;</button>
+    <button id="nextBtn" class="nav-btn">&#10095;</button>
+  </div>
+
+  <main id="project-container"></main>
+
+  <script>
+    const projectData = [
+  // DOCUMENTATION & PROJECT IMAGES - Main Development Process
+  {
+    title: "ML5 Layout Circles - Hand Tracking Interface",
+    tags: ["practical"],
+    image: "documentation/ML5-Layout-Circles.png",
+    description: "ML5 Layout Circles - Hand Tracking Interface Design - Main Project Documentation"
+  },
+  {
+    title: "ML5 Layout Circles Version 2",
+    tags: ["practical"],
+    image: "documentation/ML5-Layout-Circles_2.png",
+    description: "ML5 Layout Circles Version 2 - Advanced Hand Tracking Interface - Main Project Documentation"
+  },
+  {
+    title: "ML5 Painter - Cursor Sketch Hydra Feedback",
+    tags: ["practical"],
+    image: "documentation/ML5-painter(1).png",
+    description: "ML5 Painter - Cursor Sketch Hydra Feedback - Interactive Design Tool"
+  },
+  {
+    title: "P5 Live Random Walker Hydra",
+    tags: ["practical"],
+    image: "documentation/P5LIVE_hydra(12).png",
+    description: "P5 Live Random Walker Hydra - Generative Art Interface"
+  },
+  {
+    title: "P5 Live Hydra Experiments",
+    tags: ["practical"],
+    image: "documentation/P5LIVE_hydra(11).png",
+    description: "P5 Live Hydra Experiments - Visual Programming Interface"
+  },
+  {
+    title: "P5 Live Hydra Development",
+    tags: ["practical"],
+    image: "documentation/P5LIVE_hydra(10).png",
+    description: "P5 Live Hydra Development - Live Coding Environment"
+  },
+  {
+    title: "P5 Live Hydra System Testing",
+    tags: ["practical"],
+    image: "documentation/P5LIVE_hydra(9).png",
+    description: "P5 Live Hydra System Testing - Performance Evaluation"
+  },
+  {
+    title: "P5 Live Cursor Sketch Hydra Feedback",
+    tags: ["practical"],
+    image: "documentation/P5LIVE_hydra(8).png",
+    description: "P5 Live Cursor Sketch Hydra Feedback - Interactive Visual System"
+  },
+  {
+    title: "P5 Live Cursor Sketch Development",
+    tags: ["practical"],
+    image: "documentation/P5LIVE_hydra(7).png",
+    description: "P5 Live Cursor Sketch Development - Real-time Visual Programming"
+  },
+  {
+    title: "P5 Live Cursor Sketch",
+    tags: ["practical"],
+    image: "documentation/P5LIVE_hydra(6).png",
+    description: "P5 Live Cursor Sketch - Interactive Drawing Interface"
+  },
+  {
+    title: "P5 Live Hydra Interface",
+    tags: ["practical"],
+    image: "documentation/P5LIVE_hydra(5).png",
+    description: "P5 Live Hydra Interface - Visual Synthesis System"
+  },
+  {
+    title: "Hydra Image Manipulation System",
+    tags: ["practical"],
+    image: "documentation/hydra-2025-4-2-9.35.14.png",
+    description: "Hydra Image Manipulation System - Real-time Visual Effects"
+  },
+  {
+    title: "Random Experiment - P5.js Interactive Design",
+    tags: ["practical"],
+    image: "documentation/Screenshot 2025-05-09 at 17-27-43 p5.js Example.png",
+    description: "Random Experiment - P5.js Interactive Design - Creative Coding Process"
+  },
+  {
+    title: "MS Paint Mouse Wheel Interface",
+    tags: ["practical"],
+    image: "documentation/Bildschirmfoto 2025-05-22 um 16.22.34.png",
+    description: "MS Paint Mouse Wheel Interface - Alternative Input Method Development"
+  },
+  {
+    title: "Older Experiments Documentation",
+    tags: ["practical"],
+    image: "documentation/Bildschirmfoto 2025-04-29 um 22.05.58.png",
+    description: "Older Experiments Documentation - Early Development Process"
+  },
+  {
+    title: "Interview with Nolween",
+    image: "documentation/Bildschirmfoto 2025-04-25 um 16.24.35.png",
+    description: "Interview with Nolween - User Research Documentation"
+  },
+  {
+    title: "Additional Screenshot Reference",
+    tags: ["practical"],
+    image: "documentation/Bildschirmfoto 2025-04-20 um 11.57.24.png",
+    description: "Additional Screenshot Reference - Research Documentation"
+  },
+  {
+    title: "GUI Quote Documentation",
+    image: "documentation/Bildschirmfoto 2025-04-16 um 14.36.38.png",
+    description: "GUI Quote Documentation - Interface Design Theory"
+  },
+  
+  // PROJECT-IMG - Main Project Visuals
+  {
+    title: "Poster Creator Interface",
+    tags: ["practical"],
+    image: "Project-Img/PosterCreator.png",
+    description: "Poster Creator Interface - Typography Design Tool"
+  },
+  {
+    title: "Poster Design System",
+    tags: ["practical"],
+    image: "Project-Img/Poster.png",
+    description: "Poster Design System - Interactive Typography Interface"
+  },
+  {
+    title: "JoyStick Controller Interface",
+    tags: ["practical"],
+    image: "Project-Img/JoyStick.png",
+    description: "JoyStick Controller Interface - Gamepad Design Tool"
+  },
+  {
+    title: "Image Manipulation Interface",
+    tags: ["practical"],
+    image: "Project-Img/ImageManipulation.png",
+    description: "Image Manipulation ml5.js and hydra"
+  },
+  {
+    title: "Image Manipulation Advanced",
+    tags: ["practical"],
+    image: "Project-Img/ImageManipulation-2.png",
+    description: "Image Manipulation ml5.js and hydra"
+  },
+  {
+    title: "Image Manipulation Pro",
+    tags: ["practical"],
+    image: "Project-Img/ImageManipulation-3.png",
+    description: "Image Manipulation ml5.js and hydra"
+  },
+  {
+    title: "Gradations Filter System",
+    tags: ["practical"],
+    image: "Project-Img/GradationsFilter.png",
+    description: "Gradations Filter System - Color Correction Interface"
+  },
+  {
+    title: "Convolution Filter Interface",
+    image: "Project-Img/ConvolutionFilter.png",
+    description: "Convolution Filter Interface - Image Processing"
+  },
+  {
+    title: "Convolution System",
+    tags: ["practical"],
+    image: "Project-Img/Convolusion.png",
+    description: "Convolution Filter Interface - Image Processing"
+  },
+  {
+    title: "Blending Colors Interface",
+    tags: ["practical"],
+    image: "Project-Img/BlendingColors.png",
+    description: "Blending Colors Interface - Color Mixing Tool"
+  },
+  {
+    title: "Feedback Visual System",
+    tags: ["practical"],
+    image: "Project-Img/Feedback.png",
+    description: "Feedback Visual System - Recursive Video Effects"
+  },
+  {
+    title: "P5 MouseWheel MS Paint Interface",
+    tags: ["practical"],
+    image: "Project-Img/P5-MouseWheel-MS-Paint.png",
+    description: "P5 MouseWheel MS Paint Interface - Alternative Input Design"
+  },
+  {
+    title: "P5 Hydra Cursor Paint Editor",
+    tags: ["practical"],
+    image: "Project-Img/P5-hydra-Cursor-PaintEditor.png",
+    description: "P5 Hydra Cursor Paint Editor - Interactive Drawing Tool"
+  },
+  {
+    title: "P5 Hydra Random Walker",
+    tags: ["practical"],
+    image: "Project-Img/P5-Hydra-Random-Walker.png",
+    description: "P5 Hydra Random Walker - Generative Art System"
+  },
+  {
+    title: "Pen Multiple Interface",
+    tags: ["practical"],
+    image: "Project-Img/Pen-Multiple.png",
+    description: "Pen Multiple Interface - Multi-Tool Drawing System"
+  },
+  {
+    title: "Pen Random Walker",
+    tags: ["practical"],
+    image: "Project-Img/Pen-RandomWalker.png",
+    description: "Pen Random Walker - Generative Drawing Tool"
+  },
+  {
+    title: "Mouse CSS Interface",
+    tags: ["practical"],
+    image: "Project-Img/Mouse-CSS.png",
+    description: "Mouse CSS Interface - Stylized Interaction Design"
+  },
+  {
+    title: "Code Editor System",
+    tags: ["practical"],
+    image: "Project-Img/CodeEditor.png",
+    description: "Code Editor System - Programming Interface"
+  },
+  {
+    title: "Current System Implementation",
+    tags: ["practical"],
+    image: "Project-Img/Bildschirmfoto 2025-08-06 um 11.12.50.png",
+    description: "ML5.js - Fingertracking experiments with forms"
+  },
+  {
+    title: "Typography Interface Testing",
+    tags: ["practical"],
+    image: "Project-Img/Bildschirmfoto 2025-07-24 um 18.25.40.png",
+    description: "Typography Interface Testing - Design Tool Evaluation"
+  },
+  {
+    title: "Hand Gesture Control Development",
+    tags: ["practical"],
+    image: "Project-Img/Bildschirmfoto 2025-07-23 um 19.40.13.png",
+    description: "Colortracking Experiments with Coordinates"
+  },
+  {
+    title: "Hand Tracking Calibration Process",
+    tags: ["practical"],
+    image: "Project-Img/Bildschirmfoto 2025-07-23 um 16.40.41.png",
+    description: "Experimenting to do a own Color Picker"
+  },
+  
+  // THEORIE - Human-Computer-Interactions
+  {
+    title: "Computer keyboard with integrated touchpad made by Cherry",
+    tags: ["theory"],
+    image: "https://upload.wikimedia.org/wikipedia/commons/e/ed/Touchpad_at_keyboard_G80-11900_by_Cherry_GmbH.jpg",
+    description: "Computer keyboard with integrated touchpad made by Cherry - HCI Theory"
+  },
+  {
+    title: "Perixx Peripad 501 II",
+    tags: ["theory"],
+    image: "https://static02.galaxus.com/productimages/4/0/6/0/7/1/3/8/image.jpeg_1440.avif",
+    description: "Perixx Peripad 501 II - HCI Theory"
+  },
+  {
+    title: "The First Computer Mouse (1964)",
+    tags: ["theory"],
+    image: "https://lh7-us.googleusercontent.com/JtvAM12uWvlprQ5rtxSxKdmWzdg1tUj7zOp7RRYTkJ0A-mCxd4wfXZz_iKn9fgA3egB5TKwk3Ob5iogqMdp4GW-KbBPXBrPajUpw1NtDqFvQNxMFqWlnD-UNj6QN_sGq-oJPOL5bwUyH120TIKrCJ70",
+    description: "The First Computer Mouse (1964) - Source: APIC - HCI Theory"
+  },
+  {
+    title: "The First Commercially Available Mouse (1981)",
+    tags: ["theory"],
+    image: "https://lh7-us.googleusercontent.com/CgdFrEL7gb6zclFXdSr4oQh7T5A2tDsJYATFemQJHf8gmW9pUutfohKc--n9ay-yR0c5W0RXHzchydFFuTomVdeQvgaYaGmgGgS9idhuWtvARO1iTkd-1eQyMLTSS82uv3HJoV_caUmXJQq3jX2DPzg",
+    description: "The First Commercially Available Mouse (part of the Xerox 8010 computer) (1981) - HCI Theory"
+  },
+  {
+    title: "Demonstration of the Sketchpad Program (1963)",
+    tags: ["theory"],
+    image: "https://morphocode.com/wp-content/uploads/2020/02/morphocode-sutherland-sketchpad-demo-1963-scaled.jpg",
+    description: "Demonstration of the Sketchpad Program (1963) - HCI Theory"
+  },
+  {
+    title: "David Cronenberg's 'Naked Lunch' (1991)",
+    tags: ["research"],
+    image: "https://filmobsessive.com/wp-content/uploads/2019/09/MV5BYTJiZDVlZTAtMzU4NC00MTVkLTk4YmYtOWY4ODM1ZjlkNDViXkEyXkFqcGdeQXVyNjUxMjc1OTM@._V1_.jpg",
+    description: "David Cronenberg's 'Naked Lunch' (1991) - A film adaptation of William S. Burroughs' novel - Theory"
+  },
+  {
+    title: "David Cronenberg's 'Existenz' (1999)",
+     tags: ["research"],
+    image: "https://nachdemfilm.de/sites/default/files/styles/9col/public/2018-04/NiederMitDerRealit%C3%A4t_Teaser.jpg?itok=vP1Y7zTl",
+    description: "David Cronenberg's 'Existenz' (1999) - Fusion of Flesh and Technology - Theory"
+  },
+  {
+    title: "Existenz Bioports",
+     tags: ["research"],
+    image: "https://static1.moviewebimages.com/wordpress/wp-content/uploads/2022/07/eXistenZ-1.jpg?q=50&fit=crop&w=825&dpr=1.5",
+    description: "David Cronenberg's 'Existenz' (1999) - Fusion of Flesh and Technology - Bioports - Theory"
+  },
+  
+  // PRAXIS - Design Tools & Experiments
+  {
+    title: "4# cursor Sketch Hydra Feedback",
+    tags: ["practical"],
+    image: "documentation/ML5-painter(1).png",
+    description: "Cursor Sketch with ml5.js tracking"
+  },
+  {
+    title: "RandomExperiment",
+    tags: ["practical"],
+    image: "documentation/Screenshot 2025-05-09 at 17-27-43 p5.js Example.png",
+    description: "RandomExperiment - P5.js Interactive Design - Practical Work"
+  },
+  {
+    title: "Bérénice Serra - Critical Publishing - IDCE HGK Basel",
+    tags: ["theory"],
+    image: "documentation/Screenshot 2025-04-20 at 11-47-38 Bérénice Serra - Critical Publishing - IDCE HGK Basel.png",
+    description: "Bérénice Serra - Critical Publishing - IDCE HGK Basel"
+  },
+  {
+    title: "1# Random_Walker Hydra",
+    tags: ["practical"],
+    image: "documentation/P5LIVE_hydra(12).png",
+    description: "1# Random_Walker Hydra"
+  },
+  {
+    title: "3# cursor Sketch Hydra Feedback",
+    tags: ["practical"],
+    image: "documentation/P5LIVE_hydra(8).png",
+    description: "3# cursor Sketch Hydra Feedback"
+  },
+  {
+    title: "2# cursor Sketch Hydra Feedback",
+    tags: ["practical"],
+    image: "documentation/P5LIVE_hydra(7).png",
+    description: "2# cursor Sketch Hydra Feedback"
+  },
+  {
+    title: "1# cursor Sketch",
+    tags: ["practical"],
+    image: "documentation/P5LIVE_hydra(6).png",
+    description: "1# cursor Sketch"
+  },
+  {
+    title: "Image-Manipulation",
+    tags: ["practical"],
+    image: "documentation/hydra-2025-4-2-9.35.14.png",
+    description: "Image-Manipulation"
+  },
+  {
+    title: "Older-Experiments",
+    tags: ["practical"],
+    image: "documentation/Bildschirmfoto 2025-04-29 um 22.05.58.png",
+    description: "Older-Experiments"
+  },
+  {
+    title: "Interview Nolween",
+    tags: ["research"],
+    image: "documentation/Bildschirmfoto 2025-04-25 um 16.24.35.png",
+    description: "Interview Nolween"
+  },
+  {
+    title: "GUI-Quote",
+    tags: ["theory"],
+    image: "documentation/Bildschirmfoto 2025-04-16 um 14.36.38.png",
+    description: "GUI-Quote"
+  },
+  
+  // Weitere BilderPractical - Design Process & Experiments
+  {
+    title: "P5 Mousewheel MS Paint Interface",
+    tags: ["practical"],
+    image: "BilderPractical/Bildschirmfoto 2025-05-04 um 14.24.47.png",
+    description: "P5 Mousewheel MS Paint Interface - Early Prototype Development"
+  },
+  {
+    title: "MS Paint Mouse Wheel Implementation",
+    tags: ["practical"],
+    image: "BilderPractical/Bildschirmfoto 2025-05-22 um 16.22.34.png",
+    description: "MS Paint Mouse Wheel Implementation - Interface Design"
+  },
+  {
+    title: "Hand Tracking Interface Development",
+    tags: ["practical"],
+    image: "BilderPractical/Bildschirmfoto 2025-07-23 um 15.26.15.png",
+    description: "Hand Tracking Interface Development - ML5.js Implementation"
+  },
+  {
+    title: "Hand Position Detection System",
+    tags: ["research"],
+    image: "BilderPractical/Bildschirmfoto 2025-07-23 um 16.05.14.png",
+    description: "Hand Position Detection System - Computer Vision Interface"
+  },
+  {
+    title: "Multi-Circle Hand Control Interface",
+    tags: ["practical"],
+    image: "BilderPractical/Bildschirmfoto 2025-07-23 um 16.37.27.png",
+    description: "Multi-Circle Hand Control Interface - Advanced Gesture Recognition"
+  },
+  {
+    title: "Hand Tracking Calibration",
+    tags: ["practical"],
+    image: "BilderPractical/Bildschirmfoto 2025-07-23 um 16.40.41.png",
+    description: "Hand Tracking Calibration - System Setup and Testing"
+  },
+  {
+    title: "Gesture-Based Design Tool",
+    tags: ["research"],
+    image: "BilderPractical/Bildschirmfoto 2025-07-23 um 16.56.52.png",
+    description: "Gesture-Based Design Tool - Natural User Interface"
+  },
+  {
+    title: "Hand Control Interface Testing",
+    tags: ["research"],
+    image: "BilderPractical/Bildschirmfoto 2025-07-23 um 16.58.06.png",
+    description: "Hand Control Interface Testing - User Experience Evaluation"
+  },
+  {
+    title: "Interactive Hand Gesture System",
+    tags: ["practical"],
+    image: "BilderPractical/Bildschirmfoto 2025-07-23 um 17.03.05.png",
+    description: "Interactive Hand Gesture System - Real-time Processing"
+  },
+  {
+    title: "Hand Tracking Interface Refinement",
+    tags: ["practical"],
+    image: "BilderPractical/Bildschirmfoto 2025-07-23 um 17.03.21.png",
+    description: "Hand Tracking Interface Refinement - Design Iteration"
+  },
+  {
+    title: "Gesture Recognition Development",
+    tags: ["practical"],
+    image: "BilderPractical/Bildschirmfoto 2025-07-23 um 17.03.43.png",
+    description: "Gesture Recognition Development - Advanced Computer Vision"
+  },
+  {
+    title: "Hand Control System Implementation",
+    tags: ["practical"],
+    image: "BilderPractical/Bildschirmfoto 2025-07-23 um 17.03.58.png",
+    description: "Hand Control System Implementation - Technical Development"
+  },
+  {
+    title: "Multi-Touch Hand Interface",
+    tags: ["practical"],
+    image: "BilderPractical/Bildschirmfoto 2025-07-23 um 17.04.16.png",
+    description: "Multi-Touch Hand Interface - Natural Interaction Design"
+  },
+  {
+    title: "Hand Gesture Interface Testing",
+    tags: ["practical"],
+    image: "BilderPractical/Bildschirmfoto 2025-07-23 um 17.31.19.png",
+    description: "Hand Gesture Interface Testing - Performance Evaluation"
+  },
+  {
+    title: "Advanced Hand Tracking System",
+    tags: ["practical"],
+    image: "BilderPractical/Bildschirmfoto 2025-07-23 um 17.41.34.png",
+    description: "Advanced Hand Tracking System - ML5.js Integration"
+  },
+  {
+    title: "Hand Position Control Interface",
+    tags: ["practical"],
+    image: "BilderPractical/Bildschirmfoto 2025-07-23 um 17.42.02.png",
+    description: "Hand Position Control Interface - Precision Tracking"
+  },
+  {
+    title: "Gesture-Based Interaction Design",
+    tags: ["practical"],
+    image: "BilderPractical/Bildschirmfoto 2025-07-23 um 17.42.21.png",
+    description: "Gesture-Based Interaction Design - User Interface Innovation"
+  },
+  {
+    title: "Hand Control System Development",
+    tags: ["practical"],
+    image: "BilderPractical/Bildschirmfoto 2025-07-23 um 17.55.40.png",
+    description: "Hand Control System Development - Technical Implementation"
+  },
+  {
+    title: "Interactive Hand Interface Testing",
+    tags: ["research"],
+    image: "BilderPractical/Bildschirmfoto 2025-07-23 um 17.56.07.png",
+    description: "Interactive Hand Interface Testing - User Experience Research"
+  },
+  {
+    title: "Hand Gesture Recognition System",
+    tags: ["practical"],
+    image: "BilderPractical/Bildschirmfoto 2025-07-23 um 18.08.39.png",
+    description: "Hand Gesture Recognition System - Computer Vision Development"
+  },
+  {
+    title: "Multi-Hand Control Interface",
+    tags: ["practical"],
+    image: "BilderPractical/Bildschirmfoto 2025-07-23 um 18.09.14.png",
+    description: "Multi-Hand Control Interface - Advanced Gesture Recognition"
+  },
+  {
+    title: "Hand Tracking Interface Design",
+    tags: ["practical"],
+    image: "BilderPractical/Bildschirmfoto 2025-07-23 um 18.09.37.png",
+    description: "Hand Tracking Interface Design - UI/UX Development"
+  },
+  {
+    title: "Gesture Control System Testing",
+    tags: ["practical"],
+    image: "BilderPractical/Bildschirmfoto 2025-07-23 um 18.10.12.png",
+    description: "Gesture Control System Testing - Performance Analysis"
+  },
+  {
+    title: "Hand Interface Development",
+    tags: ["practical"],
+    image: "BilderPractical/Bildschirmfoto 2025-07-23 um 18.10.41.png",
+    description: "Hand Interface Development - Technical Innovation"
+  },
+  {
+    title: "Advanced Gesture Recognition",
+    tags: ["practical"],
+    image: "BilderPractical/Bildschirmfoto 2025-07-23 um 18.11.01.png",
+    description: "Advanced Gesture Recognition - Machine Learning Implementation"
+  },
+  {
+    title: "Hand Control Interface Optimization",
+    tags: ["practical"],
+    image: "BilderPractical/Bildschirmfoto 2025-07-23 um 18.11.36.png",
+    description: "Hand Control Interface Optimization - System Performance"
+  },
+  {
+    title: "Interactive Gesture System",
+    tags: ["practical"],
+    image: "BilderPractical/Bildschirmfoto 2025-07-23 um 19.02.00.png",
+    description: "Interactive Gesture System - Real-time Hand Tracking"
+  },
+  {
+    title: "Hand Tracking Development Process",
+    tags: ["practical"],
+    image: "BilderPractical/Bildschirmfoto 2025-07-23 um 19.02.14.png",
+    description: "Hand Tracking Development Process - Technical Documentation"
+  },
+  {
+    title: "Gesture-Based Design Tool Testing",
+    tags: ["practical"],
+    image: "BilderPractical/Bildschirmfoto 2025-07-23 um 19.02.35.png",
+    description: "Gesture-Based Design Tool Testing - User Interface Evaluation"
+  },
+  {
+    title: "Hand Control System Integration",
+    tags: ["practical"],
+    image: "BilderPractical/Bildschirmfoto 2025-07-23 um 19.03.38.png",
+    description: "Hand Control System Integration - Technical Development"
+  },
+  {
+    title: "Advanced Hand Interface Design",
+    tags: ["research"],
+    image: "BilderPractical/Bildschirmfoto 2025-07-23 um 19.33.49.png",
+    description: "Advanced Hand Interface Design - UI Innovation"
+  },
+  {
+    title: "Hand Gesture Interface Development",
+    tags: ["practical"],
+    image: "BilderPractical/Bildschirmfoto 2025-07-23 um 19.37.00.png",
+    description: "Hand Gesture Interface Development - System Design"
+  },
+  {
+    title: "Multi-Touch Gesture System",
+    tags: ["practical"],
+    image: "BilderPractical/Bildschirmfoto 2025-07-23 um 19.37.19.png",
+    description: "Multi-Touch Gesture System - Advanced Interaction"
+  },
+  {
+    title: "Hand Tracking Interface Testing",
+    tags: ["practical"],
+    image: "BilderPractical/Bildschirmfoto 2025-07-23 um 19.37.41.png",
+    description: "Hand Tracking Interface Testing - Performance Evaluation"
+  },
+  {
+    title: "Gesture Recognition Development",
+    tags: ["practical"],
+    image: "BilderPractical/Bildschirmfoto 2025-07-23 um 19.37.59.png",
+    description: "Gesture Recognition Development - Machine Learning Integration"
+  },
+  {
+    title: "Hand Control System Refinement",
+    tags: ["practical"],
+    image: "BilderPractical/Bildschirmfoto 2025-07-23 um 19.38.22.png",
+    description: "Hand Control System Refinement - Design Optimization"
+  },
+  {
+    title: "Interactive Hand Interface",
+    tags: ["practical"],
+    image: "BilderPractical/Bildschirmfoto 2025-07-23 um 19.39.34.png",
+    description: "Interactive Hand Interface - Natural User Experience"
+  },
+  {
+    title: "Hand Gesture Control Development",
+    tags: ["practical"],
+    image: "BilderPractical/Bildschirmfoto 2025-07-23 um 19.40.13.png",
+    description: "Hand Gesture Control Development - Technical Innovation"
+  },
+  {
+    title: "Advanced Gesture Interface",
+    tags: ["research"],
+    image: "BilderPractical/Bildschirmfoto 2025-07-23 um 19.52.51.png",
+    description: "Advanced Gesture Interface - User Interface Design"
+  },
+  {
+    title: "Hand Tracking System Testing",
+    tags: ["research"],
+    image: "BilderPractical/Bildschirmfoto 2025-07-23 um 19.53.30.png",
+    description: "Hand Tracking System Testing - Quality Assurance"
+  },
+  {
+    title: "Gesture-Based Interface Design",
+    tags: ["research"],
+    image: "BilderPractical/Bildschirmfoto 2025-07-23 um 20.22.46.png",
+    description: "Gesture-Based Interface Design - UI/UX Development"
+  },
+  {
+    title: "Hand Control Interface Implementation",
+    tags: ["research"],
+    image: "BilderPractical/Bildschirmfoto 2025-07-23 um 20.26.48.png",
+    description: "Hand Control Interface Implementation - Technical Development"
+  },
+  {
+    title: "Multi-Gesture Control System",
+    tags: ["research"],
+    image: "BilderPractical/Bildschirmfoto 2025-07-23 um 20.31.37.png",
+    description: "Multi-Gesture Control System - Advanced Interaction Design"
+  },
+  {
+    title: "Hand Interface System Testing",
+    tags: ["research"],
+    image: "BilderPractical/Bildschirmfoto 2025-07-23 um 20.39.09.png",
+    description: "Hand Interface System Testing - Performance Analysis"
+  },
+  {
+    title: "Gamepad Interface Development",
+    tags: ["practical"],
+    image: "BilderPractical/Bildschirmfoto 2025-07-24 um 13.55.23.png",
+    description: "Gamepad Interface Development - Controller Integration"
+  },
+  {
+    title: "Controller-Based Design Tool",
+    tags: ["practical"],
+    image: "BilderPractical/Bildschirmfoto 2025-07-24 um 14.55.30.png",
+    description: "Controller-Based Design Tool - Alternative Input Methods"
+  },
+  {
+    title: "Gamepad Control System",
+    tags: ["practical"],
+    image: "BilderPractical/Bildschirmfoto 2025-07-24 um 15.01.55.png",
+    description: "Gamepad Control System - Hardware Integration"
+  },
+  {
+    title: "Controller Interface Testing",
+    tags: ["practical"],
+    image: "BilderPractical/Bildschirmfoto 2025-07-24 um 15.02.02.png",
+    description: "Controller Interface Testing - User Experience Evaluation"
+  },
+  {
+    title: "Gamepad Integration Development",
+    tags: ["practical"],
+    image: "BilderPractical/Bildschirmfoto 2025-07-24 um 15.12.07.png",
+    description: "Gamepad Integration Development - Technical Implementation"
+  },
+  {
+    title: "Controller-Based Interface",
+    tags: ["practical"],
+    image: "BilderPractical/Bildschirmfoto 2025-07-24 um 15.12.17.png",
+    description: "Controller-Based Interface - Alternative Input Design"
+  },
+  {
+    title: "Gamepad Control Interface",
+    tags: ["practical"],
+    image: "BilderPractical/Bildschirmfoto 2025-07-24 um 15.24.10.png",
+    description: "Gamepad Control Interface - Hardware-Software Integration"
+  },
+  {
+    title: "Controller System Development",
+    tags: ["practical"],
+    image: "BilderPractical/Bildschirmfoto 2025-07-24 um 16.05.29.png",
+    description: "Controller System Development - Input Method Innovation"
+  },
+  {
+    title: "Gamepad Interface Implementation",
+    tags: ["practical"],
+    image: "BilderPractical/Bildschirmfoto 2025-07-24 um 16.07.49.png",
+    description: "Gamepad Interface Implementation - Technical Development"
+  },
+  {
+    title: "Controller-Based Design System",
+    tags: ["practical"],
+    image: "BilderPractical/Bildschirmfoto 2025-07-24 um 16.16.27.png",
+    description: "Controller-Based Design System - Alternative Interface Design"
+  },
+  {
+    title: "Gamepad Control Testing",
+    tags: ["practical"],
+    image: "BilderPractical/Bildschirmfoto 2025-07-24 um 16.35.44.png",
+    description: "Gamepad Control Testing - Performance Evaluation"
+  },
+  {
+    title: "Controller Interface Design",
+    tags: ["practical"],
+    image: "BilderPractical/Bildschirmfoto 2025-07-24 um 16.43.31.png",
+    description: "Controller Interface Design - User Experience Development"
+  },
+  {
+    title: "Gamepad Integration Testing",
+    tags: ["practical"],
+    image: "BilderPractical/Bildschirmfoto 2025-07-24 um 16.43.41.png",
+    description: "Gamepad Integration Testing - System Validation"
+  },
+  {
+    title: "Controller System Implementation",
+    tags: ["practical"],
+    image: "BilderPractical/Bildschirmfoto 2025-07-24 um 16.43.51.png",
+    description: "Controller System Implementation - Hardware Integration"
+  },
+  {
+    title: "Typography Poster Design System",
+    tags: ["practical"],
+    image: "BilderPractical/Bildschirmfoto 2025-07-24 um 18.25.27.png",
+    description: "Typography Poster Design System - Visual Design Tool"
+  },
+  {
+    title: "Interactive Typography Interface",
+    tags: ["practical"],
+    image: "BilderPractical/Bildschirmfoto 2025-07-24 um 18.25.40.png",
+    description: "Interactive Typography Interface - Design Tool Development"
+  },
+  {
+    title: "Typography Control System",
+    tags: ["research"],
+    image: "BilderPractical/Bildschirmfoto 2025-07-24 um 18.25.50.png",
+    description: "Typography Control System - Text Manipulation Interface"
+  },
+  {
+    title: "Poster Design Interface",
+    tags: ["practical"],
+    image: "BilderPractical/Bildschirmfoto 2025-07-24 um 18.26.00.png",
+    description: "Poster Design Interface - Visual Design Tool"
+  },
+  {
+    title: "Typography Design Tool",
+    tags: ["research"],
+    image: "BilderPractical/Bildschirmfoto 2025-07-24 um 18.26.14.png",
+    description: "Typography Design Tool - Interactive Text System"
+  },
+  {
+    title: "Interactive Poster System",
+    tags: ["research"],
+    image: "BilderPractical/Bildschirmfoto 2025-07-24 um 18.26.27.png",
+    description: "Interactive Poster System - Design Tool Innovation"
+  },
+  {
+    title: "Typography Interface Development",
+    tags: ["research"],
+    image: "BilderPractical/Bildschirmfoto 2025-07-24 um 18.26.48.png",
+    description: "Typography Interface Development - Text Design System"
+  },
+  {
+    title: "Poster Control Interface",
+    tags: ["practical"],
+    image: "BilderPractical/Bildschirmfoto 2025-07-24 um 18.27.28.png",
+    description: "Poster Control Interface - Visual Design Tool"
+  },
+  {
+    title: "Typography System Testing",
+    tags: ["research"],
+    image: "BilderPractical/Bildschirmfoto 2025-07-24 um 18.27.43.png",
+    description: "Typography System Testing - Design Tool Evaluation"
+  },
+  {
+    title: "Interactive Design Interface",
+    tags: ["practical"],
+    image: "BilderPractical/Bildschirmfoto 2025-07-24 um 18.37.14.png",
+    description: "Interactive Design Interface - User Experience Development"
+  },
+  {
+    title: "Typography Design System",
+    tags: ["practical"],
+    image: "BilderPractical/Bildschirmfoto 2025-07-24 um 18.39.23.png",
+    description: "Typography Design System - Interactive Text Tool"
+  },
+  {
+    title: "Poster Interface Design",
+    tags: ["practical"],
+    image: "BilderPractical/Bildschirmfoto 2025-07-24 um 18.39.29.png",
+    description: "Poster Interface Design - Visual Communication Tool"
+  },
+  {
+    title: "Typography Control Development",
+    tags: ["research"],
+    image: "BilderPractical/Bildschirmfoto 2025-07-24 um 18.42.12.png",
+    description: "Typography Control Development - Text Manipulation System"
+  },
+  {
+    title: "Interactive Typography Tool",
+    tags: ["research"],
+    image: "BilderPractical/Bildschirmfoto 2025-07-24 um 18.42.22.png",
+    description: "Interactive Typography Tool - Design Interface Innovation"
+  },
+  {
+    title: "Poster Design System",
+    tags: ["practical"],
+    image: "BilderPractical/Bildschirmfoto 2025-07-24 um 18.43.54.png",
+    description: "Poster Design System - Visual Design Interface"
+  },
+  {
+    title: "Typography Interface Implementation",
+    tags: ["practical"],
+    image: "BilderPractical/Bildschirmfoto 2025-07-24 um 18.44.11.png",
+    description: "Typography Interface Implementation - Design Tool Development"
+  },
+  {
+    title: "Interactive Poster Design",
+    tags: ["practical"],
+    image: "BilderPractical/Bildschirmfoto 2025-07-24 um 18.44.30.png",
+    description: "Interactive Poster Design - Typography Control System"
+  },
+  
+  // Reference Images & Inspiration
+  {
+    title: "Nintendo Joy-Con Controllers",
+    tags: ["research"],
+    image: "BilderPractical/Joy-Con_Blue_Red.webp",
+    description: "Nintendo Joy-Con Controllers - Gaming Interface Reference"
+  },
+  {
+    title: "Joy-Con Controller Detail",
+    tags: ["research"],
+    image: "BilderPractical/joy-con-6.jpg",
+    description: "Joy-Con Controller Detail - Hardware Design Reference"
+  },
+  {
+    title: "Joy-Con Accelerometer & Gyroscope",
+    tags: ["research"],
+    image: "BilderPractical/687474703a2f2f6374636165722e636f6d2f7769692f7377697463682f6a6f79636f6e5f6163632d6779726f5f7269676874322e706e67.png",
+    description: "Joy-Con Accelerometer & Gyroscope - Motion Control Technology"
+  },
+  {
+    title: "Joy-Con Gyroscope Left Controller",
+    tags: ["research"],
+    image: "BilderPractical/joycon_acc-gyro_left2.png",
+    description: "Joy-Con Gyroscope Left Controller - Motion Sensing Hardware"
+  },
+  {
+    title: "Mouse Movement Direction Analysis",
+    tags: ["research"],
+    image: "BilderPractical/Relationship-between-direction-of-mouse-movement-black-arrows-and-cursor-movement.png",
+    description: "Mouse Movement Direction Analysis - Human-Computer Interaction Research"
+  },
+  {
+    title: "Mouse Tracking Guide",
+    tags: ["research"],
+    image: "BilderPractical/https-__phonexa.com_blog_mouse-tracking-guide__C00185-mouse-tracking-guide.png",
+    description: "Mouse Tracking Guide - Interface Design Research"
+  },
+  {
+    title: "Hand Mouse Interface Concept",
+    tags: ["research"],
+    image: "BilderPractical/580_handmouse456x512_b828775e90bf71debae47e791cad0fad.png",
+    description: "Hand Mouse Interface Concept - Alternative Input Method"
+  },
+  {
+    title: "Mouse Gestures Interface",
+    tags: ["research"],
+    image: "BilderPractical/mouse-gestures-2_med_hr.png",
+    description: "Mouse Gestures Interface - Gesture-Based Control System"
+  },
+  {
+    title: "BlazePose Learning Reference",
+    tags: ["research"],
+    image: "BilderPractical/blazepose_lerp.png",
+    description: "BlazePose Learning Reference - Pose Detection Technology"
+  },
+  {
+    title: "PoseNet Reference Implementation",
+    tags: ["research"],
+    image: "BilderPractical/ref-posenet.png",
+    description: "PoseNet Reference Implementation - Machine Learning Body Tracking"
+  },
+  {
+    title: "Card Model Example",
+    tags: ["research"],
+    image: "BilderPractical/card-model-example-8cd816e4462b2c6d2887b0b824e0b61e.png",
+    description: "Card Model Example - Interface Design Pattern"
+  },
+  {
+    title: "P5.js Live Coding Performance",
+    tags: ["research"],
+    image: "BilderPractical/davis-ted_p5live_cocoding_iclc-performances-pbc-21-april-2023-paulus-van-dorsten_5-press-700x467-q95.webp",
+    description: "P5.js Live Coding Performance - Creative Coding Community"
+  },
+  {
+    title: "P5.js Community Day 2019",
+    tags: ["research"],
+    image: "BilderPractical/davis-ted_p5live_processing_community_day_2019@boris-magrini_15-press-1600x1067-q95.webp",
+    description: "P5.js Community Day 2019 - Creative Coding Event"
+  },
+  {
+    title: "Marcel Duchamp - Nude Descending a Staircase",
+    tags: ["research"],
+    image: "BilderPractical/eliot-elisofon-marcel-duchamp-descendant-l-escalier.jpg",
+    description: "Marcel Duchamp - Nude Descending a Staircase - Motion in Art"
+  },
+  {
+    title: "Andy Serkis as Gollum",
+    tags: ["research"],
+    image: "BilderPractical/andy-serkis-gollum-759.jpg",
+    description: "Andy Serkis as Gollum - Motion Capture Performance"
+  },
+  {
+    title: "Apes Caesar Motion Capture",
+    tags: ["research"],
+    image: "BilderPractical/ApesCaesar.png",
+    description: "Apes Caesar Motion Capture - Digital Performance Technology"
+  },
+  {
+    title: "Street Fighter Ryu Moveset",
+    tags: ["research"],
+    image: "BilderPractical/Ryu Smash Moveset CyberWolfJV.jpg",
+    description: "Street Fighter Ryu Moveset - Gaming Interface Design"
+  },
+  {
+    title: "Pantone Color Catalog",
+    tags: ["research"],
+    image: "BilderPractical/PantoneCatalog.webp",
+    description: "Pantone Color Catalog - Color System Reference"
+  },
+  {
+    title: "Square Design Element",
+    tags: ["research"],
+    image: "BilderPractical/Square-1_190312b3cc.png",
+    description: "Square Design Element - UI Component Reference"
+  },
+  {
+    title: "Download Icon",
+    tags: ["research"],
+    image: "BilderPractical/Download.png",
+    description: "Download Icon - Interface Element"
+  },
+  {
+    title: "Pie Chart Visualization",
+    tags: ["research"],
+    image: "BilderPractical/pie.png",
+    description: "Pie Chart Visualization - Data Representation"
+  },
+  {
+    title: "UNSORTED Love Session Photography",
+    tags: ["practical"],
+    image: "BilderPractical/UNSORTED-LOVE-SESSION2_Photocredit_GabrielBienz_-@giuliendante-65.jpg",
+    description: "UNSORTED Love Session Photography - Visual Documentation – Photocredits Gabriel Brienz"
+  },
+  {
+    title: "UNSORTED Love Session 2",
+    tags: ["practical"],
+    image: "BilderPractical/UNSORTED-LOVE-SESSION2_Photocredit_GabrielBienz_-@giuliendante-72.jpg",
+    description: "UNSORTED Love Session 2 - Photography Documentation – Photocredits Gabriel Brienz"
+  },
+  {
+    title: "UNSORTED Love Session 3",
+    tags: ["practical"],
+    image: "BilderPractical/UNSORTED-LOVE-SESSION2_Photocredit_GabrielBienz_-@giuliendante-74.jpg",
+    description: "UNSORTED Love Session 3 - Visual Documentation – Photocredits Gabriel Brienz"
+  },
+  {
+    title: "UNSORTED Love Session 4",
+    tags: ["practical"],
+    image: "BilderPractical/UNSORTED-LOVE-SESSION2_Photocredit_GabrielBienz_-@giuliendante-75.jpg",
+    description: "UNSORTED Love Session 4 - Photography Project – Photocredits Gabriel Brienz"
+  },
+  {
+    title: "UNSORTED Love Session 5",
+    tags: ["practical"],
+    image: "BilderPractical/UNSORTED-LOVE-SESSION2_Photocredit_GabrielBienz_-@giuliendante-84.jpg",
+    description: "UNSORTED Love Session 5 - Visual Documentation Project – Photocredits Gabriel Brienz"
+  },
+  {
+    title: "First Sketch Design Process",
+    tags: ["research"],
+    image: "BilderPractical/first-sketch2 (1).png",
+    description: "First Sketch Design Process - Conceptual Development"
+  },
+  {
+    title: "Instagram Screenshot Reference",
+    tags: ["research"],
+    image: "BilderPractical/Screenshot 2025-07-05 at 13-53-08 Instagram.png",
+    description: "Instagram Screenshot Reference - Social Media Interface"
+  },
+  
+  // BilderTheorie - Theoretical References & Research
+  {
+    title: "Dexigner Design News Interface",
+    tags: ["theory"],
+    image: "BilderTheorie/Fig1.https-::www.dexigner.com:news:30309.jpg",
+    description: "Fig. 1 - Dexigner Design News Interface - Design Communication Theory"
+  },
+  {
+    title: "Muriel Cooper MIT Research",
+    tags: ["theory"],
+    image: "BilderTheorie/Fig2https-:metropolismag.com:viewpoints:mit-muriel-cooper:.webp.webp",
+    description: "Fig. 2 - Muriel Cooper MIT Research - Information Design Pioneer"
+  },
+  {
+    title: "Gorilla Sun Design Concept",
+    tags: ["theory"],
+    image: "BilderTheorie/Fig3https-::www.gorillasun.de:content:images:size:w1600:2023:05:Image-41.png.png",
+    description: "Fig. 3 - Gorilla Sun Design Concept - Contemporary Design Theory"
+  },
+  {
+    title: "Olivia Jack Hydra Visual Programming",
+    tags: ["theory"],
+    image: "BilderTheorie/Fig3https-__criticalplayground.org_content_images_2025_07_Olivia-Jack-Hydra-5.png.png",
+    description: "Fig. 3 - Olivia Jack Hydra Visual Programming - Live Coding Theory"
+  },
+  {
+    title: "Prime Video Interface Design",
+    tags: ["theory"],
+    image: "BilderTheorie/Fig4https-::www.primevideo.com:-:de:detail:0U12RGUUUPNELDHRXMPDW1X1T5:ref=atv_dp_share_cu_r.jpg",
+    description: "Fig. 4 - Prime Video Interface Design - Streaming Media UI"
+  },
+  {
+    title: "Xerox Star 8010 Desktop Interface",
+    tags: ["theory"],
+    image: "BilderTheorie/Fig5https-__www.digibarn.com_collections_screenshots_xerox-star-8010_xerox-star-8010-05.jpg",
+    description: "Fig. 5 - Xerox Star 8010 Desktop Interface - Early GUI Design"
+  },
+  {
+    title: "Xerox Star 8010 File Management",
+    tags: ["theory"],
+    image: "BilderTheorie/Fig6https-__www.digibarn.com_collections_screenshots_xerox-star-8010_xerox-star-8010-12.jpg",
+    description: "Fig. 6 - Xerox Star 8010 File Management - Desktop Metaphor"
+  },
+  {
+    title: "Xerox Star 8010 System Interface",
+    tags: ["theory"],
+    image: "BilderTheorie/Fig7TN_xerox-star-8010-09.jpeg",
+    description: "Fig. 7 - Xerox Star 8010 System Interface - Historic GUI Development"
+  },
+  {
+    title: "Photoshop Toolbar Evolution 1989-Present",
+    tags: ["theory"],
+    image: "BilderTheorie/Fig8https-:photographybay.com:2013:05:23:photoshop-toolbars-visualized-1989-present:.jpg.jpg",
+    description: "Fig. 8 - Photoshop Toolbar Evolution 1989-Present - Design Tool History"
+  },
+  {
+    title: "Interface Design Development Process",
+    tags: ["theory"],
+    image: "BilderTheorie/Fig9_Bildschirmfoto 2025-07-21 um 16.26.05.png",
+    description: "Fig. 9 - Interface Design Development Process - Design Methodology"
+  },
+  {
+    title: "Process Design Methodology",
+    tags: ["theory"],
+    image: "BilderTheorie/Fig10_process-design-01.png",
+    description: "Fig. 10 - Process Design Methodology - Design Theory Framework"
+  },
+  {
+    title: "CHI 2024 Human-Computer Interaction Research",
+    tags: ["theory"],
+    image: "BilderTheorie/Fig11_https-::dl.acm.org:cms:attachment:html:10.1145:3613904.3642720:assets:html:images:chi24-824-fig2.jpg.jpg",
+    description: "Fig. 11 - CHI 2024 Human-Computer Interaction Research - Academic Research"
+  },
+  {
+    title: "Interface Development Screenshot",
+    tags: ["theory"],
+    image: "BilderTheorie/Fig12Bildschirmfoto 2025-07-21 um 17.19.23.png",
+    description: "Fig. 12 - Interface Development Screenshot - Development Process"
+  },
+  {
+    title: "Comprehensive HCI Interactions List",
+    tags: ["theory"],
+    image: "BilderTheorie/Fig13https-::uxdesign.cc:a-comprehensive-list-of-human-computer-interactions-d72eaca2c0df.webp",
+    description: "Fig. 13 - Comprehensive HCI Interactions List - UX Design Research"
+  },
+  {
+    title: "Cronenberg Naked Lunch Film Reference",
+    tags: ["theory"],
+    image: "BilderTheorie/Fig13https-::www.nicksflickpicks.com:naklunch.html.jpg",
+    description: "Fig. 13 - Cronenberg Naked Lunch Film Reference - Body-Machine Interface"
+  },
+  {
+    title: "Cronenberg eXistenZ Film Analysis",
+    tags: ["theory"],
+    image: "BilderTheorie/Fig14https-:www.lab111.nl:david-cronenberg-existenz:.jpg.jpg",
+    description: "Fig. 14 - Cronenberg eXistenZ Film Analysis - Flesh-Technology Fusion"
+  },
+  {
+    title: "Design by Numbers John Maeda",
+    tags: ["theory"],
+    image: "BilderTheorie/fig15https-_maeda.pm_2017_12_01_design-by-numbers-in-2017_.webp.webp",
+    description: "Fig. 15 - Design by Numbers John Maeda - Computational Design Theory"
+  },
+  {
+    title: "Hack the Promise Image",
+    tags: ["practical"],
+    image: "BilderTheorie/Fig16ImageHackthePromise.jpg",
+    description: "Experiment"
+  },
+  {
+    title: "Nam June Paik TV Buddha 1974",
+    tags: ["theory"],
+    image: "BilderTheorie/Fig18https-__bryanhiott.wordpress.com_wp-content_uploads_2015_06_tvbuddha-1974.jpg.jpg",
+    description: "Fig. 18 - Nam June Paik TV Buddha 1974 - Media Art Theory"
+  },
+  {
+    title: "John Cage Composer Portrait",
+    tags: ["theory"],
+    image: "BilderTheorie/Fig19https-:robertgreenbergmusic.com:music-history-monday-john-cage-we-miss-you:.jpg.jpg",
+    description: "Fig. 19 - John Cage Composer Portrait - Experimental Music Theory"
+  },
+  {
+    title: "VideoPlace Myron Krueger Interaction System",
+    tags: ["theory"],
+    image: "BilderTheorie/Figure 2.2 VideoPlace - premier système d'interaction mono-caméra proposé par Myron Krueger.jpg",
+    description: "Figure 2.2 - VideoPlace Myron Krueger - Early Computer Vision Interface"
+  },
+  {
+    title: "Mouse Tracking Guide Theory",
+    tags: ["theory"],
+    image: "BilderTheorie/https-__phonexa.com_blog_mouse-tracking-guide__C00185-mouse-tracking-guide.png",
+    description: "Mouse Tracking Guide Theory - Input Device Research"
+  },
+  {
+    title: "Design Research Documentation",
+    tags: ["theory"],
+    image: "BilderTheorie/Fig1096641_102_1160_MTkwODQ1NDkzMy0xNjI0NjY0NDkz.jpg",
+    description: "Design Research Documentation - Academic Research Reference"
+  },
+  {
+    title: "Hylomorphic Process",
+    image: "BilderTheorie/c933a11a-f31d-4189-9779-ce3e3d99f66c_1147x1119.jpg",
+    description: "Hylomorphic Process"
+  }
+];
+
+    const container = document.getElementById("project-container");
+
+    projectData.forEach(project => {
+      const html = `
+        <div class="project">
+          <img src="${project.image}" alt="${project.title}">
+          <div class="project-title">
+            <div class="description">${project.description}</div>
+          </div>
+        </div>
+      `;
+      container.insertAdjacentHTML("beforeend", html);
+    });
+
+    const lightbox = document.getElementById("lightbox");
+    const lightboxImg = document.getElementById("lightbox-image");
+    const closeBtn = document.getElementById("closeBtn");
+    const lightboxDesc = document.getElementById("lightbox-description");
+
+    const galleryImages = Array.from(document.querySelectorAll(".project img"));
+    let currentIndex = 0;
+
+    galleryImages.forEach((img, index) => {
+      img.addEventListener("click", () => {
+        currentIndex = index;
+        showImage(currentIndex);
+      });
+    });
+
+    function showImage(index) {
+      const item = projectData[index];
+      if (!item) return;
+      lightboxImg.src = item.image;
+      lightboxDesc.textContent = item.description || "";
+      lightbox.classList.remove("hidden");
+    }
+
+    closeBtn.addEventListener("click", () => {
+      lightbox.classList.add("hidden");
+    });
+
+    lightbox.addEventListener("click", (e) => {
+      if (e.target === lightbox) {
+        lightbox.classList.add("hidden");
+      }
+    });
+
+    document.getElementById("prevBtn").addEventListener("click", e => {
+      e.stopPropagation();
+      currentIndex = (currentIndex - 1 + projectData.length) % projectData.length;
+      showImage(currentIndex);
+    });
+
+    document.getElementById("nextBtn").addEventListener("click", e => {
+      e.stopPropagation();
+      currentIndex = (currentIndex + 1) % projectData.length;
+      showImage(currentIndex);
+    });
+
+    document.addEventListener("keydown", e => {
+      if (!lightbox.classList.contains("hidden")) {
+        if (e.key === "ArrowLeft") {
+          currentIndex = (currentIndex - 1 + projectData.length) % projectData.length;
+          showImage(currentIndex);
+        }
+        if (e.key === "ArrowRight") {
+          currentIndex = (currentIndex + 1) % projectData.length;
+          showImage(currentIndex);
+        }
+        if (e.key === "Escape") {
+          lightbox.classList.add("hidden");
+        }
+      }
+    });
+
+    // Filter functionality
+    const filterBtns = document.querySelectorAll('.filter-btn');
+    const projects = document.querySelectorAll('.project');
+    let currentFilter = null;
+
+    filterBtns.forEach(btn => {
+      btn.addEventListener('click', () => {
+        const tag = btn.dataset.tag;
+        
+        // Toggle active state
+        if (currentFilter === tag) {
+          // Deactivate current filter
+          btn.classList.remove('active');
+          currentFilter = null;
+          showAllProjects();
+        } else {
+          // Activate new filter
+          filterBtns.forEach(b => b.classList.remove('active'));
+          btn.classList.add('active');
+          currentFilter = tag;
+          filterProjects(tag);
+        }
+      });
+    });
+
+    function filterProjects(tag) {
+      const projectElements = document.querySelectorAll('.project');
+      projectElements.forEach((project, index) => {
+        const projectItem = projectData[index];
+        if (projectItem && projectItem.tags && projectItem.tags.includes(tag)) {
+          project.style.display = 'block';
+        } else {
+          project.style.display = 'none';
+        }
+      });
+    }
+
+    function showAllProjects() {
+      const projectElements = document.querySelectorAll('.project');
+      projectElements.forEach(project => {
+        project.style.display = 'block';
+      });
+    }
+  </script>
+</body>
+</html>
