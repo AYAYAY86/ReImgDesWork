@@ -483,7 +483,12 @@
           openLightbox(chapIdx, imgIdx);
         });
         const image = document.createElement('img');
-        image.src = encodeURI(img.src);
+        // Bessere URL-Kodierung für Dateipfade
+        function encodeImagePath(path) {
+          return path.split('/').map(segment => encodeURIComponent(segment)).join('/');
+        }
+        
+        image.src = encodeImagePath(img.src);
         image.alt = img.desc || '';
         image.dataset.chapter = chapIdx;
         image.dataset.index = imgIdx;
@@ -505,7 +510,12 @@
     }
     function showLightboxImage() {
       const imgObj = chapters[currentChapter].images[currentImg];
-      lightboxImg.src = encodeURI(imgObj.src);
+      
+      function encodeImagePath(path) {
+        return path.split('/').map(segment => encodeURIComponent(segment)).join('/');
+      }
+      
+      lightboxImg.src = encodeImagePath(imgObj.src);
       lightboxImg.alt = imgObj.desc || '';
       lightboxDesc.textContent = imgObj.desc || '';
     }
