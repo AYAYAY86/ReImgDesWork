@@ -1,0 +1,483 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>Gradationskurve mit Sliders + Reset (Fixed)</title>
+  <script src="https://cdn.jsdelivr.net/npm/p5@1.11.8/lib/p5.js"></script>
+  <style>
+    /* Container zentriert die p5-canvas horizontal und vertikal */
+    html, body { height: 100%; margin: 0; background: gray; }
+    #canvasContainer {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      height: 85vh;
+      position: relative; /* damit input absolut positioniert werden kann */
+
+    }
+    /* Canvas soll nicht aus dem Fenster herauswachsen */
+    #canvasContainer canvas {
+      max-width: 100%;
+      height: auto;
+    }
+    /* Neues CSS für die externe Koordinatenanzeige */
+    #coords {
+      text-align: center;
+      color: white;
+ 
+      padding: 10px;
+      margin-top: 8px;
+      font-family: monospace;
+      font-size: 1.2em;
+      font-weight: bold;
+    }
+    /* CSS für die Effekt-Übersicht */
+    #effectsDisplay {
+      position: fixed;
+      top: 10px;
+      left: 20px;
+  
+      color: white;
+      padding: 15px;
+      border-radius: 8px;
+      font-family: monospace;
+      font-size: 1em;
+      max-width: 350px;
+      max-height: 90vh;
+      overflow-y: auto;
+      z-index: 1000;
+    }
+
+    .effect-title {
+      color: #ffcc00;
+      font-weight: bold;
+      margin-top: 10px;
+    }
+  </style>
+</head>
+<body>
+  <div id="canvasContainer"></div>
+  <!-- Koordinaten außerhalb des Canvas -->
+  <div id="coords" aria-live="polite"></div>
+  
+  <!-- Effekte-Übersicht -->
+  <div id="effectsDisplay">
+    
+    <!-- <div class="effect-title">1. Linear Shift</div>
+    <pre>255 |     _____ ← y
+    |    /
+    |   /
+    |  /
+  0 |_/________
+    0    x   255</pre>
+    
+    <div class="effect-title">2. Sine Wave</div>
+    <pre>255 |        ___
+    |      /'   \
+    |     /      \
+    |    /        \
+y   |   /          \
+    |  /            \
+    | /              \
+  0 |/_________________
+    0       x        255</pre>
+    
+    <div class="effect-title">3. Gamma Correction</div>
+    <pre>255 |            ___--- (γ<1)
+    |        ___/
+    |    ___/
+    |___/
+  0 |_________________
+    0               255
+
+255 |---___           (γ>1)
+    |      \___
+    |          \___
+    |              \___
+  0 |_________________
+    0               255</pre>
+    
+    <div class="effect-title">4. S-Curve (Sigmoid)</div>
+    <pre>255 |          ___---
+    |      ___/
+    |  ___/
+    |_/
+  0 |_________________
+    0               255</pre>
+    
+    <div class="effect-title">5. Inverse</div>
+    <pre>255 |\
+    | \
+    |  \
+    |   \
+    |    \
+    |     \
+    |      \
+  0 |_______\
+    0       255</pre>
+    
+    <div class="effect-title">6. Exponential</div>
+    <pre>255 |               __---
+    |           __--
+    |       __--
+    |   __--
+    |_--
+  0 |_________________
+    0               255</pre>
+    
+    <div class="effect-title">7. Square Root</div>
+    <pre>255 |    ___-------
+    |  _/
+    | /
+    |/
+    |
+  0 |_________________
+    0               255</pre>
+    
+    <div class="effect-title">8. Cosine Wave</div>
+    <pre>255 |\        /\        /
+    | \      /  \      /
+    |  \    /    \    /
+    |   \__/      \__/
+  0 |_________________
+    0               255</pre>
+    
+    <div class="effect-title">9. Triangle Wave</div>
+    <pre>255 |  /\    /\    /\
+    | /  \  /  \  /  \
+    |/    \/    \/    \
+  0 |_________________
+    0               255</pre>
+    
+    <div class="effect-title">10. Step Function</div>
+    <pre>255 |___   ___   ___
+    |   |  |   |  |
+    |   |__|   |__|
+    |
+  0 |_________________
+    0               255</pre> -->
+    
+    <div class="effect-title">Controls:</div>
+    <pre>
+1: Mouse Control (X/Y)
+2: RED
+3: GREEN
+4: BLUE
+5: Change Effect
+6: Randomize All
+7: Reset Settings
+8: Save Image
+<!-- S: Save Image -->
+
+</pre>
+    </div>
+<script>
+let img, originalImg, lut = [], cnv, coordsDiv, num = 1.25, mouseControl = false, savedX = 0, savedY = 255, effectControl = false, pixelOffset = 0, 
+    offsetControl = false, savedOffsetX = 0, savedOffsetY = 0,
+    offsetControlG = false, savedOffsetGX = 0, savedOffsetGY = 0,
+    offsetControlB = false, savedOffsetBX = 0, savedOffsetBY = 0,
+    currentEffect = 0, effectNames = [
+      "Linear Shift",
+      "Sine Wave", 
+      "Gamma Correction",
+      "S-Curve",
+      "Inverse",
+      "Exponential",
+      "Square Root",
+      "Cosine Wave",
+      "Triangle Wave",
+      "Step Function"
+    ],
+    // Globale Variablen für Save-Funktion
+    currentX = 0, currentY = 255, currentActiveControl = 'None';
+
+function preload() {
+  originalImg = loadImage("img/image-garden.png");
+}
+
+function setup() {
+  // create canvas and attach it to the centered container
+  cnv = createCanvas(originalImg.width/num, originalImg.height/num);
+  cnv.parent('canvasContainer');
+  cnv.drop(handleFile);
+
+  img = createImage(originalImg.width/num, originalImg.height/num);
+  imageMode(CORNER);
+  pixelDensity(1);
+
+  // Referenz auf die externe Koordinatenanzeige
+  coordsDiv = document.getElementById('coords');
+}
+
+function handleFile(file) {
+  if (file.type === 'image') {
+    loadImage(file.data, loaded => {
+      originalImg = loaded;
+      resizeCanvas(originalImg.width/num, originalImg.height/num);
+      img = createImage(originalImg.width/num, originalImg.height/num);
+    });
+  } else {
+    console.log('Keine Bilddatei');
+  }
+}
+
+function draw() {
+  background(0);
+
+  let x, y;
+  
+  if (mouseControl) {
+    x = map(mouseX, 0, width, 0, 255); // shift amount with mouseX
+    y = map(mouseY, 0, height, 0, 255); // shift amount with mouseY
+    // Save current values while mouse control is active
+    savedX = x;
+    savedY = y;
+  } else {
+    // Use saved values when mouse control is off
+    x = savedX;
+    y = savedY;
+  }
+
+  // Pixel-Offset-Control mit mouseX/mouseY
+  let offsetX, offsetY, offsetGX, offsetGY, offsetBX, offsetBY;
+  
+  // Effekt-Control mit mouseX (Taste 5 gedrückt halten)
+  if (effectControl) {
+    currentEffect = Math.floor(map(mouseX, 0, width, 0, effectNames.length));
+    currentEffect = constrain(currentEffect, 0, effectNames.length - 1);
+  }
+  
+  if (offsetControl) {
+    offsetX = Math.round(map(mouseX, 0, width, -12, 12)); // R: -12 bis +12 Pixel-Offset
+    offsetY = Math.round(map(mouseY, 0, height, -12, 12)); // R: -12 bis +12 Pixel-Offset  
+    savedOffsetX = offsetX;
+    savedOffsetY = offsetY;
+  } else {
+    offsetX = savedOffsetX;
+    offsetY = savedOffsetY;
+  }
+  
+  if (offsetControlG) {
+    offsetGX = Math.round(map(mouseX, 0, width, -12, 12)); // G: -12 bis +12 Pixel-Offset
+    offsetGY = Math.round(map(mouseY, 0, height, -12, 12)); // G: -12 bis +12 Pixel-Offset  
+    savedOffsetGX = offsetGX;
+    savedOffsetGY = offsetGY;
+  } else {
+    offsetGX = savedOffsetGX;
+    offsetGY = savedOffsetGY;
+  }
+  
+  if (offsetControlB) {
+    offsetBX = Math.round(map(mouseX, 0, width, -12, 12)); // B: -12 bis +12 Pixel-Offset
+    offsetBY = Math.round(map(mouseY, 0, height, -12, 12)); // B: -12 bis +12 Pixel-Offset  
+    savedOffsetBX = offsetBX;
+    savedOffsetBY = offsetBY;
+  } else {
+    offsetBX = savedOffsetBX;
+    offsetBY = savedOffsetBY;
+  }
+
+  // Update external coords display (outside canvas)
+  if (coordsDiv) {
+    let activeControl = offsetControl ? 'R' : offsetControlG ? 'G' : offsetControlB ? 'B' : effectControl ? 'Effect' : 'None';
+    coordsDiv.innerHTML = `x = ${x.toFixed(2)} y = ${y.toFixed(2)} | Mouse Control: ${mouseControl ? 'ON' : 'OFF'} | Active: ${activeControl} | R[${offsetX},${offsetY}] G[${offsetGX},${offsetGY}] B[${offsetBX},${offsetBY}] | Effect: ${effectNames[currentEffect]} (${currentEffect + 1}/10)`;
+    
+    // Update globale Variablen für Save-Funktion
+    currentX = x;
+    currentY = y;
+    currentActiveControl = activeControl;
+  }
+
+  // Create the lookup table (lut) with different effects
+  for (let i = 0; i < 256; i++) {
+    let normalizedI = i / 255.0; // Normalize to 0-1 range
+    let normalizedX = x / 255.0;
+    let normalizedY = y / 255.0;
+    let result = 0;
+    
+    switch(currentEffect) {
+      case 0: // Linear Shift
+        result = min(i + x, y);
+        break;
+      case 1: // Sine Wave
+        if (x > 0) {
+          result = sin((i / x) * PI/2) * y;
+        } else {
+          result = i;
+        }
+        break;
+      case 2: // Gamma Correction
+        let gamma = map(x, 0, 255, 0.1, 3.0);
+        result = pow(normalizedI, gamma) * y;
+        break;
+      case 3: // S-Curve (Sigmoid)
+        let steepness = map(x, 0, 255, 1, 10);
+        result = (1 / (1 + exp(-steepness * (normalizedI - 0.5)))) * y;
+        break;
+      case 4: // Inverse
+        result = (255 - i) * normalizedY;
+        break;
+      case 5: // Exponential
+        let expFactor = map(x, 0, 255, 0.5, 3.0);
+        result = (exp(normalizedI * expFactor) - 1) / (exp(expFactor) - 1) * y;
+        break;
+      case 6: // Square Root
+        result = sqrt(normalizedI) * y;
+        break;
+      case 7: // Cosine Wave
+        if (x > 0) {
+          result = (cos((i / x) * PI) + 1) * 0.5 * y;
+        } else {
+          result = i;
+        }
+        break;
+      case 8: // Triangle Wave
+        let period = map(x, 1, 255, 10, 100);
+        result = (2 * abs((i % period) / period - 0.5)) * y;
+        break;
+      case 9: // Step Function
+        let steps = max(1, floor(map(x, 0, 255, 1, 10)));
+        result = floor(normalizedI * steps) / steps * y;
+        break;
+      default:
+        result = i;
+    }
+
+    cnv.ellipse(width/2, height/2, 200);
+    
+    lut[i] = constrain(result, 0, 255);
+  }
+
+  // Apply the lut to a fresh copy
+  if (img && originalImg) {
+    img.copy(originalImg, 0, 0, originalImg.width, originalImg.height, 0, 0, originalImg.width/num, originalImg.height/num);
+    img.loadPixels();
+    for (let i = 0; i < img.pixels.length; i += 4) {
+      // R-Kanal mit Offset
+      let targetIndexR = i + offsetX;
+      let sourceIndexR = i + offsetY;
+      if (targetIndexR >= 0 && targetIndexR < img.pixels.length && 
+          sourceIndexR >= 0 && sourceIndexR < img.pixels.length) {
+        img.pixels[targetIndexR] = lut[img.pixels[sourceIndexR]];
+      } else {
+        img.pixels[i+0] = lut[img.pixels[i]];
+      }
+      
+      // G-Kanal mit Offset
+      let targetIndexG = i+1 + offsetGX;
+      let sourceIndexG = i+1 + offsetGY;
+      if (targetIndexG >= 0 && targetIndexG < img.pixels.length && 
+          sourceIndexG >= 0 && sourceIndexG < img.pixels.length) {
+        img.pixels[targetIndexG] = lut[img.pixels[sourceIndexG]];
+      } else {
+        img.pixels[i+1] = lut[img.pixels[i+1]];
+      }
+      
+      // B-Kanal mit Offset
+      let targetIndexB = i+2 + offsetBX;
+      let sourceIndexB = i+2 + offsetBY;
+      if (targetIndexB >= 0 && targetIndexB < img.pixels.length && 
+          sourceIndexB >= 0 && sourceIndexB < img.pixels.length) {
+        img.pixels[targetIndexB] = lut[img.pixels[sourceIndexB]];
+      } else {
+        img.pixels[i+2] = lut[img.pixels[i+2]];
+      }
+    }
+    img.updatePixels();
+
+    image(img, 0, 0);
+  }
+
+  // Optional info jetzt außerhalb des Canvas
+  // (Anzeige im externen Div erfolgt in draw())
+}
+
+function keyPressed() {
+  if (key === '1') {
+    mouseControl = !mouseControl; // toggle mouse control on/off
+  }
+  if (key === '2') {
+    offsetControl = !offsetControl; // toggle R offset control on/off
+  }
+  if (key === '3') {
+    offsetControlG = !offsetControlG; // toggle G offset control on/off
+  }
+  if (key === '4') {
+    offsetControlB = !offsetControlB; // toggle B offset control on/off
+  }
+  if (key === '5') {
+    effectControl = !effectControl; // toggle effect control on/off
+  }
+  if (key === '6') {
+    // Random values für alle Parameter
+    savedX = random(0, 255);
+    savedY = random(0, 255);
+    savedOffsetX = Math.round(random(-12, 12));
+    savedOffsetY = Math.round(random(-12, 12));
+    savedOffsetGX = Math.round(random(-12, 12));
+    savedOffsetGY = Math.round(random(-12, 12));
+    savedOffsetBX = Math.round(random(-12, 12));
+    savedOffsetBY = Math.round(random(-12, 12));
+    currentEffect = Math.floor(random(0, effectNames.length)); // Zufälligen Effekt auswählen
+    console.log(`Random values generated: x=${savedX.toFixed(2)}, y=${savedY.toFixed(2)}, Effect=${effectNames[currentEffect]}`);
+  }
+  if (key === '7') {
+    // Reset all settings to default values
+    savedX = 0;
+    savedY = 255;
+    savedOffsetX = 0;
+    savedOffsetY = 0;
+    savedOffsetGX = 0;
+    savedOffsetGY = 0;
+    savedOffsetBX = 0;
+    savedOffsetBY = 0;
+    currentEffect = 0; // Reset to Linear Shift
+    mouseControl = false;
+    offsetControl = false;
+    offsetControlG = false;
+    offsetControlB = false;
+    effectControl = false;
+    console.log('All settings reset to default values');
+  }
+  if (key === '8') {
+    // Save image
+    if (img) {
+      let filename = `x=${currentX.toFixed(2)}_y=${currentY.toFixed(2)}_R[${savedOffsetX},${savedOffsetY}]_G[${savedOffsetGX},${savedOffsetGY}]_B[${savedOffsetBX},${savedOffsetBY}]_Effect=${effectNames[currentEffect]}.jpg`;
+      img.save(filename);
+      console.log(`Image saved as: ${filename}`);
+    }
+  }
+  if (key === 'S' || key === 's') {
+    if (img) {
+      let filename = `x=${currentX.toFixed(2)}_y=${currentY.toFixed(2)}_R[${savedOffsetX},${savedOffsetY}]_G[${savedOffsetGX},${savedOffsetGY}]_B[${savedOffsetBX},${savedOffsetBY}]_Effect=${effectNames[currentEffect]}.jpg`;
+      img.save(filename);
+      console.log(`Image saved as: ${filename}`);
+    }
+  }
+}
+
+function keyReleased() {
+  if (key === '1') {
+    mouseControl = !mouseControl; // toggle mouse control on/off
+  }
+  if (key === '2') {
+    offsetControl = false; // turn off R when key is released
+  }
+  if (key === '3') {
+    offsetControlG = false; // turn off G when key is released
+  }
+  if (key === '4') {
+    offsetControlB = false; // turn off B when key is released
+  }
+  if (key === '5') {
+    effectControl = false; // turn off effect control when key is released
+  }
+}
+
+function mouseWheel(event) {
+  // Mausrad-Funktionalität deaktiviert - verwende jetzt Taste 5 + mouseX
+  return true; // Erlaubt normales Scrollen der Seite
+}
+</script>
+</body>
+</html>
