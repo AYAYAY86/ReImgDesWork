@@ -1,0 +1,878 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+  <meta charset="UTF-8">
+  <title>p5.js Widget mit text/p5</title>
+  <script src="https://toolness.github.io/p5.js-widget/p5-widget.js"></script>
+  <!-- https://toolness.github.io/p5.js-widget/ -->
+   <!-- https://archive.p5js.org/learn/ -->
+  <style>
+    /* Schrift pro Element: individuelle Deklarationen */
+    body, main, section, p, a, div {
+      font-family: Arial, "Helvetica Neue", Helvetica, sans-serif;
+      font-weight: 400;
+    }
+    h1, h2, h3, strong, b {
+      font-family: Arial, "Helvetica Neue", Helvetica, sans-serif;
+      font-weight: 700;
+    }
+    button, .header-buttons a {
+      font-family: Arial, "Helvetica Neue", Helvetica, sans-serif;
+      font-weight: 500;
+    }
+
+    /* Global layout */
+    body {
+      margin: 0 auto;
+      padding: 20px;
+      padding-top: 96px; /* Platz für den fixierten Header */
+      display: flex;
+      flex-direction: column;
+      width: 95%;
+      max-width: 1000px;
+      align-items: center;
+      justify-content: flex-start;
+      gap: 20px;
+      background: lightgrey;
+      box-sizing: border-box;
+      color: #222;
+    }
+
+    /* Fixierter Header mit 4 Buttons */
+    header {
+      position: fixed;
+      top: 0;
+      left: 0;
+      right: 0;
+      height: 72px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      background: #ffffff;
+      border-bottom: 1px solid #e6e6e6;
+      z-index: 1000;
+      box-shadow: 0 2px 6px rgba(0,0,0,0.03);
+    }
+    .header-buttons {
+      display: flex;
+      gap: 12px;
+      flex-wrap: wrap; /* allow wrapping on small screens */
+      justify-content: center;
+    }
+    .header-buttons a {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      text-decoration: none;
+      color: #222;
+      background: #fff;
+      border: 1px solid #e0e0e0;
+      padding: 8px 14px;
+      border-radius: 200px;
+      transition: background .15s, color .15s;
+    }
+    .header-buttons a:hover { background: #f5f5f5; }
+
+    /* List styling für Links und Aufzählungen (ohne Punkte) */
+    ul { padding-left: 0; margin: 0 0 12px 0; }
+    li { font-size: 1.05rem; margin-bottom: 8px; list-style: none; padding-left: 0; }
+    li a { color: #1a73e8; text-decoration: none; }
+    li a:hover { text-decoration: underline; }
+
+    /* Abschnitts-Layout */
+    section {
+      width: 100%;
+      box-sizing: border-box;
+      background: #fff;
+      padding: 18px;
+      border-radius: 8px;
+      box-shadow: 0 1px 3px rgba(0,0,0,0.03);
+    }
+    section + section { margin-top: 12px; }
+    section h2 { margin: 0 0 8px 0; font-size: 1.5rem; }
+    section p { margin: 0 0 12px 0; color: #444; font-size: 1.05rem; }
+
+    p.p1 { text-align: right; margin: 0 0 12px 0; font-style: italic; }
+
+    /* p5 wrappers: canvas responsive */
+    .p5-widget-root {
+      width: 100%;
+      max-width: 100%;
+      padding: 12px;       /* default padding */
+      box-sizing: border-box;
+    }
+    .p5-widget-root canvas { display: block; margin: 0 auto; max-width: 100%; height: auto; }
+
+    /* responsive iframes */
+    iframe { width: 100%; max-width: 100%; height: auto; min-height: 600px; border: 0; }
+
+    /* Kleine responsive Anpassung */
+    @media (max-width: 900px) {
+      body { width: 98%; max-width: 100%; padding-top: 88px; }
+      header { height: 64px; }
+      .header-buttons a { padding: 6px 10px; font-size: 0.95rem; }
+      section { padding: 12px; }
+    }
+    @media (max-width: 600px) {
+      body { width: 100%; padding: 12px; padding-top: 80px; }
+      header { height: 56px; }
+      .header-buttons { gap: 8px; }
+      .header-buttons a { padding: 6px 8px; font-size: 0.9rem; }
+      section { padding: 10px; }
+      section p { font-size: 0.98rem; }
+    }
+  </style>
+</head>
+<!-- https://toolness.github.io/p5.js-widget/ -->
+<body>
+
+  <header>
+    <nav class="header-buttons" role="navigation" aria-label="Hauptnavigation">
+      <a href="#kategorie0">Overview</a>
+      <a href="#kategorie1">Interaction Mouse</a>
+      <a href="#kategorie2">Keyboard Data</a>
+      <a href="#kategorie3">Mouse and Keyboard</a>
+      <a href="#kategorie4">Kategorie 4</a>
+    </nav>
+  </header>
+
+  <main>
+
+    <section id="kategorie0">
+      <h2>Intro</h2>
+      <p>This is a simple blog webpage for the workshop at the Hack the Promise Festival. Using the p5.js library, I created a collection of interactive widgets that let you experiment with code in a small playground and explore new ways of interacting. Let’s reimagine design tools together!</p>
+
+      <h2>Links</h2>
+      <ul>
+        <li><a href="https://designing-design-tools.nolwennmaudet.com/" target="_blank">designing-design-tools</a></li>
+        <p>This work is a PhD thesis in Human-Computer Interaction / Design from Nolween Maudet that investigates how graphic and interaction designers use digital tools in their creative process, and how those tools often don’t align well with real practice. </p>
+        <li><a href="https://p5js.org/" target="_blank">p5.js</a></li>
+        <p>p5.js is a JavaScript library that makes coding accessible for artists, designers, educators, and beginners. It is based on the core principles of Processing, a programming language and environment created to teach fundamentals of computer programming within a visual context.</p>
+        <li><a href="https://editor.p5js.org/" target="_blank">p5.js Editor</a></li>
+        <p>The p5.js Editor is an online code editor specifically designed for p5.js sketches. It provides a simple interface for writing and testing p5.js code in the browser.</p>
+        <li><a href="https://p5js.org/reference/" target="_blank">p5.js Referenz</a></li>
+        <p>The p5.js reference is a comprehensive guide to the p5.js library, including all functions, classes, and methods available in the library. It is an essential resource for anyone working with p5.js.</p>
+         <li><a href="https://archive.p5js.org/learn/" target="_blank">p5.js Learn</a></li>
+        <p>p5.js Learn is a platform that offers tutorials and resources for learning p5.js. It provides a variety of examples and exercises to help users get started with creative coding.</p>
+         <li><a href="https://archive.p5js.org/learn/interactivity.html" target="_blank">p5.js tutorials Interactivity</a></li>
+        <p>There is a section on interactivity that covers mouse and keyboard interactions in detail.</p>
+        <li><a href="https://alperyagcioglu.ch/" target="_blank">alperyagcioglu.ch</a></li>
+        <p>My personal website where I share my projects and experiments with creative coding and design.</p>
+        <li><a href="https://alperyagcioglu.ch/index_Process_Documentation.html" target="_blank">Process Documentation</a></li>
+        <p>Process Documentation provides an overview of my design process, including research, ideation, and implementation phases.</p>
+        <li><a href="https://designandtheory.wordpress.com/wp-content/uploads/2017/01/muriel-cooper-computers-and-design-1989.pdf" target="_blank">Muriel Cooper’s Computers and Design (1989)</a></li>
+        <p>A very interesting Theory from Muriel Cooper on the relationship between computers and design. Muriel Cooper’s Computers and Design (1989) presents her vision of dynamic, interactive, and multidimensional graphic interfaces that rethink how we access, visualize, and design information in the digital age.</p>
+      </ul>
+    </section>
+
+    <section id="kategorie1">
+      <h2>Interaction Mouse</h2>
+      <p>Here are some examples with mouse movement. The mouse is a basic part of user interface design, and in this section we’ll look at sketches that show mouse interactions in p5.js.</p>
+      <br>
+      <li><a href="https://archive.p5js.org/learn/interactivity.html">p5.js Interactivity Guide</a></li>
+      <p>A interactivity guide from the p5.js community that provides insights and examples for implementing mouse interactions in your sketches.</p>
+      <br>
+
+
+      <!-- bsp1 -->
+      <script type="text/p5" data-autoplay data-height="400" data-preview-width="300">
+function setup() {
+  createCanvas(200, 200);
+}
+function draw() {
+  background(200);
+  stroke(0);
+  ellipse(mouseX, mouseY, 33, 33);
+}
+      </script>
+      <p class="p1">general the mousemovement with a ellipse</p>
+      <p class="p1"><a href="https://p5js.org/reference/p5/mouseX/" target="_blank">mouseX</a></p> 
+      <p class="p1"><a href="https://p5js.org/reference/p5/mouseY/" target="_blank">mouseY</a></p>
+
+      <!-- bsp2 -->
+      <script type="text/p5" data-autoplay data-height="400" data-preview-width="300">
+function setup() {
+  createCanvas(200, 200);
+  background(200);
+}
+function draw() {
+  stroke(0);
+  ellipse(mouseX, mouseY, 33, 33);
+}
+      </script>
+      <p class="p1">general the mousemovement with a ellipse without a background</p>
+      
+      <!-- bsp3 -->
+      <script type="text/p5" data-autoplay data-height="400" data-preview-width="300">
+function setup() {
+  createCanvas(200, 200);
+  background(200);
+}
+
+function draw() {
+  fill(0);
+  ellipse(mouseX, mouseY, 33, 33);
+}
+      </script>
+      <p class="p1">general the mousemovement with a filled ellipse without a background like a paint editor</p>
+
+      <!-- bsp4 -->
+            <script type="text/p5" data-autoplay data-height="400" data-preview-width="300">
+function setup() {
+  createCanvas(200, 200);
+}
+
+function draw() {
+  background(200);
+  stroke(0);
+  ellipse(width/2, height/2, mouseX, mouseX);
+}
+      </script>
+      <p class="p1">change the size of the ellipse with the mouse position</p>
+
+      <!-- bsp5 -->
+      <script type="text/p5" data-autoplay data-height="400" data-preview-width="300">
+function setup() {
+  createCanvas(200, 200);
+}
+
+function draw() {
+  background(200);
+  stroke(0);
+  ellipse(width/2, height/2, mouseX, mouseY);
+}
+      </script>
+      <p class="p1">change the size of the ellipse with the mouse position of x and y coordinates</p>
+
+      <!-- bsp6 -->
+      <script type="text/p5" data-autoplay data-height="400" data-preview-width="300">
+function setup() {
+  createCanvas(200, 200);
+  background(200);
+}
+
+function draw() {
+  stroke(0);
+  ellipse(width/2, height/2, mouseX, mouseY);
+}
+      </script>
+<p class="p1">Change the size of the ellipse with the mouse’s x and y position, without a background. You can see the effect of the mouse movement on the ellipse size in real time, which produces an artifact.</p>
+
+      <!-- bsp7 -->
+      <script type="text/p5" data-autoplay data-height="400" data-preview-width="300">
+function setup() {
+  createCanvas(200, 200);
+  noStroke();
+}
+function draw() {
+  let x = mouseX;
+  let y = mouseY;
+  let ix = width - mouseX;  // Inverse X
+  let iy = height - mouseY; // Inverse Y
+  background(126);
+  fill(255, 150);
+  ellipse(x, height/2, y, y);
+  fill(0, 159);
+  ellipse(ix, height/2, iy, iy);
+}
+      </script>
+<p class="p1">To invert the value of the mouse, subtract the mouseX value from the width of the window and subtract the mouseY value from the height of the screen.</p>
+
+      <!-- bsp8 -->
+      <script type="text/p5" data-autoplay data-height="400" data-preview-width="300">
+function setup() {
+  createCanvas(200, 200);
+  noStroke();
+  fill(0);
+}
+function draw() {
+  background(204);
+  if (mouseIsPressed == true) {
+    fill(255); // White
+  }
+  else {
+    fill(0);   // Black
+  }
+  rect(50, 50, 100, 100);
+}
+      </script>
+<p class="p1">Example of the mouseIsPressed function in p5.js, like a button</p>
+
+      <!-- bsp9 -->
+      <script type="text/p5" data-autoplay data-height="400" data-preview-width="300">
+function setup() {
+  createCanvas(200, 200);
+  noStroke();
+  background(204);
+  
+}
+function draw() {
+  fill(0);
+  if (mouseIsPressed == true) {
+    ellipse(mouseX, mouseY, 20, 20);
+  }
+}
+      </script>
+<p class="p1">Example of the mouseIsPressed function to create a drawing effect.</p>
+
+      <!-- bsp9 -->
+      <script type="text/p5" data-autoplay data-height="400" data-preview-width="300">
+function setup() {
+  createCanvas(200, 200);
+  noStroke();
+  background(204);
+  
+}
+function draw() { 
+  if (mouseIsPressed == true) {
+    fill(0); 
+  }else{
+    fill(204); 
+  }
+  ellipse(mouseX, mouseY, 33, 33);
+}
+      </script>
+<p class="p1">Example of the mouseIsPressed function to create a drawing effect.</p>
+
+      <!-- bsp10 -->
+      <script type="text/p5" data-autoplay data-height="400" data-preview-width="300">
+let circleSize = 20;
+
+function setup() {
+  createCanvas(200, 200);
+}
+
+function draw() {
+  background(200);
+  ellipse(mouseX, mouseY, circleSize, circleSize);
+}
+
+function mouseWheel(event) {
+  circleSize += event.delta / 1;
+}
+      </script>
+<p class="p1">Example of the mouseWheel function to increase the size of the circle with the mouse wheel.</p>
+
+      <!-- bsp11 -->
+      <script type="text/p5" data-autoplay data-height="400" data-preview-width="300">
+let circleSize = 20;
+
+function setup() {
+  createCanvas(200, 200);
+  background(200);
+}
+
+function draw() {
+  ellipse(mouseX, mouseY, circleSize, circleSize);
+}
+
+function mouseWheel(event) {
+  circleSize += event.delta / 1;
+}
+      </script>
+<p class="p1">Example of the mouseWheel function to increase the size of the circle with the mouse wheel. Without a background</p>
+
+      <!-- bsp11.1 -->
+      <script type="text/p5" data-autoplay data-height="400" data-preview-width="300">
+let circleSize = 20;
+
+function setup() {
+  createCanvas(200, 200);
+  background(200);
+}
+
+function draw() {
+  if (mouseIsPressed == true) {
+  ellipse(mouseX, mouseY, circleSize, circleSize);
+  }
+}
+
+function mouseWheel(event) {
+  circleSize += event.delta / 1;
+}
+      </script>
+<p class="p1">Example of the mouseWheel function to increase the size of the circle with the mouse wheel. Without a background</p>
+
+
+
+ <!-- bsp12 -->
+      <iframe
+  title="p5.js Web Editor Embed"
+  width="900"
+  height="800"
+  src="https://editor.p5js.org/ayayay/sketches/6-bBG1-aa"
+  style="border: none;"
+></iframe>
+<p class="p1">Combine the mouse Events mouseIsPressed and mouseWheel to create a drawing effect or a paint editor with adjustable brush size. And double click to change the color.</p>
+<p class="p1"><a href="https://p5js.org/reference/p5/doubleClicked/" target="_blank">double Click</a></p>
+
+<!-- bsp11 -->
+      <script type="text/p5" data-autoplay data-height="400" data-preview-width="300">
+function setup() {
+  createCanvas(200,200);
+  background(200);
+  stroke(0);
+}
+
+function draw() {
+  
+  let pen1 = map(sin(frameCount*0.025),-1,1,2,10)
+  if (mouseIsPressed) {
+    stroke(0);
+    strokeWeight(pen1);
+    //line(prevX, prevY, mouseX, mouseY);
+    ellipse(mouseX,mouseY, pen1, pen1)
+  }
+  prevX = mouseX;
+  prevY = mouseY;
+}
+
+function keyPressed(){
+	if(key == 'S'){
+		save('drawing.png')
+	}
+}
+      </script>
+<p class="p1">create a dynamic brush size.</p>
+<p class="p1"><a href="https://p5js.org/reference/p5/map/" target="_blank">map function</a></p>
+<p class="p1"><a href="https://p5js.org/reference/p5/sin/" target="_blank">sin function</a></p>
+<p class="p1"><a href="https://p5js.org/reference/p5/save/" target="_blank">save function</a></p>
+
+<!-- bsp11 -->
+      <script type="text/p5" data-autoplay data-height="400" data-preview-width="300">
+
+function setup() {
+  createCanvas(200,200);
+  background(200);
+  stroke(0);
+}
+
+function draw() {
+  
+  let pen1 = map(sin(frameCount*0.1),-1,1,3,20)
+  if (mouseIsPressed) {
+    stroke(0);
+    strokeWeight(6);
+    line(pmouseX, pmouseY, mouseX, mouseY);
+  }
+}
+
+function keyPressed(){
+	if(key == 'S'){
+		save('drawing.png')
+	}
+}
+      </script>
+<p class="p1">A example for a smoother line with the pmouseX and pmouseY settings</p>
+<p class="p1"><a href="https://p5js.org/reference/p5/pmouseX" target="_blank">pmouseX and pmouseY</a></p>
+
+    </section>
+
+
+<!-- /////////// HERE IS THE NEXT SECTION //////////////// -->
+    <section id="kategorie2">
+      <h2>Keyboard data</h2>
+      <p>To combine the p5.js keyboard events with the mouse events, you can use the keyIsPressed function to change the behavior of your sketches based on keyboard input.</p>
+
+<!-- bsp1 -->
+      <script type="text/p5" data-autoplay data-height="400" data-preview-width="300">
+let size = 75;
+
+function setup() {
+  createCanvas(200, 200);
+  strokeWeight(4);
+}
+function draw() {
+  background(204);
+  if (keyIsPressed == true) {
+    ellipse(width/2,height/2,size,size)
+  }
+  else {               
+    rect(width/2-size/2,height/2-size/2, size, size);
+  }
+}
+      </script>
+<p class="p1">here is a simple example of the keyIsPressed function to change the shape from a rectangle to an ellipse when a key is pressed.</p>
+<p class="p1"><a href="https://p5js.org/reference/p5/keyIsPressed/" target="_blank">keyIsPressed</a></p>
+
+<!-- bsp3 -->
+<script type="text/p5" data-autoplay data-height="400" data-preview-width="300">
+let size = 40;
+let moveX, moveY;
+
+function setup() {
+  createCanvas(200, 200);
+  background(200);
+  strokeWeight(2);
+}
+function draw() {
+
+  moveX = mouseX
+  moveY = mouseY
+  if (keyIsPressed == true) {
+    ellipse(moveX, moveY, size, size)
+  }
+  else {
+    rect(moveX - size / 2, moveY - size / 2, size, size);
+  }
+}
+      </script>
+<p class="p1">the same sketch without a background and the mouse position is used for drawing.</p>
+
+<!-- bsp3 -->
+<script type="text/p5" data-autoplay data-height="400" data-preview-width="300">
+function setup() {
+  createCanvas(200, 200);
+  textSize(80);
+  fill(255);
+  background(200);
+}
+
+function draw() {
+  strokeWeight(4)
+  stroke(0);
+  fill(255);
+  text(key, mouseX, mouseY); // Draw at coordinate (20,75)
+}
+      </script>
+<p class="p1">key letters as drawing objects</p>
+
+<!-- bsp4 -->
+<script type="text/p5" data-autoplay data-height="400" data-preview-width="300">
+function setup() {
+  createCanvas(200, 200);
+  strokeWeight(4);
+  stroke(255);
+}
+function draw() {
+  background(0);
+  noFill()
+  if ((keyIsPressed == true) && (key == 'a')) {
+    line(100, 75, 100, 125);
+  }
+  else {
+    ellipse(100, 100, 50, 50);
+  }
+}
+      </script>
+<p class="p1">a specific key in this example the letter 'a'</p>
+
+<!-- bsp6 -->
+<script type="text/p5" data-autoplay data-height="400" data-preview-width="300">
+
+let strokeSize = 20;
+function setup() {
+  createCanvas(200, 200);
+  
+  stroke(255);
+}
+
+function draw() {
+  background(0);
+  noFill()
+  strokeWeight(strokeSize);
+  if ((keyIsPressed == true) && (key == 'a')) {
+    line(75, 75, 125, 125);
+    line(125, 75, 75, 125);
+  } else if ((keyIsPressed == true) && (key == 's'))  {
+    rect(75, 75, 50, 50);
+  } else if (keyIsPressed && key === 'd') {
+    triangle(100, 75, 75, 125, 125, 125);
+  } else {
+    ellipse(100, 100, 50, 50);
+  }
+}
+
+function mouseWheel(event) {
+  strokeSize += event.delta / 1;
+}
+      </script>
+<p class="p1">here is a example to use more keys 'a', 's', 'd' to draw different shapes</p>
+
+<!-- bsp7 -->
+<script type="text/p5" data-autoplay data-height="400" data-preview-width="300">
+
+let strokeSize = 1
+
+function setup() {
+  createCanvas(200, 200);
+  background(200)
+  stroke(255);
+}
+
+function draw() {
+  noFill()
+  strokeSize = constrain(strokeSize, 1, 30);
+  strokeWeight(strokeSize);
+  
+  let newX = map(mouseX,0,width,-width/2,width/2)
+  let newY = map(mouseY,0,height,-height/2,height/2)
+  
+  translate(newX,newY)
+  
+  if ((keyIsPressed == true) && (key == 'a')) {
+    push();
+    stroke(255,0,0)
+    line(75, 75, 125, 125);
+    line(125, 75, 75, 125);
+    pop();
+  } else if ((keyIsPressed == true) && (key == 's'))  {
+    push();
+    stroke(0,0,255)
+    rect(75, 75, 50, 50);
+    pop();
+  } else if (keyIsPressed && key === 'd') {
+    push();
+    stroke(255,0,255)
+    triangle(100, 75, 75, 125, 125, 125);
+    pop();
+  } else {
+    stroke(255,255,0)
+    ellipse(100, 100, 50, 50);
+  }
+}
+
+function mouseWheel(event) {
+  strokeSize += event.delta / 2;
+}
+      </script>
+<p class="p1">here is a example to use more keys 'a', 's', 'd' to draw with different shapes and change stroke sizes with mousewheel</p>
+<p class="p1"><a href="https://p5js.org/reference/p5/constrain" target="_blank">constrain</a></p>
+<p class="p1"><a href="https://p5js.org/reference/p5/push/" target="_blank">push & pop</a></p>
+<p class="p1"><a href="https://p5js.org/reference/p5/map/" target="_blank">map</a></p>
+<p class="p1"><a href="https://p5js.org/reference/p5/translate/" target="_blank">translate</a></p>
+
+
+<!-- bsp8 -->
+<script type="text/p5" data-autoplay data-height="400" data-preview-width="300">
+
+let value = 0;
+
+function setup() {
+  createCanvas(200, 200);
+}
+
+function draw() {
+  background(200);
+  fill(value);
+  rect(50, 50, 100,100);
+}
+
+function keyPressed() {
+  if (keyCode === LEFT_ARROW) {
+    value = 255;
+  } else if (keyCode === RIGHT_ARROW) {
+    value = 0;
+  }
+}
+      </script>
+<p class="p1">Change the Colors with the left and right arrow of your keyboard</p>
+
+<!-- bsp9 -->
+<script type="text/p5" data-autoplay data-height="400" data-preview-width="300">
+
+let value = 100;
+
+function setup() {
+  createCanvas(200, 200);
+  rectMode(CENTER)
+}
+
+function draw() {
+  background(200);
+  fill(0);
+  rect(100, 100, value, value);
+}
+
+function keyPressed() {
+  if (keyCode === UP_ARROW) {
+    value += 10;
+  } else if (keyCode === DOWN_ARROW) {
+    value -= 10;
+  }
+}
+    </script>
+<p class="p1">Change the size with the up and down arrow of your keyboard</p>
+
+
+ <!-- bsp10 -->
+      <iframe
+  title="p5.js Web Editor Embed"
+  width="900"
+  height="800"
+  src="https://editor.p5js.org/ayayay/sketches/NfKAbi4nH"
+  style="border: none;"
+></iframe>
+<p class="p1">Draw with the mouse and press once 'a' and 's'to change the shape. And 'd' to erase</p>
+<p class="p1"><a href="https://p5js.org/reference/p5/keyPressed/" target="_blank">keyPressed</a></p>
+<p class="p1"><a href="https://p5js.org/reference/p5/mouseMoved/" target="_blank">mouseMoved</a></p>
+
+    </section>
+
+    <!-- /////////// HERE IS THE NEXT SECTION //////////////// -->
+    <section id="kategorie3">
+      <h2>Interaction Mouse and Keyboard data</h2>
+      <p>In the following examples, we combine the p5.js keyboard events with the mouse events, you can use the keyIsPressed function to change the behavior of your sketches based on keyboard input.</p>
+      
+        <!-- bsp1 -->
+        
+      <iframe
+  title="p5.js Web Editor Embed"
+  width="900"
+  height="800"
+  src="https://editor.p5js.org/ayayay/sketches/KJGaizpNj"
+  style="border: none;"
+></iframe>
+<p class="p1">Change the font size with mouse X and the leading with mouse Y while pressing the mouse.</p>
+
+    
+          <!-- bsp2 -->
+      <iframe
+  title="p5.js Web Editor Embed"
+  width="900"
+  height="800"
+  src="https://editor.p5js.org/ayayay/sketches/LUKvW8aDF"
+  style="border: none;"
+></iframe>
+<p class="p1">Here the same, change the font size with mouse X and the leading with mouse Y while pressing the mouse. Combine 'a', 's', 'd', 'f' to change the font style.</p>
+
+<!-- bsp3 -->
+<script type="text/p5" data-autoplay data-height="400" data-preview-width="300">
+
+let startX, startY;
+let c;
+
+function setup() {
+  createCanvas(200, 200);
+  background(220);
+}
+
+function draw() {
+  if (mouseIsPressed) {
+    fill(c);
+    rect(startX, startY, mouseX - startX, mouseY - startY);
+  }
+}
+
+function mousePressed() {
+  startX = mouseX;
+  startY = mouseY;
+  c = color(random(255), random(255), random(255));
+}
+    </script>
+<p class="p1">make some random colors with the mouse pressed rectangle</p>
+
+ <!-- bsp4 -->
+      <iframe
+  title="p5.js Web Editor Embed"
+  width="900"
+  height="800"
+  src="https://editor.p5js.org/ayayay/sketches/c2brpC0N3"
+  style="border: none;"
+></iframe>
+<p class="p1">This self-made color picker mix colors with mouse and scroll, draw rectangles by dragging, and press a to show the picked color in a fixed square.</p>
+
+ <!-- bsp5 -->
+      <iframe
+  title="p5.js Web Editor Embed"
+  width="900"
+  height="800"
+  src="https://editor.p5js.org/ayayay/sketches/5fjZYhDMn"
+  style="border: none;"
+></iframe>
+<p class="p1">Sketch with gradient and rectangles</p>
+
+ <!-- bsp5 -->
+      <iframe
+  title="p5.js Web Editor Embed"
+  width="900"
+  height="800"
+  src="https://editor.p5js.org/ayayay/sketches/h62FzXPxh"
+  style="border: none;"
+></iframe>
+<p class="p1">Sketches about color mixing and movement</p>
+
+ <!-- bsp6 -->
+      <iframe
+  title="p5.js Web Editor Embed"
+  width="900"
+  height="800"
+  src="https://editor.p5js.org/ayayay/sketches/DyDLmu754"
+  style="border: none;"
+></iframe>
+<p class="p1">Funny Experiment with GUI Tools</p>
+
+ </section>
+  <!-- /////////// HERE IS THE NEXT SECTION //////////////// -->
+    <section id="kategorie3">
+      <h2>Other Libraries</h2>
+      <p>A collection of other libraries that could also be interesting to explore and combine with p5.js.</p>
+
+        <ul>
+        <li><a href="https://hydra.ojack.xyz/?sketch_id=alexandre_2" target="_blank">hydra video synthesizer</a></li>
+        <p>Hydra is a browser-based, open-source live-coding video synth (created by Olivia Jack) that lets you write short JavaScript-like expressions to generate, chain, and mix real-time visuals (compiled to WebGL), suitable for experiments, performance and collaboration. </p>
+        <li><a href="https://teddavis.org/p5live/" target="_blank">p5 live</a></li>
+        <p>p5.live (created by Ted Davis) is a browser-based environment for live-coding with p5.js, designed for performance, teaching, and experimentation.</p>
+        <li><a href="https://hy5live.teddavis.org/" target="_blank">p5 and hydra hy5</a></li>
+        <p>HY5LIVE (created by Ted Davis) is a minimal live-coding editor to showcase HY5 which bridges the gap between hydra-synth and p5.js, containing a suite of functions for passing visuals between both frameworks (hydra » p5 || p5 » hydra), while enabling global-mode code within both!</p>
+        <li><a href="https://charlieroberts.github.io/screamer/playground/" target="_blank">p5.js Learn</a></li>
+        <p>Screamer, which is a declarative language designed for ray marching visuals — you type code and immediately see 3D procedural graphics generated in real time. </p>
+         <li><a href="https://ml5js.org/" target="_blank">ml5js</a></li>
+        <p>ml5.js is a high-level JavaScript library for machine learning built on top of TensorFlow.js, designed to make ML accessible to artists, designers, and creative coders.</p>
+        <li><a href="https://www.youtube.com/@TheCodingTrain" target="_blank">The Coding Train</a></li>
+        <p>A YouTube channel that offers tutorials and creative coding challenges using p5.js and other libraries.</p>
+        <li><a href="https://www.youtube.com/@pattvira" target="_blank">Patt Vira</a></li>
+        <p>Patt Vira is a creative coder and educator who shares tutorials and projects using p5.js and other tools.</p>
+        <li><a href="https://www.youtube.com/@jeffkthompson" target="_blank">Jeff Thompson </a></li>
+        <p>Jeff Thompson is a creative coder and educator who shares tutorials and projects using p5.js and other tools.</p>
+      </ul>
+
+ </section>
+
+<!-- 
+    <section id="kategorie2">
+      <h2>Kategorie 2</h2>
+      <p>Ein weiterer Sketch mit eigener Erklärung. Du kannst beliebig viele Sektionen in Folge hinzufügen.</p>
+
+      <script type="text/p5" data-height="400" data-preview-width="600">
+        function setup() {
+          createCanvas(windowWidth, 100);
+        }
+        function draw() {
+          background(255, 0, 200);
+        }
+      </script>
+    </section>
+
+    <section id="kategorie3">
+      <h2>Kategorie 3</h2>
+      <p>Beschreibung für diesen Sketch. Nutze Absätze, Listen oder Links zur Dokumentation.</p>
+
+      <script type="text/p5" data-height="400" data-preview-width="600">
+        function setup() {
+          createCanvas(windowWidth, 100);
+        }
+        function draw() {
+          background(255, 0, 200);
+        }
+      </script>
+    </section>
+
+    <section id="kategorie4">
+      <h2>Kategorie 4</h2>
+      <p>Platzhalter für weitere Inhalte oder Sketches.</p>
+        <iframe
+  title="p5.js Web Editor Embed"
+  width="900"
+  height="800"
+  src="https://editor.p5js.org/ayayay/sketches/sayvvqwTb"
+  style="border: none;"
+></iframe>
+    </section> -->
+
+  </main>
+
+  <!-- iframe auskommentiert -->
+
+</body>
+</html>
