@@ -1,0 +1,226 @@
+
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <title>Book Hildegard - Portfolio</title>
+        <style>
+                :root {
+                        --bg-color: lightgray;
+                        /* Fix: Raute hinzugefügt */
+                        --text-color: #333333;
+                }
+
+                body {
+                        margin: 0;
+                        padding: 0;
+                        background-color: var(--bg-color);
+                        color: var(--text-color);
+                        font-family: sans-serif;
+                        line-height: 1.6;
+                }
+
+                /* 2. HEADER */
+                .header {
+                        text-align: center;
+                        padding: 0px 20px;
+                }
+
+                h1 {
+                        margin: 0;
+                        font-size: 2.5rem;
+                        letter-spacing: 0.1em;
+                        text-transform: uppercase;
+                        font-weight: 300;
+                }
+
+                /* 3. GALERIE (Einfaches Scroll-Layout) */
+                .gallery {
+                        display: block;
+                        /* Kein Flexbox-Chaos mehr */
+                        width: 100%;
+                        max-width: 1500px;
+                        margin: 0 auto;
+                        /* Zentriert die Galerie */
+                        padding-bottom: 100px;
+                }
+
+                .image-wrapper {
+                        margin-bottom: 80px;
+                        /* Abstand zwischen den Bildern */
+                        width: 100%;
+                }
+
+                .image-wrapper img {
+                        width: 100%;
+                        height: auto;
+                        display: block;
+                        border-radius: 2px;
+                        /* mix-blend-mode: multiply; */
+                        /* Ein ganz simpler Schatten für etwas Tiefe */
+                        filter: drop-shadow(10px 10px 15px rgba(0, 0, 0, 0.3));
+                }
+
+                /* 4. FORTSCHRITTSBALKEN (Optional, oben am Rand) */
+                #progress-bar {
+                        position: fixed;
+                        top: 0;
+                        left: 0;
+                        height: 4px;
+                        background: #333;
+                        width: 0%;
+                        z-index: 1000;
+                }
+        </style>
+</head>
+
+<body>
+        <div id="progress-bar"></div>
+
+        <div class="header">
+
+        </div>
+
+        <div class="gallery">
+                <div class="image-wrapper"><img src="png/replicate-prediction-071qytkeanrme0cn541r1pp934.png"
+                                loading="lazy" alt="Artwork"></div>
+                <div class="image-wrapper"><img src="png/replicate-prediction-0ngz7maww1rm80cn53s8bjrnyg.png"
+                                loading="lazy" alt="Artwork"></div>
+                <div class="image-wrapper"><img src="png/replicate-prediction-1rsxv0sq09rme0cn53zbsb9sjw.png"
+                                loading="lazy" alt="Artwork"></div>
+                <div class="image-wrapper"><img src="png/replicate-prediction-2hhpjs02dhrma0cn53trdrcj6g.png"
+                                loading="lazy" alt="Artwork"></div>
+                <div class="image-wrapper"><img src="png/replicate-prediction-388hz5zd39rme0cn53zv9zdg1w.png"
+                                loading="lazy" alt="Artwork"></div>
+                <div class="image-wrapper"><img src="png/replicate-prediction-3p30csa2ynrm80cn5438m8z768.png"
+                                loading="lazy" alt="Artwork"></div>
+                <div class="image-wrapper"><img src="png/replicate-prediction-4y8cky5195rma0cn53zs0ya7bc.png"
+                                loading="lazy" alt="Artwork"></div>
+                <div class="image-wrapper"><img src="png/replicate-prediction-51w7dh1fbxrmc0cn540stdchkm.png"
+                                loading="lazy" alt="Artwork"></div>
+                <div class="image-wrapper"><img src="png/replicate-prediction-5t7543drc9rm80cn542s11db28.png"
+                                loading="lazy" alt="Artwork"></div>
+                <div class="image-wrapper"><img src="png/replicate-prediction-5x95rtav1srma0cn540v50djx8.png"
+                                loading="lazy" alt="Artwork"></div>
+                <div class="image-wrapper"><img src="png/replicate-prediction-606m5hvyqsrma0cn540834jsqg.png"
+                                loading="lazy" alt="Artwork"></div>
+                <div class="image-wrapper"><img src="png/replicate-prediction-66a5wj0fasrme0cn53xvymcxp0.png"
+                                loading="lazy" alt="Artwork"></div>
+                <div class="image-wrapper"><img src="png/replicate-prediction-6c0gd48ba1rma0cn544s83fe0c.png"
+                                loading="lazy" alt="Artwork"></div>
+                <div class="image-wrapper"><img src="png/replicate-prediction-6xcnw70j4hrm80cn542segwz7r.png"
+                                loading="lazy" alt="Artwork"></div>
+                <div class="image-wrapper"><img src="png/replicate-prediction-7t8yf2g2gsrme0cn54199q1pnc(1).png"
+                                loading="lazy" alt="Artwork"></div>
+                <div class="image-wrapper"><img src="png/replicate-prediction-7zjnrd5pdhrme0cn543s6e52yr.png"
+                                loading="lazy" alt="Artwork"></div>
+                <div class="image-wrapper"><img src="png/replicate-prediction-8x1hk2exr5rma0cn544apxyqn8.png"
+                                loading="lazy" alt="Artwork"></div>
+                <div class="image-wrapper"><img src="png/replicate-prediction-9gc7311y65rm80cn544a0y2rd0.png"
+                                loading="lazy" alt="Artwork"></div>
+                <div class="image-wrapper"><img src="png/replicate-prediction-9vcx0pak89rmc0cn53wbcwjghr.png"
+                                loading="lazy" alt="Artwork"></div>
+                <div class="image-wrapper"><img src="png/replicate-prediction-a3gtjj6wsxrme0cn53zacadms0.png"
+                                loading="lazy" alt="Artwork"></div>
+                <div class="image-wrapper"><img src="png/replicate-prediction-ad9k9zt3jxrmc0cn53yttvkw20.png"
+                                loading="lazy" alt="Artwork"></div>
+                <div class="image-wrapper"><img src="png/replicate-prediction-bgd2qj2199rme0cn53xbk39nbr.png"
+                                loading="lazy" alt="Artwork"></div>
+                <div class="image-wrapper"><img src="png/replicate-prediction-brsarr4tnnrm80cn53v9gtvreg.png"
+                                loading="lazy" alt="Artwork"></div>
+                <div class="image-wrapper"><img src="png/replicate-prediction-day1ws4gadrmc0cn544aagcq3w.png"
+                                loading="lazy" alt="Artwork"></div>
+                <div class="image-wrapper"><img src="png/replicate-prediction-dd5129p4wsrm80cn544bvz290c.png"
+                                loading="lazy" alt="Artwork"></div>
+                <div class="image-wrapper"><img src="png/replicate-prediction-e5bszy91v9rm80cn541bdwx6nw.png"
+                                loading="lazy" alt="Artwork"></div>
+                <div class="image-wrapper"><img src="png/replicate-prediction-f038zkqetnrm80cn541r68841w.png"
+                                loading="lazy" alt="Artwork"></div>
+                <div class="image-wrapper"><img src="png/replicate-prediction-fp2dqtzadxrma0cn542rrjahh0.png"
+                                loading="lazy" alt="Artwork"></div>
+                <div class="image-wrapper"><img src="png/replicate-prediction-g3xrnvr541rma0cn545a3mjenr.png"
+                                loading="lazy" alt="Artwork"></div>
+                <div class="image-wrapper"><img src="png/replicate-prediction-ghzvraprbsrm80cn53yt403qdc.png"
+                                loading="lazy" alt="Artwork"></div>
+                <div class="image-wrapper"><img src="png/replicate-prediction-h5n2n747r5rme0cn53xbyxh5gg.png"
+                                loading="lazy" alt="Artwork"></div>
+                <div class="image-wrapper"><img src="png/replicate-prediction-hvtn77x1ndrmc0cn540scc0s14.png"
+                                loading="lazy" alt="Artwork"></div>
+                <div class="image-wrapper"><img src="png/replicate-prediction-j76hd6x1s9rme0cn542atd04yc.png"
+                                loading="lazy" alt="Artwork"></div>
+                <div class="image-wrapper"><img src="png/replicate-prediction-j8n28yxm1xrmc0cn5419h9vmtm.png"
+                                loading="lazy" alt="Artwork"></div>
+                <div class="image-wrapper"><img src="png/replicate-prediction-nv1vp22ve1rm80cn53q9wpr4hg.png"
+                                loading="lazy" alt="Artwork"></div>
+                <div class="image-wrapper"><img src="png/replicate-prediction-q0dh16rte1rma0cn543a4jywcm.png"
+                                loading="lazy" alt="Artwork"></div>
+                <div class="image-wrapper"><img src="png/replicate-prediction-q2mm5cqd21rm80cn543a3kcp3g.png"
+                                loading="lazy" alt="Artwork"></div>
+                <div class="image-wrapper"><img src="png/replicate-prediction-qpbg2scby9rme0cn53wb67emz8.png"
+                                loading="lazy" alt="Artwork"></div>
+                <div class="image-wrapper"><img src="png/replicate-prediction-r5dyz5kphhrmc0cn53ya2627nm.png"
+                                loading="lazy" alt="Artwork"></div>
+                <div class="image-wrapper"><img src="png/replicate-prediction-rnvqw4340nrmc0cn53ssh3dtzg.png"
+                                loading="lazy" alt="Artwork"></div>
+                <div class="image-wrapper"><img src="png/replicate-prediction-rzq15xssk9rme0cn53wsdjnfa4.png"
+                                loading="lazy" alt="Artwork"></div>
+                <div class="image-wrapper"><img src="png/replicate-prediction-s893hbydtxrme0cn5408pnr42g.png"
+                                loading="lazy" alt="Artwork"></div>
+                <div class="image-wrapper"><img src="png/replicate-prediction-sh15n660t9rmc0cn546b9dk5j8.png"
+                                loading="lazy" alt="Artwork"></div>
+                <div class="image-wrapper"><img src="png/replicate-prediction-smtqsb65knrme0cn53zvsw9t98.png"
+                                loading="lazy" alt="Artwork"></div>
+                <div class="image-wrapper"><img src="png/replicate-prediction-sxnjbk5r4srme0cn53y8qa7b34.png"
+                                loading="lazy" alt="Artwork"></div>
+                <div class="image-wrapper"><img src="png/replicate-prediction-v323qtwhm9rme0cn543ak00hk4.png"
+                                loading="lazy" alt="Artwork"></div>
+                <div class="image-wrapper"><img src="png/replicate-prediction-vxjnwfjpe5rme0cn542bgsjj38.png"
+                                loading="lazy" alt="Artwork"></div>
+                <div class="image-wrapper"><img src="png/replicate-prediction-w8h9qxr0z1rmc0cn546sm1zjym.png"
+                                loading="lazy" alt="Artwork"></div>
+                <div class="image-wrapper"><img src="png/replicate-prediction-wg1yeyeccsrm80cn53wrx2ndx4.png"
+                                loading="lazy" alt="Artwork"></div>
+                <div class="image-wrapper"><img src="png/replicate-prediction-x2h9b5k2ysrmc0cn54486hvnfc.png"
+                                loading="lazy" alt="Artwork"></div>
+                <div class="image-wrapper"><img src="png/replicate-prediction-y2n2em4bt9rma0cn542v8dyk3c.png"
+                                loading="lazy" alt="Artwork"></div>
+                <div class="image-wrapper"><img src="png/replicate-prediction-z4k1hvt42xrm80cn544seeh5nw.png"
+                                loading="lazy" alt="Artwork"></div>
+                <div class="image-wrapper"><img src="png/replicate-prediction-zfmjafha65rm80cn53yb06kwz4.png"
+                                loading="lazy" alt="Artwork"></div>
+        </div>
+
+        <script>
+                // Scroll Progress Bar
+                window.addEventListener('scroll', () => {
+                        const winScroll = document.body.scrollTop || document.documentElement.scrollTop;
+                        const height = document.documentElement.scrollHeight - document.documentElement.clientHeight;
+                        const scrolled = (winScroll / height) * 100;
+                        document.getElementById("progress-bar").style.width = scrolled + "%";
+                });
+
+                // Intersection Observer for fade-in effect when scrolling down
+                const observerOptions = {
+                        root: null,
+                        rootMargin: '0px',
+                        threshold: 0.1
+                };
+
+                const observer = new IntersectionObserver((entries, observer) => {
+                        entries.forEach(entry => {
+                                if (entry.isIntersecting) {
+                                        entry.target.classList.add('visible');
+                                        observer.unobserve(entry.target);
+                                }
+                        });
+                }, observerOptions);
+
+                document.querySelectorAll('.image-wrapper').forEach(wrapper => {
+                        observer.observe(wrapper);
+                });
+        </script>
+</body>
+
+</html>
