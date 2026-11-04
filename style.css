@@ -1,0 +1,150 @@
+html {
+    scroll-behavior: smooth;
+    height: 100%;
+}
+
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body {
+    font-family: Arial, sans-serif;
+    height: 100%;
+    overflow-x: hidden;
+    overflow-y: hidden;
+    font-size: .5rem;
+    line-height: 1.5;
+}
+
+header {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    padding: 0.5rem 1rem 0;
+    z-index: 1000;
+    background-color: #fff;
+}
+
+header h1 {
+    margin: 0;
+    font-size: 1rem;
+    line-height: 1.5;
+}
+
+footer {
+    max-width: 900px;
+    margin: 0 auto;
+    padding: 1rem;
+}
+
+main {
+    width: 100%;
+    margin: 0;
+    height: 100%;
+    padding: 4rem 1rem 0.5rem;
+    overflow-y: auto;
+    scroll-snap-type: y mandatory;
+    scroll-padding-top: 4rem;
+    padding-top: 5rem;
+}
+
+h1 {
+    margin: 0 0 1rem 0;
+    text-align: left;
+}
+
+main > section {
+    min-height: 35vh;
+    padding-bottom: 1rem;
+    scroll-snap-align: start;
+    scroll-snap-stop: always;
+}
+
+main > section:last-child {
+    min-height: calc(100vh - 4rem);
+    padding-bottom: 0;
+}
+
+.hero {
+    display: flex;
+    align-items: flex-start;
+    gap: 1rem;
+    overflow-x: auto;
+    overflow-y: hidden;
+    padding: 1rem 0;
+    scroll-snap-type: x mandatory;
+    scroll-padding-inline: 0;
+    -webkit-overflow-scrolling: touch;
+    scrollbar-width: none;
+    -ms-overflow-style: none;
+}
+
+.hero::-webkit-scrollbar {
+    display: none;
+}
+
+.hero img { 
+    display: block;
+    flex: 0 0 auto;
+    width: 100%;
+    max-width: 420px;
+    object-fit: contain; 
+    scroll-snap-align: start;
+    scroll-snap-stop: always;
+    /* max-height: 400px; */
+}
+
+.hero-title {
+    margin: 0 0 1rem 0;
+    font-size: 1rem;
+}
+
+.hero-subtitle {
+    max-width: 50ch;
+    font-size: 1rem;
+    line-height: 1.25;
+    font-weight: 400;
+}
+
+
+
+@media (max-width: 600px) {
+    header {
+        padding: 0.5rem 0.75rem 0;
+    }
+
+    header h1 {
+        font-size: 1rem;
+        line-height: 1.2;
+    }
+
+    main {
+        padding: 3.25rem 0.75rem 0.25rem;
+        scroll-padding-top: 3.25rem;
+        padding-top: 4.5rem;
+        scroll-padding-top: 4.5rem;
+    }
+
+    main > section {
+        min-height: 48vh;
+        padding-bottom: 0.5rem;
+    }
+
+    main > section:last-child {
+        min-height: calc(100vh - 3.25rem);
+    }
+
+    .hero {
+        gap: 0.5rem;
+        padding: 0.5rem 0;
+    }
+
+    .hero img,
+    .hero figure {
+        flex: 0 0 100%;
+        max-width: none;
+    }
+}
